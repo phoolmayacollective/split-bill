@@ -9,8 +9,8 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 1 | [Project bootstrap](./milestones/01-bootstrap.md) | 1 | `completed` | — |
 | 2 | [Database schema](./milestones/02-database-schema.md) | 1 | `completed` | 1 |
 | 3 | [Split calculation logic](./milestones/03-split-logic.md) | 1 | `completed` | 1 |
-| 4 | [Bill & claims API](./milestones/04-bill-api.md) | 1 | `pending` | 2, 3 |
-| 5 | [Payer UI — manual bill](./milestones/05-payer-ui-manual.md) | 1 | `pending` | 4 |
+| 4 | [Bill & claims API](./milestones/04-bill-api.md) | 1 | `completed` | 2, 3 |
+| 5 | [Payer UI — manual bill](./milestones/05-payer-ui-manual.md) | 1 | `completed` | 4 |
 | 6 | [Ower UI — claim & summary](./milestones/06-ower-ui-claims.md) | 1 | `pending` | 4 |
 | 7 | [Client-side crypto](./milestones/07-client-crypto.md) | 2 | `pending` | 1 |
 | 8 | [Encrypted payment flow](./milestones/08-encrypted-payment.md) | 2 | `pending` | 5, 7 |
@@ -32,9 +32,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 3 / 14
+- **Completed:** 5 / 14
 - **In progress:** 0
-- **Pending:** 11
+- **Pending:** 9
 
 ## Completed work log
 
@@ -63,6 +63,22 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 **How:** `lib/split.ts` with `calculateSplits` / `calculateOwerTotal`; tax/tip scaled to claimed portion of bill subtotal; 6 unit tests via `npm test`.
 
 **Details:** [milestones/03-split-logic.md](./milestones/03-split-logic.md)
+
+### M4 — Bill & claims API (2026-07-10)
+
+**What:** REST API for creating bills, fetching bills with claims, recording ower claims, and computing per-ower summary totals.
+
+**How:** Zod schemas in `lib/api/schemas.ts`; four route handlers under `app/api/bills/` wired to `lib/db/bills.ts` and `lib/split.ts`; payment ciphertext fields stripped in phase 1; verified with `npm run build` and curl integration tests.
+
+**Details:** [milestones/04-bill-api.md](./milestones/04-bill-api.md)
+
+### M5 — Payer UI manual bill (2026-07-10)
+
+**What:** Mobile-first payer flow — manual item entry, tax/tip review, POST bill, share link with copy button.
+
+**How:** `app/create` hub + `/create/manual` client form with `BillItemEditor`; `lib/bill-totals.ts` for live totals; POST to `/api/bills` then redirect to `/bill/{id}/share`; `CopyShareLink` uses `NEXT_PUBLIC_APP_URL`; verified with build/lint and curl.
+
+**Details:** [milestones/05-payer-ui-manual.md](./milestones/05-payer-ui-manual.md)
 
 ## How to update
 

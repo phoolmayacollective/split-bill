@@ -8,14 +8,16 @@
 
 ## Current progress
 
-**3 / 14 milestones completed** (Phase 1 in progress)
+**5 / 14 milestones completed** (Phase 1 in progress)
 
 | Done | Milestone | Summary |
 |------|-----------|---------|
 | ✅ | M1 Bootstrap | Next.js 16 + shadcn/ui + Supabase client stub |
 | ✅ | M2 Database | `bills`/`claims` tables via Supabase MCP + `lib/db/bills.ts` |
 | ✅ | M3 Split logic | `lib/split.ts` + unit tests (`npm test`) |
-| ⏳ | M4 Bill API | Next up |
+| ✅ | M4 Bill API | `POST/GET /api/bills`, claims + summary routes |
+| ✅ | M5 Payer UI | Manual bill entry, share link with copy |
+| ⏳ | M6 Ower UI | Next up |
 
 See [MILESTONES.md](./MILESTONES.md) for the full log and [milestones/](./milestones/) for step-by-step details.
 
