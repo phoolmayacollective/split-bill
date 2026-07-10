@@ -1,0 +1,65 @@
+# Milestones
+
+Last updated: 2026-07-10
+
+Track progress here and in each file under [`milestones/`](./milestones/).
+
+| # | Milestone | Phase | Status | Depends on |
+|---|-----------|-------|--------|------------|
+| 1 | [Project bootstrap](./milestones/01-bootstrap.md) | 1 | `completed` | — |
+| 2 | [Database schema](./milestones/02-database-schema.md) | 1 | `completed` | 1 |
+| 3 | [Split calculation logic](./milestones/03-split-logic.md) | 1 | `pending` | 1 |
+| 4 | [Bill & claims API](./milestones/04-bill-api.md) | 1 | `pending` | 2, 3 |
+| 5 | [Payer UI — manual bill](./milestones/05-payer-ui-manual.md) | 1 | `pending` | 4 |
+| 6 | [Ower UI — claim & summary](./milestones/06-ower-ui-claims.md) | 1 | `pending` | 4 |
+| 7 | [Client-side crypto](./milestones/07-client-crypto.md) | 2 | `pending` | 1 |
+| 8 | [Encrypted payment flow](./milestones/08-encrypted-payment.md) | 2 | `pending` | 5, 7 |
+| 9 | [Ower decrypt & payment summary](./milestones/09-ower-decrypt.md) | 2 | `pending` | 6, 7, 8 |
+| 10 | [Receipt scan (OCR)](./milestones/10-receipt-scan.md) | 3 | `pending` | 5 |
+| 11 | [Shared-item & tax/tip polish](./milestones/11-split-polish.md) | 4 | `pending` | 6 |
+| 12 | [Mobile UX & share tools](./milestones/12-mobile-share.md) | 4 | `pending` | 9 |
+| 13 | [Payer edit token & bill lifecycle](./milestones/13-bill-lifecycle.md) | 4 | `pending` | 8 |
+| 14 | [Deploy MVP](./milestones/14-deploy.md) | 4 | `pending` | 9, 11 |
+
+## Phase summary
+
+| Phase | Milestones | Goal |
+|-------|------------|------|
+| **1 — Core flow** | 1–6 | Manual bill, claim items, summary — no crypto, no OCR |
+| **2 — Zero-knowledge payment** | 7–9 | Encrypt payment details client-side; password in URL fragment |
+| **3 — OCR** | 10 | Scan receipt → editable line items |
+| **4 — Polish & ship** | 11–14 | Splitting UX, mobile, edit token, expiry, deploy |
+
+## Progress
+
+- **Completed:** 2 / 14
+- **In progress:** 0
+- **Pending:** 12
+
+## Completed work log
+
+### M1 — Project bootstrap (2026-07-10)
+
+**What:** Next.js 16 app with Tailwind v4, shadcn/ui, Supabase client stub, landing page.
+
+**How:** `create-next-app` via `web/` subfolder workaround (folder name has a space) → shadcn init → install deps → `lib/supabase.ts` + `/` and `/create` pages → build/lint verified.
+
+**Details:** [milestones/01-bootstrap.md](./milestones/01-bootstrap.md)
+
+### M2 — Database schema (2026-07-10)
+
+**What:** `bills` + `claims` tables on Supabase; typed query helpers in repo.
+
+**How:** Supabase MCP `apply_migration` (`initial_schema`) on project `prgjjnudjnaohmeqhhhm` → `generate_typescript_types` → `lib/db/bills.ts` + local `supabase/migrations/001_initial.sql`.
+
+**Details:** [milestones/02-database-schema.md](./milestones/02-database-schema.md)
+
+**Blocked on user:** Paste `SUPABASE_SERVICE_ROLE_KEY` into `.env.local` (Dashboard → API settings).
+
+## How to update
+
+1. Change **Status** in the milestone file: `pending` → `in_progress` → `completed`
+2. Check off tasks (`- [ ]` → `- [x]`)
+3. Add **What was done**, **How it was done**, and dated notes under **Updates**
+4. Add a row to **Completed work log** in this file
+5. Sync the status column in the table above
