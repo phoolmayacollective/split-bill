@@ -8,7 +8,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 |---|-----------|-------|--------|------------|
 | 1 | [Project bootstrap](./milestones/01-bootstrap.md) | 1 | `completed` | — |
 | 2 | [Database schema](./milestones/02-database-schema.md) | 1 | `completed` | 1 |
-| 3 | [Split calculation logic](./milestones/03-split-logic.md) | 1 | `pending` | 1 |
+| 3 | [Split calculation logic](./milestones/03-split-logic.md) | 1 | `completed` | 1 |
 | 4 | [Bill & claims API](./milestones/04-bill-api.md) | 1 | `pending` | 2, 3 |
 | 5 | [Payer UI — manual bill](./milestones/05-payer-ui-manual.md) | 1 | `pending` | 4 |
 | 6 | [Ower UI — claim & summary](./milestones/06-ower-ui-claims.md) | 1 | `pending` | 4 |
@@ -32,9 +32,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 2 / 14
+- **Completed:** 3 / 14
 - **In progress:** 0
-- **Pending:** 12
+- **Pending:** 11
 
 ## Completed work log
 
@@ -55,6 +55,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 **Details:** [milestones/02-database-schema.md](./milestones/02-database-schema.md)
 
 **Blocked on user:** Paste `SUPABASE_SERVICE_ROLE_KEY` into `.env.local` (Dashboard → API settings).
+
+### M3 — Split calculation logic (2026-07-10)
+
+**What:** Pure functions for claim-based bill splitting with proportional tax/tip.
+
+**How:** `lib/split.ts` with `calculateSplits` / `calculateOwerTotal`; tax/tip scaled to claimed portion of bill subtotal; 6 unit tests via `npm test`.
+
+**Details:** [milestones/03-split-logic.md](./milestones/03-split-logic.md)
 
 ## How to update
 

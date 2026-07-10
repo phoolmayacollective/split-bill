@@ -139,7 +139,7 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 |---|-----------|-------|--------|
 | 1 | Project bootstrap | 1 | `completed` |
 | 2 | Database schema (`bills`, `claims`) | 1 | `completed` |
-| 3 | Split calculation logic | 1 | `pending` |
+| 3 | Split calculation logic | 1 | `completed` |
 | 4 | Bill & claims API | 1 | `pending` |
 | 5 | Payer UI — manual bill | 1 | `pending` |
 | 6 | Ower UI — claim & summary | 1 | `pending` |
