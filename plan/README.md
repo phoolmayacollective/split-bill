@@ -8,7 +8,7 @@
 
 ## Current progress
 
-**5 / 14 milestones completed** (Phase 1 in progress)
+**6 / 14 milestones completed** (Phase 1 complete)
 
 | Done | Milestone | Summary |
 |------|-----------|---------|
@@ -17,7 +17,8 @@
 | ✅ | M3 Split logic | `lib/split.ts` + unit tests (`npm test`) |
 | ✅ | M4 Bill API | `POST/GET /api/bills`, claims + summary routes |
 | ✅ | M5 Payer UI | Manual bill entry, share link with copy |
-| ⏳ | M6 Ower UI | Next up |
+| ✅ | M6 Ower UI | Name → claim items → summary total |
+| ⏳ | M7 Client crypto | Next up (Phase 2) |
 
 See [MILESTONES.md](./MILESTONES.md) for the full log and [milestones/](./milestones/) for step-by-step details.
 

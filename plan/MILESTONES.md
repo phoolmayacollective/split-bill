@@ -11,7 +11,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 3 | [Split calculation logic](./milestones/03-split-logic.md) | 1 | `completed` | 1 |
 | 4 | [Bill & claims API](./milestones/04-bill-api.md) | 1 | `completed` | 2, 3 |
 | 5 | [Payer UI — manual bill](./milestones/05-payer-ui-manual.md) | 1 | `completed` | 4 |
-| 6 | [Ower UI — claim & summary](./milestones/06-ower-ui-claims.md) | 1 | `pending` | 4 |
+| 6 | [Ower UI — claim & summary](./milestones/06-ower-ui-claims.md) | 1 | `completed` | 4 |
 | 7 | [Client-side crypto](./milestones/07-client-crypto.md) | 2 | `pending` | 1 |
 | 8 | [Encrypted payment flow](./milestones/08-encrypted-payment.md) | 2 | `pending` | 5, 7 |
 | 9 | [Ower decrypt & payment summary](./milestones/09-ower-decrypt.md) | 2 | `pending` | 6, 7, 8 |
@@ -32,9 +32,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 5 / 14
+- **Completed:** 6 / 14
 - **In progress:** 0
-- **Pending:** 9
+- **Pending:** 8
 
 ## Completed work log
 
@@ -68,7 +68,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **What:** REST API for creating bills, fetching bills with claims, recording ower claims, and computing per-ower summary totals.
 
-**How:** Zod schemas in `lib/api/schemas.ts`; four route handlers under `app/api/bills/` wired to `lib/db/bills.ts` and `lib/split.ts`; payment ciphertext fields stripped in phase 1; verified with `npm run build` and curl integration tests.
+**How:** Zod schemas in `lib/api/schemas.ts`; four route handlers under `app/api/bills/` wired to `lib/db/bills.ts` and `lib/split.ts`; payment ciphertext fields stripped in phase 1; verified with `npm run build` and curl integration tests. Shipped in `5c28f5c` on `origin/main`.
 
 **Details:** [milestones/04-bill-api.md](./milestones/04-bill-api.md)
 
@@ -76,9 +76,21 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **What:** Mobile-first payer flow — manual item entry, tax/tip review, POST bill, share link with copy button.
 
-**How:** `app/create` hub + `/create/manual` client form with `BillItemEditor`; `lib/bill-totals.ts` for live totals; POST to `/api/bills` then redirect to `/bill/{id}/share`; `CopyShareLink` uses `NEXT_PUBLIC_APP_URL`; verified with build/lint and curl.
+**How:** `app/create` hub + `/create/manual` client form with `BillItemEditor`; `lib/bill-totals.ts` for live totals; POST to `/api/bills` then redirect to `/bill/{id}/share`; `CopyShareLink` uses `NEXT_PUBLIC_APP_URL`; verified with build/lint and curl. Shipped in `5c28f5c` on `origin/main`.
 
 **Details:** [milestones/05-payer-ui-manual.md](./milestones/05-payer-ui-manual.md)
+
+### M6 — Ower UI claim & summary (2026-07-10)
+
+**What:** Mobile-first ower flow — set name, claim items with checkboxes, see proportional tax/tip breakdown and total owed.
+
+**How:** `/bill/{id}` redirects to name step; `sessionStorage` carries ower name; `OwerItemPicker` uses `calculateOwerTotal()` for live preview; sticky footer on items page; POST new claims then summary from `/api/bills/{id}/summary`; verified with build/lint/test and curl.
+
+**Details:** [milestones/06-ower-ui-claims.md](./milestones/06-ower-ui-claims.md)
+
+## Next up
+
+**M7 — Client-side crypto** — AES-GCM + PBKDF2 helpers for zero-knowledge payment details (Phase 2).
 
 ## How to update
 

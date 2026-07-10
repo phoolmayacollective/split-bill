@@ -61,3 +61,4 @@ app/api/bills/[id]/summary/route.ts
 
 - **2026-07-10:** Started M4 — Bill & claims API routes.
 - **2026-07-10:** Milestone completed. Four API routes with Zod validation, error handling, and integration-tested against Supabase.
+- **2026-07-10:** Pushed to `origin/main` in commit `5c28f5c` (with M5 payer UI).

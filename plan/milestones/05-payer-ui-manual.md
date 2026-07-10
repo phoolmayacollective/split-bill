@@ -71,3 +71,4 @@ app/bill/[id]/share/page.tsx
 
 - **2026-07-10:** Started M5 — Payer UI manual bill flow.
 - **2026-07-10:** Milestone completed. Manual bill creation, POST redirect, and share link copy shipped.
+- **2026-07-10:** Pushed to `origin/main` in commit `5c28f5c` (with M4 API routes).

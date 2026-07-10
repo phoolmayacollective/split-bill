@@ -142,7 +142,7 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 3 | Split calculation logic | 1 | `completed` |
 | 4 | Bill & claims API | 1 | `completed` |
 | 5 | Payer UI — manual bill | 1 | `completed` |
-| 6 | Ower UI — claim & summary | 1 | `pending` |
+| 6 | Ower UI — claim & summary | 1 | `completed` |
 | 7 | Client-side crypto (Web Crypto API) | 2 | `pending` |
 | 8 | Encrypted payment flow (payer) | 2 | `pending` |
 | 9 | Ower decrypt & payment summary | 2 | `pending` |
