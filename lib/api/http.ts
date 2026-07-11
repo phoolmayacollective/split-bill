@@ -1,8 +1,12 @@
 import type { z } from "zod";
 import { billIdSchema } from "@/lib/api/schemas";
 
-export function jsonResponse<T>(data: T, status = 200): Response {
-  return Response.json(data, { status });
+export function jsonResponse<T>(
+  data: T,
+  status = 200,
+  headers?: Record<string, string>,
+): Response {
+  return Response.json(data, { status, headers });
 }
 
 export function jsonError(

@@ -74,3 +74,4 @@ app/bill/[id]/summary/page.tsx
 
 - **2026-07-10:** Started M6 — Ower UI claim & summary flow.
 - **2026-07-10:** Milestone completed. Full ower flow: name → claim items → summary with proportional tax/tip.
+- **2026-07-11:** Pushed to `origin/main` in commit `fc0aa9a`.

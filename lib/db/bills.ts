@@ -7,6 +7,7 @@ import type {
   ClaimInsert,
   ClaimRow,
 } from "@/lib/database.types";
+import { parseBillParticipants } from "@/lib/participants";
 import { createServerSupabaseClient } from "@/lib/supabase";
 
 const defaultTotals: BillTotals = {
@@ -50,12 +51,16 @@ function parseBillTotals(totals: BillRow["totals"]): BillTotals {
 export async function createBill(input: {
   items: BillItem[];
   totals?: BillTotals;
+  participants?: string[];
+  payerId?: string | null;
 }): Promise<BillRow> {
   const supabase = createServerSupabaseClient();
 
   const payload: BillInsert = {
     items: input.items,
     totals: input.totals ?? defaultTotals,
+    participants: input.participants ?? [],
+    ...(input.payerId ? { payer_id: input.payerId } : {}),
   };
 
   const { data, error } = await supabase
@@ -113,6 +118,8 @@ export async function updateBill(
     payment_iv?: string | null;
     payment_salt?: string | null;
     kdf_iterations?: number | null;
+    payer_password_hash?: string | null;
+    payer_id?: string | null;
   },
 ): Promise<BillRow> {
   const supabase = createServerSupabaseClient();
@@ -129,6 +136,37 @@ export async function updateBill(
   }
 
   return data;
+}
+
+export async function replaceOwerClaims(
+  billId: string,
+  owerName: string,
+  claims: Array<Pick<ClaimInsert, "item_id" | "share">>,
+): Promise<ClaimRow[]> {
+  const supabase = createServerSupabaseClient();
+
+  const { error: deleteError } = await supabase
+    .from("claims")
+    .delete()
+    .eq("bill_id", billId)
+    .eq("ower_name", owerName);
+
+  if (deleteError) {
+    throw new Error(`Failed to replace claims: ${deleteError.message}`);
+  }
+
+  if (claims.length === 0) {
+    return [];
+  }
+
+  return addClaims(
+    billId,
+    claims.map((claim) => ({
+      ower_name: owerName,
+      item_id: claim.item_id,
+      share: claim.share,
+    })),
+  );
 }
 
 export async function addClaims(
@@ -161,5 +199,6 @@ export function normalizeBill(bill: BillWithClaims) {
     ...bill,
     items: parseBillItems(bill.items),
     totals: parseBillTotals(bill.totals),
+    participants: parseBillParticipants(bill.participants),
   };
 }

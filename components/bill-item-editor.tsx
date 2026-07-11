@@ -2,11 +2,15 @@
 
 import { Trash2 } from "lucide-react";
 
+import { SectionCard } from "@/components/layout/section-card";
+import { ErrorMessage } from "@/components/feedback/error-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MoneyAmount } from "@/components/bill/money-amount";
 import type { BillItem } from "@/lib/database.types";
-import { formatMoney, itemLineTotal } from "@/lib/bill-totals";
+import { itemLineTotal } from "@/lib/bill-totals";
+import { cn } from "@/lib/utils";
 
 type BillItemEditorProps = {
   item: BillItem;
@@ -14,6 +18,8 @@ type BillItemEditorProps = {
   onChange: (item: BillItem) => void;
   onRemove: () => void;
   canRemove: boolean;
+  invalid?: boolean;
+  errorMessage?: string | null;
 };
 
 export function BillItemEditor({
@@ -22,16 +28,18 @@ export function BillItemEditor({
   onChange,
   onRemove,
   canRemove,
+  invalid = false,
+  errorMessage,
 }: BillItemEditorProps) {
   return (
-    <div className="bg-card space-y-3 rounded-xl border p-4">
+    <SectionCard
+      className={cn(invalid && "border-destructive/40 bg-destructive/5")}
+    >
       <div className="flex items-start justify-between gap-3">
         <p className="text-muted-foreground text-sm font-medium">
           Item {index + 1}
         </p>
-        <p className="text-sm font-medium tabular-nums">
-          {formatMoney(itemLineTotal(item))}
-        </p>
+        <MoneyAmount amount={itemLineTotal(item)} size="sm" />
       </div>
 
       <div className="space-y-2">
@@ -43,7 +51,7 @@ export function BillItemEditor({
           onChange={(event) =>
             onChange({ ...item, name: event.target.value })
           }
-          className="h-10"
+          aria-invalid={invalid && !item.name.trim()}
         />
       </div>
 
@@ -64,7 +72,7 @@ export function BillItemEditor({
                 price: event.target.value === "" ? 0 : Number(event.target.value),
               })
             }
-            className="h-10"
+            aria-invalid={invalid && item.price <= 0}
           />
         </div>
 
@@ -86,10 +94,11 @@ export function BillItemEditor({
                     : Math.max(1, Number(event.target.value)),
               })
             }
-            className="h-10"
           />
         </div>
       </div>
+
+      {errorMessage ? <ErrorMessage message={errorMessage} /> : null}
 
       {canRemove ? (
         <Button
@@ -103,6 +112,6 @@ export function BillItemEditor({
           Remove item
         </Button>
       ) : null}
-    </div>
+    </SectionCard>
   );
 }

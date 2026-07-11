@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   description: "No-signup bill splitter — create, share, and claim what you owe.",
 };
 
+export const viewport: Viewport = {
+  themeColor: "#faf7f0",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +34,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="bg-background min-h-full flex flex-col">
+        <div className="from-primary/8 via-background to-background pointer-events-none fixed inset-0 -z-10 bg-gradient-to-b" />
+        {children}
+      </body>
     </html>
   );
 }

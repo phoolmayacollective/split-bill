@@ -1,18 +1,37 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { BillContextCard } from "@/components/bill/bill-context-card";
 import {
   OwerItemPicker,
   useOwerPreviewTotal,
 } from "@/components/ower-item-picker";
+import { ErrorMessage } from "@/components/feedback/error-message";
+import { LoadingState } from "@/components/feedback/loading-state";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
+import { StepIndicator } from "@/components/layout/step-indicator";
+import { StickyActionBar } from "@/components/layout/sticky-action-bar";
+import { MoneyAmount } from "@/components/bill/money-amount";
 import { Button } from "@/components/ui/button";
-import { formatMoney } from "@/lib/bill-totals";
+import {
+  claimsMatchQuantities,
+  getOwerClaimQuantities,
+  hasAnyClaim,
+  toClaimPayload,
+  validateClaimQuantities,
+} from "@/lib/claim-units";
 import type { BillItem, BillTotals } from "@/lib/database.types";
 import { getOwerName } from "@/lib/ower-session";
 import type { SplitClaim } from "@/lib/split";
+
+const OWER_STEPS = [
+  { label: "Name" },
+  { label: "Items" },
+  { label: "Summary" },
+];
 
 type OwerItemsPageProps = {
   billId: string;
@@ -20,33 +39,6 @@ type OwerItemsPageProps = {
   totals: BillTotals;
   existingClaims: SplitClaim[];
 };
-
-function getInitialSelection(
-  owerName: string,
-  existingClaims: SplitClaim[],
-): Set<string> {
-  return new Set(
-    existingClaims
-      .filter((claim) => claim.ower_name === owerName)
-      .map((claim) => claim.item_id),
-  );
-}
-
-function getNewClaims(
-  owerName: string,
-  existingClaims: SplitClaim[],
-  selectedIds: Set<string>,
-): Array<{ item_id: string; share: number }> {
-  const alreadyClaimed = new Set(
-    existingClaims
-      .filter((claim) => claim.ower_name === owerName)
-      .map((claim) => claim.item_id),
-  );
-
-  return [...selectedIds]
-    .filter((itemId) => !alreadyClaimed.has(itemId))
-    .map((item_id) => ({ item_id, share: 1 }));
-}
 
 export function OwerItemsPage({
   billId,
@@ -56,12 +48,13 @@ export function OwerItemsPage({
 }: OwerItemsPageProps) {
   const router = useRouter();
   const owerName = useMemo(() => getOwerName(billId), [billId]);
-  const [selectedIds, setSelectedIds] = useState(() => {
+  const [claimQuantities, setClaimQuantities] = useState(() => {
     const name = getOwerName(billId);
-    return name ? getInitialSelection(name, existingClaims) : new Set<string>();
+    return name ? getOwerClaimQuantities(name, existingClaims) : {};
   });
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     if (!owerName) {
@@ -74,16 +67,18 @@ export function OwerItemsPage({
     totals,
     owerName ?? "",
     existingClaims,
-    selectedIds,
+    claimQuantities,
   );
 
-  const hasNewClaims = useMemo(() => {
+  const hasChanges = useMemo(() => {
     if (!owerName) {
       return false;
     }
 
-    return getNewClaims(owerName, existingClaims, selectedIds).length > 0;
-  }, [existingClaims, owerName, selectedIds]);
+    return !claimsMatchQuantities(existingClaims, owerName, claimQuantities);
+  }, [claimQuantities, existingClaims, owerName]);
+
+  const hasSelection = hasAnyClaim(claimQuantities);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,23 +88,33 @@ export function OwerItemsPage({
       return;
     }
 
-    if (selectedIds.size === 0) {
+    if (!hasSelection) {
       setError("Select at least one item you owe.");
       return;
     }
 
-    const newClaims = getNewClaims(owerName, existingClaims, selectedIds);
+    const validationError = validateClaimQuantities(
+      items,
+      existingClaims,
+      owerName,
+      claimQuantities,
+    );
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
-      if (newClaims.length > 0) {
+      if (hasChanges) {
         const response = await fetch(`/api/bills/${billId}/claims`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ower_name: owerName,
-            claims: newClaims,
+            claims: toClaimPayload(claimQuantities),
           }),
         });
 
@@ -121,6 +126,7 @@ export function OwerItemsPage({
         }
       }
 
+      setIsRedirecting(true);
       router.push(`/bill/${billId}/summary`);
     } catch {
       setError("Failed to save your claims. Please try again.");
@@ -130,26 +136,34 @@ export function OwerItemsPage({
   }
 
   if (!owerName) {
-    return null;
+    return (
+      <PageShell centered>
+        <LoadingState message="Loading…" />
+      </PageShell>
+    );
+  }
+
+  if (isRedirecting) {
+    return (
+      <PageShell centered>
+        <LoadingState message="Loading summary…" />
+      </PageShell>
+    );
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-8 pb-28">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6">
-        <div className="space-y-2">
-          <Link
-            href={`/bill/${billId}/name`}
-            className="text-muted-foreground hover:text-foreground text-sm"
-          >
-            ← Change name
-          </Link>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Claim your items
-          </h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Hi {owerName} — check everything you&apos;re paying for.
-          </p>
-        </div>
+    <>
+      <PageShell withStickyFooter>
+        <PageHeader
+          title="Claim your items"
+          description={`Hi ${owerName} — check everything you're paying for.`}
+          backHref={`/bill/${billId}/name`}
+          backLabel="Change name"
+        />
+
+        <StepIndicator steps={OWER_STEPS} currentStep={2} />
+
+        <BillContextCard itemCount={items.length} totals={totals} />
 
         <form id="ower-claims-form" onSubmit={handleSubmit}>
           <OwerItemPicker
@@ -157,41 +171,41 @@ export function OwerItemsPage({
             totals={totals}
             owerName={owerName}
             existingClaims={existingClaims}
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
+            claimQuantities={claimQuantities}
+            onClaimQuantitiesChange={setClaimQuantities}
           />
 
           {error ? (
-            <p className="text-destructive mt-4 text-sm" role="alert">
-              {error}
+            <ErrorMessage message={error} className="mt-4" />
+          ) : !hasSelection ? (
+            <p className="text-muted-foreground mt-4 text-center text-sm">
+              Select at least one item to continue.
             </p>
           ) : null}
         </form>
-      </main>
+      </PageShell>
 
-      <div className="border-border bg-background/95 supports-backdrop-filter:bg-background/80 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-md items-center gap-4">
+      <StickyActionBar>
+        <div className="flex w-full items-center gap-4">
           <div className="min-w-0 flex-1">
             <p className="text-muted-foreground text-xs">Your total</p>
-            <p className="text-lg font-semibold tabular-nums">
-              {formatMoney(runningTotal)}
-            </p>
+            <MoneyAmount amount={runningTotal} size="lg" />
           </div>
           <Button
             type="submit"
             form="ower-claims-form"
             size="lg"
-            className="h-11 shrink-0 px-6"
-            disabled={isSubmitting || selectedIds.size === 0}
+            className="shrink-0 px-6"
+            disabled={isSubmitting || !hasSelection}
           >
             {isSubmitting
               ? "Saving…"
-              : hasNewClaims
+              : hasChanges
                 ? "Continue"
                 : "View summary"}
           </Button>
         </div>
-      </div>
-    </div>
+      </StickyActionBar>
+    </>
   );
 }

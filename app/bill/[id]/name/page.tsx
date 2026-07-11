@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { OwerNameForm } from "@/components/ower-name-form";
-import { getBillById } from "@/lib/db/bills";
+import { getBillById, normalizeBill } from "@/lib/db/bills";
 
 type OwerNamePageProps = {
   params: Promise<{ id: string }>;
@@ -28,5 +28,14 @@ export default async function OwerNamePage({ params }: OwerNamePageProps) {
     notFound();
   }
 
-  return <OwerNameForm billId={id} />;
+  const normalized = normalizeBill(bill);
+
+  return (
+    <OwerNameForm
+      billId={id}
+      participants={normalized.participants}
+      itemCount={normalized.items.length}
+      totals={normalized.totals}
+    />
+  );
 }

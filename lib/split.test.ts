@@ -25,7 +25,7 @@ describe("calculateSplits", () => {
       claims: [
         { ower_name: "Alice", item_id: "pizza", share: 1 },
         { ower_name: "Alice", item_id: "salad", share: 1 },
-        { ower_name: "Alice", item_id: "drink", share: 1 },
+        { ower_name: "Alice", item_id: "drink", share: 2 },
       ],
     });
 
@@ -77,13 +77,62 @@ describe("calculateSplits", () => {
     assert.ok(alice);
     assert.ok(bob);
     assert.equal(alice.subtotal, 20);
-    assert.equal(bob.subtotal, 20);
+    assert.equal(bob.subtotal, 15);
     assert.equal(alice.tax_share, 2);
-    assert.equal(bob.tax_share, 2);
+    assert.equal(bob.tax_share, 1.5);
     assert.equal(alice.tip_share, 3);
-    assert.equal(bob.tip_share, 3);
+    assert.equal(bob.tip_share, 2.25);
     assert.equal(alice.total, 25);
-    assert.equal(bob.total, 25);
+    assert.equal(bob.total, 18.75);
+  });
+
+  it("charges unit price times quantity claimed when item qty > 1", () => {
+    const results = calculateSplits({
+      items: [{ id: "beer", name: "Beer", price: 5, qty: 4 }],
+      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
+      claims: [{ ower_name: "Alice", item_id: "beer", share: 2 }],
+    });
+
+    assert.equal(results.length, 1);
+    assert.equal(results[0].subtotal, 10);
+    assert.equal(results[0].lines[0].item_name, "Beer");
+    assert.equal(results[0].lines[0].split_label, "2 of 4");
+  });
+
+  it("labels shared single-qty items as split between people", () => {
+    const results = calculateSplits({
+      items: [{ id: "pizza", name: "Pizza", price: 20, qty: 1 }],
+      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
+      claims: [
+        { ower_name: "Alice", item_id: "pizza", share: 1 },
+        { ower_name: "Bob", item_id: "pizza", share: 1 },
+        { ower_name: "Carol", item_id: "pizza", share: 1 },
+        { ower_name: "Dan", item_id: "pizza", share: 1 },
+      ],
+    });
+
+    for (const result of results) {
+      assert.equal(result.lines[0].split_label, "Split between 4 people");
+    }
+  });
+
+  it("splits multi-qty items among multiple owers by units", () => {
+    const results = calculateSplits({
+      items: [{ id: "beer", name: "Beer", price: 5, qty: 4 }],
+      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
+      claims: [
+        { ower_name: "Alice", item_id: "beer", share: 2 },
+        { ower_name: "Bob", item_id: "beer", share: 2 },
+      ],
+    });
+
+    const alice = results.find((result) => result.ower_name === "Alice");
+    const bob = results.find((result) => result.ower_name === "Bob");
+
+    assert.ok(alice);
+    assert.ok(bob);
+    assert.equal(alice.subtotal, 10);
+    assert.equal(bob.subtotal, 10);
   });
 
   it("supports weighted shares on the same item", () => {

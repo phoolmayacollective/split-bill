@@ -1,6 +1,6 @@
 import { jsonError, jsonResponse, parseBillId } from "@/lib/api/http";
-import { getBillById, normalizeBill } from "@/lib/db/bills";
-import { calculateSplits } from "@/lib/split";
+import { getBillOwerSummaries } from "@/lib/api/summary";
+import { getBillById } from "@/lib/db/bills";
 
 export async function GET(
   _request: Request,
@@ -20,16 +20,7 @@ export async function GET(
       return jsonError("Bill not found", 404);
     }
 
-    const normalized = normalizeBill(bill);
-    const owers = calculateSplits({
-      items: normalized.items,
-      totals: normalized.totals,
-      claims: normalized.claims.map((claim) => ({
-        ower_name: claim.ower_name,
-        item_id: claim.item_id,
-        share: Number(claim.share),
-      })),
-    });
+    const owers = await getBillOwerSummaries(bill);
 
     return jsonResponse({ owers });
   } catch (error) {

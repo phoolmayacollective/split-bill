@@ -1,7 +1,12 @@
 import { toPublicBill } from "@/lib/api/bills";
 import { createClaimsSchema } from "@/lib/api/schemas";
+import { validateClaimQuantities } from "@/lib/claim-units";
 import { jsonError, jsonResponse, parseBillId, parseJsonBody } from "@/lib/api/http";
-import { addClaims, getBillById, normalizeBill } from "@/lib/db/bills";
+import {
+  getBillById,
+  normalizeBill,
+  replaceOwerClaims,
+} from "@/lib/db/bills";
 
 export async function POST(
   request: Request,
@@ -39,10 +44,28 @@ export async function POST(
       });
     }
 
-    await addClaims(
+    const quantities = Object.fromEntries(
+      parsedBody.data.claims.map((claim) => [claim.item_id, claim.share]),
+    );
+    const validationError = validateClaimQuantities(
+      normalized.items,
+      normalized.claims.map((claim) => ({
+        ower_name: claim.ower_name,
+        item_id: claim.item_id,
+        share: Number(claim.share),
+      })),
+      parsedBody.data.ower_name,
+      quantities,
+    );
+
+    if (validationError) {
+      return jsonError(validationError, 400);
+    }
+
+    await replaceOwerClaims(
       parsedId.data,
+      parsedBody.data.ower_name,
       parsedBody.data.claims.map((claim) => ({
-        ower_name: parsedBody.data.ower_name,
         item_id: claim.item_id,
         share: claim.share,
       })),

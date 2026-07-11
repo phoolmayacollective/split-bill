@@ -64,8 +64,9 @@ flowchart TD
 3. **Review & fix**: edit any line item, add/remove items, set tax/tip/total.
 4. **Add payment details**: PayPal address and/or IBAN.
 5. Browser **encrypts** payment details (see model above), sets/generates password.
-6. Browser POSTs `{ items, totals, encryptedPayment }` → server returns `billId`.
-7. App shows the **share link** (`/bill/{id}#{password}`) with copy button.
+6. Browser POSTs encrypted payment → server stores ciphertext.
+7. App lands on the **payer bill view** (`/bill/{id}/payer#{password}`) with copyable share link, live claims, and per-item payment progress.
+8. Payer shares `/bill/{id}#{password}` so owers can claim items.
 
 ### Ower flow
 1. Open share link → app reads password from URL fragment.
@@ -131,6 +132,15 @@ claims
 - Mobile refinements, copy-to-clipboard, QR code for share link.
 - Optional: separate-password mode (link without fragment).
 
+### Phase 5 — Future extensions (post-MVP)
+
+Shipped in **M10** (Phase 2):
+
+- **Participant roster** — payer adds expected names at bill creation; owers pick from the list on the name step.
+- **Item payment progress** — payer bill view shows per-item settlement (e.g. 1 of 3 shares paid → 33%) with inline progress bars.
+
+Remaining post-MVP ideas (not yet scheduled): edit token, bill expiry, rate limiting — see M14 / open questions.
+
 ## Milestones
 
 Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTONES.md`](./MILESTONES.md).
@@ -143,14 +153,16 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 4 | Bill & claims API | 1 | `completed` |
 | 5 | Payer UI — manual bill | 1 | `completed` |
 | 6 | Ower UI — claim & summary | 1 | `completed` |
-| 7 | Client-side crypto (Web Crypto API) | 2 | `pending` |
-| 8 | Encrypted payment flow (payer) | 2 | `pending` |
-| 9 | Ower decrypt & payment summary | 2 | `pending` |
-| 10 | Receipt scan (OCR) | 3 | `pending` |
-| 11 | Shared-item & tax/tip polish | 4 | `pending` |
-| 12 | Mobile UX & share tools (QR, copy) | 4 | `pending` |
-| 13 | Payer edit token & bill lifecycle | 4 | `pending` |
-| 14 | Deploy MVP | 4 | `pending` |
+| 7 | Client-side crypto (Web Crypto API) | 2 | `completed` |
+| 8 | Encrypted payment flow (payer) | 2 | `completed` |
+| 9 | Ower decrypt & payment summary | 2 | `completed` |
+| 10 | Payer bill view, item progress & participant roster | 2 | `completed` |
+| 11 | Receipt scan (OCR) | 3 | `pending` |
+| 12 | Shared-item & tax/tip polish | 4 | `pending` |
+| 13 | Mobile UX & share tools (QR, copy) | 4 | `in_progress` |
+| 14 | Payer edit token & bill lifecycle | 4 | `pending` |
+| 15 | Deploy MVP | 4 | `pending` |
+| 16 | Payer & ower account dashboards (optional username) | 4 | `in_progress` |
 
 ## Open Questions / Risks
 

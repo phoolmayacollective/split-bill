@@ -1,4 +1,4 @@
-# Milestone 11: Shared-item & tax/tip polish
+# Milestone 12: Shared-item & tax/tip polish
 
 **Status:** `pending`  
 **Phase:** 4 — Polish  

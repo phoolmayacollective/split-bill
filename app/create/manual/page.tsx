@@ -1,12 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { nanoid } from "nanoid";
 import { Plus } from "lucide-react";
 
 import { BillItemEditor } from "@/components/bill-item-editor";
+import { MoneyBreakdown } from "@/components/bill/money-breakdown";
+import { ParticipantListEditor } from "@/components/participant-list-editor";
+import { ErrorMessage } from "@/components/feedback/error-message";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
+import { SectionCard } from "@/components/layout/section-card";
+import { StepIndicator } from "@/components/layout/step-indicator";
+import { StickyActionBar } from "@/components/layout/sticky-action-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,10 +21,15 @@ import {
   buildTotals,
   calculateSubtotal,
   calculateTotal,
-  formatMoney,
   roundMoney,
 } from "@/lib/bill-totals";
 import type { BillItem } from "@/lib/database.types";
+
+const PAYER_STEPS = [
+  { label: "Items" },
+  { label: "Payment" },
+  { label: "Share" },
+];
 
 function createEmptyItem(): BillItem {
   return {
@@ -29,15 +41,27 @@ function createEmptyItem(): BillItem {
 }
 
 function isItemValid(item: BillItem): boolean {
-  return item.name.trim().length > 0 && item.price >= 0 && item.qty > 0;
+  return item.name.trim().length > 0 && item.price > 0 && item.qty > 0;
+}
+
+function getItemError(item: BillItem): string | null {
+  if (!item.name.trim()) {
+    return "Add a name for this item.";
+  }
+  if (item.price <= 0) {
+    return "Price must be greater than zero.";
+  }
+  return null;
 }
 
 export default function ManualBillPage() {
   const router = useRouter();
   const [items, setItems] = useState<BillItem[]>([createEmptyItem()]);
+  const [participants, setParticipants] = useState<string[]>([]);
   const [tax, setTax] = useState(0);
   const [tip, setTip] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [invalidItemIds, setInvalidItemIds] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const subtotal = useMemo(() => calculateSubtotal(items), [items]);
@@ -52,6 +76,15 @@ export default function ManualBillPage() {
         itemIndex === index ? nextItem : item,
       ),
     );
+    if (invalidItemIds.has(nextItem.id)) {
+      setInvalidItemIds((current) => {
+        const next = new Set(current);
+        if (isItemValid(nextItem)) {
+          next.delete(nextItem.id);
+        }
+        return next;
+      });
+    }
   }
 
   function removeItem(index: number) {
@@ -66,12 +99,20 @@ export default function ManualBillPage() {
     event.preventDefault();
     setError(null);
 
-    const validItems = items.filter(isItemValid);
+    const invalidIds = new Set<string>();
+    for (const item of items) {
+      if (!isItemValid(item)) {
+        invalidIds.add(item.id);
+      }
+    }
 
-    if (validItems.length === 0) {
-      setError("Add at least one item with a name and price.");
+    if (invalidIds.size > 0) {
+      setInvalidItemIds(invalidIds);
+      setError("Fix the highlighted items before continuing.");
       return;
     }
+
+    const validItems = items.filter(isItemValid);
 
     const payload = {
       items: validItems.map((item) => ({
@@ -81,6 +122,7 @@ export default function ManualBillPage() {
         qty: item.qty,
       })),
       totals: buildTotals(validItems, tax, tip),
+      ...(participants.length > 0 ? { participants } : {}),
     };
 
     setIsSubmitting(true);
@@ -102,7 +144,7 @@ export default function ManualBillPage() {
         return;
       }
 
-      router.push(`/bill/${data.billId}/share`);
+      router.push(`/create/${data.billId}/payment`);
     } catch {
       setError("Failed to create bill. Please try again.");
     } finally {
@@ -111,23 +153,15 @@ export default function ManualBillPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-8 pb-28">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6">
-        <div className="space-y-2">
-          <Link
-            href="/create"
-            className="text-muted-foreground hover:text-foreground text-sm"
-          >
-            ← Back
-          </Link>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Add bill items
-          </h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Enter each line item. You can review and share when you&apos;re
-            done.
-          </p>
-        </div>
+    <>
+      <PageShell withStickyFooter>
+        <PageHeader
+          title="Add bill items"
+          description="Enter each line item. You'll add payment details on the next step."
+          backHref="/create"
+        />
+
+        <StepIndicator steps={PAYER_STEPS} currentStep={1} />
 
         <form id="manual-bill-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-3">
@@ -139,6 +173,10 @@ export default function ManualBillPage() {
                 onChange={(nextItem) => updateItem(index, nextItem)}
                 onRemove={() => removeItem(index)}
                 canRemove={items.length > 1}
+                invalid={invalidItemIds.has(item.id)}
+                errorMessage={
+                  invalidItemIds.has(item.id) ? getItemError(item) : null
+                }
               />
             ))}
           </div>
@@ -147,15 +185,18 @@ export default function ManualBillPage() {
             type="button"
             variant="outline"
             onClick={addItem}
-            className="h-10 w-full"
+            className="w-full"
           >
             <Plus />
             Add item
           </Button>
 
-          <div className="bg-card space-y-4 rounded-xl border p-4">
-            <h2 className="font-medium">Tax & tip</h2>
+          <ParticipantListEditor
+            participants={participants}
+            onChange={setParticipants}
+          />
 
+          <SectionCard title="Tax & tip">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="bill-tax">Tax</Label>
@@ -173,7 +214,6 @@ export default function ManualBillPage() {
                         : Math.max(0, Number(event.target.value)),
                     )
                   }
-                  className="h-10"
                 />
               </div>
 
@@ -193,58 +233,35 @@ export default function ManualBillPage() {
                         : Math.max(0, Number(event.target.value)),
                     )
                   }
-                  className="h-10"
                 />
               </div>
             </div>
 
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Subtotal</dt>
-                <dd className="font-medium tabular-nums">
-                  {formatMoney(subtotal)}
-                </dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Tax</dt>
-                <dd className="font-medium tabular-nums">{formatMoney(tax)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Tip</dt>
-                <dd className="font-medium tabular-nums">{formatMoney(tip)}</dd>
-              </div>
-              <div className="border-t pt-2">
-                <div className="flex justify-between text-base">
-                  <dt className="font-medium">Total</dt>
-                  <dd className="font-semibold tabular-nums">
-                    {formatMoney(total)}
-                  </dd>
-                </div>
-              </div>
-            </dl>
-          </div>
+            <MoneyBreakdown
+              lines={[
+                { label: "Subtotal", amount: subtotal },
+                { label: "Tax", amount: tax },
+                { label: "Tip", amount: tip },
+              ]}
+              total={total}
+            />
+          </SectionCard>
 
-          {error ? (
-            <p className="text-destructive text-sm" role="alert">
-              {error}
-            </p>
-          ) : null}
+          {error ? <ErrorMessage message={error} /> : null}
         </form>
-      </main>
+      </PageShell>
 
-      <div className="border-border bg-background/95 supports-backdrop-filter:bg-background/80 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur">
-        <div className="mx-auto w-full max-w-md">
-          <Button
-            type="submit"
-            form="manual-bill-form"
-            size="lg"
-            className="h-11 w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Creating bill…" : "Create & share"}
-          </Button>
-        </div>
-      </div>
-    </div>
+      <StickyActionBar>
+        <Button
+          type="submit"
+          form="manual-bill-form"
+          size="lg"
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating bill…" : "Continue to payment"}
+        </Button>
+      </StickyActionBar>
+    </>
   );
 }

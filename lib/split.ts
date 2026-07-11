@@ -1,4 +1,5 @@
 import type { BillItem, BillTotals } from "@/lib/database.types";
+import { getLineSplitLabel } from "@/lib/item-split-display";
 
 export type SplitClaim = {
   ower_name: string;
@@ -10,6 +11,7 @@ export type OwerItemLine = {
   item_id: string;
   item_name: string;
   amount: number;
+  split_label: string | null;
 };
 
 export type OwerSplitResult = {
@@ -19,6 +21,10 @@ export type OwerSplitResult = {
   tip_share: number;
   total: number;
   lines: OwerItemLine[];
+};
+
+export type OwerSummary = OwerSplitResult & {
+  paid_at: string | null;
 };
 
 function roundMoney(amount: number): number {
@@ -63,6 +69,23 @@ function allocateTaxOrTip(
 
   const pool = roundMoney((amount * claimedSubtotal) / billSubtotal);
   return distributeProportionally(pool, owerSubtotals);
+}
+
+function claimLineAmount(
+  item: BillItem,
+  claim: SplitClaim,
+  totalShare: number,
+): number {
+  if (item.qty > 1) {
+    return roundMoney(item.price * claim.share);
+  }
+
+  const cost = itemCost(item);
+  return roundMoney((cost * claim.share) / totalShare);
+}
+
+function formatItemLineName(item: BillItem): string {
+  return item.name;
 }
 
 function distributeProportionally(
@@ -125,7 +148,6 @@ export function calculateSplits(input: {
       continue;
     }
 
-    const cost = itemCost(item);
     const totalShare = itemClaims.reduce((sum, claim) => sum + claim.share, 0);
 
     if (totalShare <= 0) {
@@ -133,12 +155,13 @@ export function calculateSplits(input: {
     }
 
     for (const claim of itemClaims) {
-      const amount = roundMoney((cost * claim.share) / totalShare);
+      const amount = claimLineAmount(item, claim, totalShare);
       const lines = owerLines.get(claim.ower_name) ?? [];
       lines.push({
         item_id: item.id,
-        item_name: item.name,
+        item_name: formatItemLineName(item),
         amount,
+        split_label: getLineSplitLabel(item, claim, itemClaims),
       });
       owerLines.set(claim.ower_name, lines);
 
