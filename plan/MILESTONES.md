@@ -138,9 +138,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ### M12 — Dal Bhat restaurant menu (2026-07-12)
 
-**What:** Static Dal Bhat menu at `/restaurant/dalbhat` — searchable picker with options, momo portions, drink sizes; posts to existing bill API and continues through payment → share.
+**What:** Static Dal Bhat menu at `/restaurant/dalbhat` — fuzzy-searchable picker with highlighted matches, options, momo portions, drink sizes; posts to existing bill API and continues through payment → share.
 
-**How:** `data/restaurants/dalbhat-menu.json` + typed helpers in `lib/restaurants/`; `DalbhatBillForm` cart with `filterDalbhatMenu()` search/filter; `formatEuro()` for prices; `POST /api/bills` then redirect to `/create/{id}/payment`. URL-only route — no home page link.
+**How:** `data/restaurants/dalbhat-menu.json` + typed helpers in `lib/restaurants/`; `lib/fuzzy-search.ts` subsequence matcher wired into `filterDalbhatMenu()`; `MenuSearchHighlight` in `DalbhatBillForm`; `formatEuro()` for prices; `POST /api/bills` then redirect to `/create/{id}/payment`. URL-only route — no home page link.
 
 **Details:** [milestones/12-dalbhat-restaurant-menu.md](./milestones/12-dalbhat-restaurant-menu.md)
 

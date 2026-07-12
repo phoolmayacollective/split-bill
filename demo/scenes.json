@@ -74,7 +74,7 @@
   {
     "id": "dalbhat",
     "persona": "Restaurant · Ramey",
-    "text": "Restaurants can build bills from a searchable menu — like Dal Bhat in Kathmandu.",
+    "text": "Restaurants can search the menu with fuzzy matching — type scattered letters to find items like momo at Dal Bhat in Kathmandu.",
     "bufferMs": 500
   }
 ]

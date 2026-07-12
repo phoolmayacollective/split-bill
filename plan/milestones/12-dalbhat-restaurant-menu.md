@@ -41,7 +41,8 @@ Restaurant-specific bill creation from a static Dal Bhat menu — pick items wit
 | Menu data | `data/restaurants/dalbhat-menu.json` — full Dal Bhat menu: small plates, recommendations, classics, dalbhat, momo, desserts, extras, drinks (tea through wine) |
 | Menu lib | `lib/restaurants/dalbhat-menu.ts` — `MenuItem`, `RecommendationItem`, `MomoStyle`, `DrinkItem` types; `dalbhatMenu` import; `CATEGORY_LABELS` / `DRINK_CATEGORY_LABELS`; `formatMenuItemName()`, `buildBillItemId()` |
 | EUR format | `lib/restaurants/format-euro.ts` — `formatEuro()` for de-DE currency display |
-| Search/filter | `lib/restaurants/dalbhat-menu-search.ts` — `filterDalbhatMenu()`, `MENU_FILTER_OPTIONS`, `isMenuFiltered()`; searches DE/EN names, descriptions, allergens, options |
+| Search/filter | `lib/restaurants/dalbhat-menu-search.ts` — `filterDalbhatMenu()`, `MENU_FILTER_OPTIONS`, `isMenuFiltered()`; fuzzy subsequence search across DE/EN names, descriptions, allergens, options |
+| Fuzzy search | `lib/fuzzy-search.ts` — `fuzzyMatch()` / `matchesFuzzySearch()` for out-of-order partial queries; `components/restaurant/menu-search-highlight.tsx` highlights matched character indices in picker rows |
 | Route | `app/restaurant/dalbhat/page.tsx` — server page with metadata; renders `DalbhatBillForm` (not linked from home) |
 | Bill form | `components/restaurant/dalbhat-bill-form.tsx` — category sections, option checkboxes, momo builder (filling × style × portion × qty), drink size picker, cart review, `ParticipantListEditor`, sticky submit |
 | UI controls | `components/restaurant/menu-controls.tsx` — shared `QtyControls` (+/−) and `EuroAmount` |
@@ -52,7 +53,7 @@ Restaurant-specific bill creation from a static Dal Bhat menu — pick items wit
 
 1. **Static menu** — encoded the Dal Bhat menu as JSON with typed categories; food items support `options[]` for surcharges; recommendations use portion-based pricing; momo has fillings, styles, and 6pc/10pc price tiers; drinks support flat price or `sizes[]`.
 2. **Menu helpers** — `dalbhat-menu.ts` exports types and label maps; `buildBillItemId(category, itemId, variant?)` produces stable bill line IDs for cart deduplication.
-3. **Search** — `filterDalbhatMenu(query, activeFilter)` normalizes query, matches across bilingual text and metadata per section, and returns a `FilteredDalbhatMenu` with `resultCount` / `hasResults`.
+3. **Search** — `filterDalbhatMenu(query, activeFilter)` uses `matchesFuzzySearch()` so queries like `mmo` match "Momo"; `MenuSearchHighlight` wraps matched indices in `<mark>` across names, descriptions, and variant labels; returns a `FilteredDalbhatMenu` with `resultCount` / `hasResults`.
 4. **Picker UI** — `DalbhatBillForm` maintains a `CartLine[]` keyed by variant; `QtyControls` increment/decrement per line; option checkboxes add `extra_charge` to price; momo section combines filling + style + portion before qty; drinks render size buttons when `sizes` present.
 5. **Submit flow** — reuses `lib/bill-totals.ts` (`calculateSubtotal`, `buildTotals`); optional participant roster; POST to existing `/api/bills`; on success redirects to M8 payment step (not share directly).
 6. **EUR display** — restaurant page uses `formatEuro` / `EuroAmount` instead of generic currency helpers.
@@ -65,6 +66,8 @@ data/restaurants/dalbhat-menu.json
 lib/restaurants/dalbhat-menu.ts
 lib/restaurants/format-euro.ts
 lib/restaurants/dalbhat-menu-search.ts
+lib/fuzzy-search.ts
+components/restaurant/menu-search-highlight.tsx
 app/restaurant/dalbhat/page.tsx
 components/restaurant/dalbhat-bill-form.tsx
 components/restaurant/menu-controls.tsx
@@ -74,3 +77,4 @@ components/restaurant/menu-search-filter.tsx
 ## Updates
 
 - **2026-07-12:** Milestone completed. Dal Bhat menu picker with search/filter, variant pricing, momo portions, drink sizes; plugs into existing bill → payment → share flow.
+- **2026-07-12:** Enhanced menu search with fuzzy subsequence matching and highlighted matches in picker rows (`lib/fuzzy-search.ts`, `MenuSearchHighlight`); unit tests via `npm test`.

@@ -77,7 +77,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
 | Feature | Route |
 |---------|-------|
-| Dal Bhat searchable menu + cart | `/restaurant/dalbhat`, `DalbhatBillForm` |
+| Dal Bhat fuzzy-searchable menu + highlighted matches + cart | `/restaurant/dalbhat`, `DalbhatBillForm`, `MenuSearchHighlight` |
 | Momo portions, drink sizes, add-ons | Menu JSON + picker |
 | Same payment → share flow as manual | Reuses M8 |
 
@@ -125,7 +125,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | 10 | `payer_progress` | Payer · Ramey | Per-item progress + mark Shyamey paid |
 | 11 | `ower_harkey_paid` | Ower · Harkey | “I've paid” self-report |
 | 12 | `payer_update` | Payer · Ramey | “2/2 people paid” |
-| 13 | `dalbhat` | Restaurant · Ramey | Dal Bhat menu search + cart |
+| 13 | `dalbhat` | Restaurant · Ramey | Dal Bhat fuzzy menu search (types "momo") + cart |
 
 **Covered end-to-end:** Landing → manual create + tax/tip + participants → encrypted payment → payer dashboard → copy share link → ower roster name → claim + split → decrypted payment + copy → second ower joins split → payer progress + mark paid → ower self-report → collection update → Dal Bhat menu.
 
@@ -142,7 +142,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | “Split with N people” | ✅ Scene 7 |
 | Second ower (Harkey) | ✅ Scenes 9, 11 |
 | Payer “Mark paid” (vs ower self-report) | ✅ Both shown (scenes 10–11) |
-| Dal Bhat restaurant menu | ✅ Scene 13 (menu + cart; payment not repeated) |
+| Dal Bhat restaurant menu (fuzzy search + highlights) | ✅ Scene 13 (search "momo" + cart; payment not repeated) |
 | Open bill link on landing | ❌ Skipped |
 | Optional account save | ❌ M15 stub not shown |
 | Per-item progress bars detail | ✅ Scene 10 |

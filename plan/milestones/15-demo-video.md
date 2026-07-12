@@ -66,5 +66,6 @@ GCP service account JSON for WaveNet TTS — set `GOOGLE_APPLICATION_CREDENTIALS
 
 ## Updates
 
-- **2026-07-12:** Extended walkthrough to 13 scenes — share link copy, split-with-N, second ower, payer mark paid, decrypted payment copy, Dal Bhat menu. Added `Ower · Jordan` and `Restaurant · Alex` personas.
+- **2026-07-12:** Extended walkthrough to 13 scenes — share link copy, split-with-N, second ower, payer mark paid, decrypted payment copy, Dal Bhat menu. Added `Ower · Harkey` and `Restaurant · Ramey` personas.
+- **2026-07-12:** Renamed demo personas to Nepali-themed fixtures (Ramey, Shyamey, Harkey); manual-create bill item is Momo (10 pc); Dal Bhat scene searches "momo".
 - **2026-07-12:** Started M15. Silent Playwright pipeline + demo persona banner shipped. WaveNet narration pipeline added (Phase B).
