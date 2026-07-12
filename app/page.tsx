@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Receipt } from "lucide-react";
 
 import { HowItWorks } from "@/components/how-it-works";
 import { OpenBillLink } from "@/components/open-bill-link";
@@ -10,9 +10,15 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   return (
     <PageShell centered className="justify-center py-12 sm:py-16">
-      <div className="bg-primary/10 text-primary mx-auto flex size-16 items-center justify-center rounded-2xl shadow-card">
-        <Receipt className="size-8" aria-hidden />
-      </div>
+      <Image
+        src="/icon.png"
+        alt=""
+        width={64}
+        height={64}
+        className="mx-auto size-16 rounded-2xl shadow-card"
+        priority
+        aria-hidden
+      />
 
       <div className="space-y-3">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">

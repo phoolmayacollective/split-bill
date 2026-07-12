@@ -1,3 +1,4 @@
+import { matchesFuzzySearch, normalizeSearchQuery } from "@/lib/fuzzy-search";
 import {
   CATEGORY_LABELS,
   dalbhatMenu,
@@ -35,16 +36,8 @@ export const MENU_FILTER_OPTIONS: Array<{ id: MenuFilterId; label: string }> = [
   { id: "drinks", label: "Drinks" },
 ];
 
-function normalizeQuery(query: string): string {
-  return query.trim().toLowerCase();
-}
-
 function matchesQuery(searchText: string, query: string): boolean {
-  const normalized = normalizeQuery(query);
-  if (!normalized) {
-    return true;
-  }
-  return searchText.toLowerCase().includes(normalized);
+  return matchesFuzzySearch(searchText, query);
 }
 
 function joinSearchParts(parts: Array<string | undefined>): string {
@@ -229,7 +222,7 @@ export function isMenuFiltered(
   query: string,
   activeFilter: MenuFilterId,
 ): boolean {
-  return normalizeQuery(query).length > 0 || activeFilter !== "all";
+  return normalizeSearchQuery(query).length > 0 || activeFilter !== "all";
 }
 
 export function getCategoryLabel(category: MenuFilterId): string {

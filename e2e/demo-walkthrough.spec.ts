@@ -38,16 +38,16 @@ test("full app walkthrough", async ({ browser }) => {
   await page.waitForURL("**/create/manual**");
   await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.payer));
   await expect(page.getByTestId("demo-persona-banner")).toHaveText(
-    /Demo · Payer · Alex/,
+    /Demo · Payer · Ramey/,
   );
 
-  await demoType(page, page.getByLabel("Name").first(), "Margherita pizza");
-  await demoType(page, page.getByLabel("Price").first(), "18");
+  await demoType(page, page.getByLabel("Name").first(), "Momo (10 pc)");
+  await demoType(page, page.getByLabel("Price").first(), "16");
   await demoType(page, page.getByLabel("Tax"), "2");
   await demoType(page, page.getByLabel("Tip"), "3");
-  await demoType(page, page.getByPlaceholder("e.g. Alex"), "Sam");
+  await demoType(page, page.getByPlaceholder("e.g. Alex"), "Shyamey");
   await demoClick(page, page.getByRole("button", { name: "Add", exact: true }));
-  await demoType(page, page.getByPlaceholder("e.g. Alex"), "Jordan");
+  await demoType(page, page.getByPlaceholder("e.g. Alex"), "Harkey");
   await demoClick(page, page.getByRole("button", { name: "Add", exact: true }));
   await pauseForScene(page, "create", audioManifest);
 
@@ -56,7 +56,7 @@ test("full app walkthrough", async ({ browser }) => {
 
   // Scene 3 — Payment
   await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.payer));
-  await demoType(page, page.getByLabel("PayPal"), "alex@example.com");
+  await demoType(page, page.getByLabel("PayPal"), "ramey@example.com");
   await pauseForScene(page, "payment", audioManifest);
 
   await demoClick(page, page.getByRole("button", { name: "Save & open dashboard" }));
@@ -83,17 +83,17 @@ test("full app walkthrough", async ({ browser }) => {
   await demoClick(page, shareCopyButton);
   await pauseForScene(page, "share_link", audioManifest);
 
-  // Scene 6 — Ower Sam picks name
+  // Scene 6 — Ower Shyamey picks name
   await demoGoto(page, withDemoPersona(sharePath, DEMO_PERSONAS.ower));
   await expect(page.getByTestId("demo-persona-banner")).toHaveText(
-    /Demo · Ower · Sam/,
+    /Demo · Ower · Shyamey/,
   );
-  await demoClick(page, page.getByRole("button", { name: "Sam" }));
+  await demoClick(page, page.getByRole("button", { name: "Shyamey" }));
   await pauseForScene(page, "ower_name", audioManifest);
   await demoClick(page, page.getByRole("button", { name: "Continue" }));
   await page.waitForURL(`**/bill/${billId}/items**`);
 
-  // Scene 7 — Sam claims item and splits with 2 people
+  // Scene 7 — Shyamey claims item and splits with 2 people
   await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.ower));
   const claimCheckbox = page.getByRole("checkbox").first();
   await demoClick(page, claimCheckbox);
@@ -101,7 +101,7 @@ test("full app walkthrough", async ({ browser }) => {
   await demoClick(page, page.getByRole("button", { name: "More people" }));
   await pauseForScene(page, "ower_items", audioManifest);
 
-  const samClaimsResponse = page.waitForResponse(
+  const shyameyClaimsResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/api/bills/${billId}/claims`) &&
       response.request().method() === "POST" &&
@@ -111,36 +111,36 @@ test("full app walkthrough", async ({ browser }) => {
     page,
     page.getByRole("button", { name: /Continue|View summary/ }),
   );
-  await samClaimsResponse;
+  await shyameyClaimsResponse;
   await page.waitForURL(`**/bill/${billId}/summary**`);
 
-  // Scene 8 — Sam sees decrypted payment details and copies PayPal
+  // Scene 8 — Shyamey sees decrypted payment details and copies PayPal
   await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.ower));
-  await expect(page.getByText("alex@example.com")).toBeVisible({
+  await expect(page.getByText("ramey@example.com")).toBeVisible({
     timeout: 20_000,
   });
   await demoClick(page, page.getByRole("button", { name: "Copy PayPal" }));
   await pauseForScene(page, "ower_payment", audioManifest);
 
-  // Scene 9 — Jordan joins the split
+  // Scene 9 — Harkey joins the split
   await clearOwerSession(page, billId);
-  await demoGoto(page, withDemoPersona(sharePath, DEMO_PERSONAS.owerJordan));
+  await demoGoto(page, withDemoPersona(sharePath, DEMO_PERSONAS.owerHarkey));
   await expect(page.getByTestId("demo-persona-banner")).toHaveText(
-    /Demo · Ower · Jordan/,
+    /Demo · Ower · Harkey/,
   );
-  await demoClick(page, page.getByRole("button", { name: "Jordan" }));
+  await demoClick(page, page.getByRole("button", { name: "Harkey" }));
   await demoClick(page, page.getByRole("button", { name: "Continue" }));
   await page.waitForURL(`**/bill/${billId}/items**`);
-  await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.owerJordan));
+  await demoGoto(page, withDemoPersona(page.url(), DEMO_PERSONAS.owerHarkey));
 
-  const jordanCheckbox = page.getByRole("checkbox").first();
+  const harkeyCheckbox = page.getByRole("checkbox").first();
   await expect(page.getByText(/Split 2 ways · 1 of 2 spots claimed/)).toBeVisible();
-  await demoClick(page, jordanCheckbox);
-  await expect(jordanCheckbox).toBeChecked();
+  await demoClick(page, harkeyCheckbox);
+  await expect(harkeyCheckbox).toBeChecked();
   await expect(page.getByText(/Your share ·/)).toBeVisible();
-  await pauseForScene(page, "ower_jordan", audioManifest);
+  await pauseForScene(page, "ower_harkey", audioManifest);
 
-  const jordanClaimsResponse = page.waitForResponse(
+  const harkeyClaimsResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/api/bills/${billId}/claims`) &&
       response.request().method() === "POST" &&
@@ -150,56 +150,56 @@ test("full app walkthrough", async ({ browser }) => {
     page,
     page.getByRole("button", { name: /Continue|View summary/ }),
   );
-  await jordanClaimsResponse;
+  await harkeyClaimsResponse;
   await page.waitForURL(`**/bill/${billId}/summary**`);
 
-  // Scene 10 — Payer sees per-item progress and marks Sam paid
+  // Scene 10 — Payer sees per-item progress and marks Shyamey paid
   await expect(async () => {
     await demoGoto(page, withDemoPersona(payerUrl, DEMO_PERSONAS.payer));
     await expect(
-      page.getByRole("progressbar", { name: /Margherita pizza/ }),
+      page.getByRole("progressbar", { name: /Momo \(10 pc\)/ }),
     ).toBeVisible({ timeout: 5_000 });
     await expect(page.getByText("0/2 people paid")).toBeVisible();
   }).toPass({ timeout: 30_000 });
 
   await page
-    .getByRole("progressbar", { name: /Margherita pizza/ })
+    .getByRole("progressbar", { name: /Momo \(10 pc\)/ })
     .scrollIntoViewIfNeeded();
   await pauseForScene(page, "payer_progress", audioManifest);
 
-  const samRow = page
+  const shyameyRow = page
     .locator("li")
-    .filter({ hasText: "Sam" })
+    .filter({ hasText: "Shyamey" })
     .filter({ has: page.getByRole("button", { name: "Mark paid" }) });
-  await demoClick(page, samRow.getByRole("button", { name: "Mark paid" }));
-  const markSamPaidResponse = page.waitForResponse(
+  await demoClick(page, shyameyRow.getByRole("button", { name: "Mark paid" }));
+  const markShyameyPaidResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/api/bills/${billId}/paid`) &&
       response.request().method() === "POST" &&
       response.ok(),
   );
   await demoClick(page, page.getByRole("button", { name: "Confirm" }));
-  await markSamPaidResponse;
+  await markShyameyPaidResponse;
 
-  // Scene 11 — Jordan self-reports payment
-  const jordanSummaryPath = `/bill/${billId}/summary#${encodeURIComponent(password)}`;
+  // Scene 11 — Harkey self-reports payment
+  const harkeySummaryPath = `/bill/${billId}/summary#${encodeURIComponent(password)}`;
   await demoGoto(
     page,
-    withDemoPersona(jordanSummaryPath, DEMO_PERSONAS.owerJordan),
+    withDemoPersona(harkeySummaryPath, DEMO_PERSONAS.owerHarkey),
   );
   await expect(page.getByRole("button", { name: "I've paid" })).toBeVisible({
     timeout: 20_000,
   });
-  await pauseForScene(page, "ower_jordan_paid", audioManifest);
+  await pauseForScene(page, "ower_harkey_paid", audioManifest);
 
-  const jordanPaidResponse = page.waitForResponse(
+  const harkeyPaidResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/api/bills/${billId}/paid`) &&
       response.request().method() === "POST" &&
       response.ok(),
   );
   await demoClick(page, page.getByRole("button", { name: "I've paid" }));
-  await jordanPaidResponse;
+  await harkeyPaidResponse;
   await expect(page.getByText("Marked as paid")).toBeVisible();
 
   // Scene 12 — Payer sees full collection

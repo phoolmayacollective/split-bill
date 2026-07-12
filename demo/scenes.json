@@ -7,74 +7,74 @@
   },
   {
     "id": "create",
-    "persona": "Payer · Alex",
-    "text": "Alex adds items with tax and tip, and invites Sam and Jordan to the bill.",
+    "persona": "Payer · Ramey",
+    "text": "Ramey adds momo and dal bhat with tax and tip, and invites Shyamey and Harkey to the bill.",
     "bufferMs": 500
   },
   {
     "id": "payment",
-    "persona": "Payer · Alex",
+    "persona": "Payer · Ramey",
     "text": "Payment details are encrypted in the browser before anything is saved.",
     "bufferMs": 500
   },
   {
     "id": "payer_dashboard",
-    "persona": "Payer · Alex",
-    "text": "Alex opens his dashboard to track who has claimed and paid.",
+    "persona": "Payer · Ramey",
+    "text": "Ramey opens his dashboard to track who has claimed and paid.",
     "bufferMs": 500
   },
   {
     "id": "share_link",
-    "persona": "Payer · Alex",
+    "persona": "Payer · Ramey",
     "text": "He copies the share link so friends can open it on their phones.",
     "bufferMs": 500
   },
   {
     "id": "ower_name",
-    "persona": "Ower · Sam",
-    "text": "Sam opens the link and picks his name from the roster.",
+    "persona": "Ower · Shyamey",
+    "text": "Shyamey opens the link and picks his name from the roster.",
     "bufferMs": 500
   },
   {
     "id": "ower_items",
-    "persona": "Ower · Sam",
-    "text": "Sam claims the pizza and splits it with two people.",
+    "persona": "Ower · Shyamey",
+    "text": "Shyamey claims the momo and splits it with two people.",
     "bufferMs": 500
   },
   {
     "id": "ower_payment",
-    "persona": "Ower · Sam",
+    "persona": "Ower · Shyamey",
     "text": "His share unlocks the payer's PayPal details — decrypted only in his browser.",
     "bufferMs": 500
   },
   {
-    "id": "ower_jordan",
-    "persona": "Ower · Jordan",
-    "text": "Jordan joins the same split so each person owes half the pizza.",
+    "id": "ower_harkey",
+    "persona": "Ower · Harkey",
+    "text": "Harkey joins the same split so each person owes half the momo.",
     "bufferMs": 500
   },
   {
     "id": "payer_progress",
-    "persona": "Payer · Alex",
-    "text": "Alex sees per-item progress bars and can mark someone paid when the money arrives.",
+    "persona": "Payer · Ramey",
+    "text": "Ramey sees per-item progress bars and can mark someone paid when the money arrives.",
     "bufferMs": 500
   },
   {
-    "id": "ower_jordan_paid",
-    "persona": "Ower · Jordan",
-    "text": "Jordan can also tap I've paid to notify Alex directly.",
+    "id": "ower_harkey_paid",
+    "persona": "Ower · Harkey",
+    "text": "Harkey can also tap I've paid to notify Ramey directly.",
     "bufferMs": 500
   },
   {
     "id": "payer_update",
-    "persona": "Payer · Alex",
+    "persona": "Payer · Ramey",
     "text": "The dashboard updates — two of two people paid.",
     "bufferMs": 500
   },
   {
     "id": "dalbhat",
-    "persona": "Restaurant · Alex",
-    "text": "Restaurants can build bills from a searchable menu — like Dal Bhat in Berlin.",
+    "persona": "Restaurant · Ramey",
+    "text": "Restaurants can build bills from a searchable menu — like Dal Bhat in Kathmandu.",
     "bufferMs": 500
   }
 ]

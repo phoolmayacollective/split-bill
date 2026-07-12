@@ -18,14 +18,14 @@ describe("getLineSplitLabel", () => {
   it("shows open spots while a split is filling up", () => {
     const label = getLineSplitLabel(
       {
-        id: makeUnitId("pizza", 0),
-        parentItemId: "pizza",
+        id: makeUnitId("momo", 0),
+        parentItemId: "momo",
         unitIndex: 0,
-        name: "Pizza",
+        name: "Momo (10 pc)",
         price: 10,
       },
       { share: 0.3333 },
-      [{ ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 0.3333 }],
+      [{ ower_name: "Ramey", item_id: makeUnitId("momo", 0), share: 0.3333 }],
     );
 
     assert.equal(label, `Split 3 ways · ${formatSplitSlotsTaken(1, 3)}`);

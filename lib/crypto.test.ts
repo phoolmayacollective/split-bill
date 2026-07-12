@@ -8,7 +8,7 @@ import {
 } from "@/lib/crypto";
 
 const sampleDetails: PaymentDetails = {
-  paypal: "alice@example.com",
+  paypal: "ramey@example.com",
   iban: "DE89370400440532013000",
 };
 
@@ -57,7 +57,7 @@ describe("encryptPaymentDetails / decryptPaymentDetails", () => {
 
   it("supports partial payment details", async () => {
     const password = "paypal-only";
-    const details: PaymentDetails = { paypal: "bob@example.com" };
+    const details: PaymentDetails = { paypal: "shyamey@example.com" };
     const encrypted = await encryptPaymentDetails(password, details);
     const decrypted = await decryptPaymentDetails(
       password,

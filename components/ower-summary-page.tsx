@@ -30,6 +30,7 @@ import {
 import { useOwerSession } from "@/lib/use-ower-session";
 import { buildPayerAuthHeaders } from "@/lib/payer-password";
 import type { OwerSummary } from "@/lib/split";
+import { isShareableLink } from "@/lib/web-share";
 import { cn } from "@/lib/utils";
 
 const OWER_STEPS = [
@@ -296,6 +297,7 @@ export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
                           value={paymentState.details.paypal}
                           label="PayPal"
                           variant="button"
+                          allowShare={isShareableLink(paymentState.details.paypal)}
                         />
                       </div>
                     </div>

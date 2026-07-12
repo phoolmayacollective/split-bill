@@ -5,16 +5,16 @@ import type { BillItem } from "@/lib/database.types";
 import { makeUnitId } from "@/lib/bill-units";
 import { calculateItemProgress } from "@/lib/item-progress";
 
-const pizza: BillItem = { id: "pizza", name: "Pizza", price: 10, qty: 4 };
+const momo: BillItem = { id: "momo", name: "Momo (10 pc)", price: 10, qty: 4 };
 
 describe("calculateItemProgress", () => {
   it("tracks each unit separately", () => {
     const results = calculateItemProgress({
-      items: [pizza],
+      items: [momo],
       claims: [
         {
-          ower_name: "Alice",
-          item_id: makeUnitId("pizza", 0),
+          ower_name: "Ramey",
+          item_id: makeUnitId("momo", 0),
           share: 0.3333,
         },
       ],
@@ -29,15 +29,15 @@ describe("calculateItemProgress", () => {
   });
 
   it("shows paid progress as a fraction of the unit", () => {
-    const unitId = makeUnitId("pizza", 0);
+    const unitId = makeUnitId("momo", 0);
     const results = calculateItemProgress({
-      items: [pizza],
+      items: [momo],
       claims: [
-        { ower_name: "Alice", item_id: unitId, share: 0.3333 },
-        { ower_name: "Bob", item_id: unitId, share: 0.3333 },
-        { ower_name: "Carol", item_id: unitId, share: 0.3333 },
+        { ower_name: "Ramey", item_id: unitId, share: 0.3333 },
+        { ower_name: "Shyamey", item_id: unitId, share: 0.3333 },
+        { ower_name: "Suntali", item_id: unitId, share: 0.3333 },
       ],
-      paidOwerNames: new Set(["Alice"]),
+      paidOwerNames: new Set(["Ramey"]),
     });
 
     assert.equal(results[0].percent_claimed, 100);
@@ -46,11 +46,11 @@ describe("calculateItemProgress", () => {
   });
 
   it("marks a unit settled when fully claimed and paid", () => {
-    const unitId = makeUnitId("pizza", 1);
+    const unitId = makeUnitId("momo", 1);
     const results = calculateItemProgress({
-      items: [pizza],
-      claims: [{ ower_name: "Alice", item_id: unitId, share: 1 }],
-      paidOwerNames: new Set(["Alice"]),
+      items: [momo],
+      claims: [{ ower_name: "Ramey", item_id: unitId, share: 1 }],
+      paidOwerNames: new Set(["Ramey"]),
     });
 
     assert.equal(results[1].percent_claimed, 100);

@@ -5,6 +5,11 @@ import { Check, Copy, Share2 } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  canUseWebShare,
+  shareValue,
+  type SharePayloadMode,
+} from "@/lib/web-share";
 import { cn } from "@/lib/utils";
 
 type CopyFieldProps = {
@@ -15,11 +20,9 @@ type CopyFieldProps = {
   className?: string;
   /** Enable Web Share API when available */
   allowShare?: boolean;
+  /** Share as a URL or plain text (passwords, etc.) */
+  shareAs?: SharePayloadMode;
 };
-
-function canUseWebShare(): boolean {
-  return typeof navigator !== "undefined" && typeof navigator.share === "function";
-}
 
 export function CopyField({
   value,
@@ -27,32 +30,47 @@ export function CopyField({
   variant = "field",
   className,
   allowShare = false,
+  shareAs = "url",
 }: CopyFieldProps) {
   const { copied, copy } = useCopyToClipboard();
   const showShare = allowShare && canUseWebShare();
+  const shareTitle = label === "Copy" ? "Split Bill" : label;
 
   async function handleShare() {
-    try {
-      await navigator.share({ url: value, title: "Split Bill" });
-      return;
-    } catch {
-      // User cancelled or share failed — fall back to copy
+    const shared = await shareValue(value, {
+      mode: shareAs,
+      title: shareTitle,
+    });
+
+    if (!shared) {
+      await copy(value);
     }
-    await copy(value);
   }
 
   if (variant === "button") {
     return (
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => void copy(value)}
-        className={cn("shrink-0", className)}
-      >
-        {copied ? <Check /> : <Copy />}
-        {copied ? "Copied" : `Copy ${label}`}
-      </Button>
+      <div className={cn("flex shrink-0 gap-1.5", className)}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => void copy(value)}
+        >
+          {copied ? <Check /> : <Copy />}
+          {copied ? "Copied" : `Copy ${label}`}
+        </Button>
+        {showShare ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => void handleShare()}
+            className="size-11 shrink-0"
+            aria-label={`Share ${label}`}
+          >
+            <Share2 />
+          </Button>
+        ) : null}
+      </div>
     );
   }
 
@@ -80,7 +98,7 @@ export function CopyField({
           variant="outline"
           onClick={() => void handleShare()}
           className="size-11 shrink-0"
-          aria-label="Share link"
+          aria-label={`Share ${label}`}
         >
           <Share2 />
         </Button>

@@ -11,13 +11,13 @@ import { createSessionToken, parseSessionToken } from "@/lib/payer-session";
 
 describe("normalizePayerUsername", () => {
   it("lowercases and trims", () => {
-    assert.equal(normalizePayerUsername("  Alex  "), "alex");
+    assert.equal(normalizePayerUsername("  Ramey  "), "ramey");
   });
 });
 
 describe("isValidPayerUsername", () => {
   it("accepts simple usernames", () => {
-    assert.equal(isValidPayerUsername("alex"), true);
+    assert.equal(isValidPayerUsername("ramey"), true);
     assert.equal(isValidPayerUsername("user_1"), true);
   });
 
@@ -42,13 +42,13 @@ describe("payer session token", () => {
 
     const token = createSessionToken({
       payerId: "550e8400-e29b-41d4-a716-446655440000",
-      username: "alex",
+      username: "ramey",
     });
 
     const session = parseSessionToken(token);
     assert.deepEqual(session, {
       payerId: "550e8400-e29b-41d4-a716-446655440000",
-      username: "alex",
+      username: "ramey",
     });
   });
 
@@ -57,7 +57,7 @@ describe("payer session token", () => {
 
     const token = createSessionToken({
       payerId: "550e8400-e29b-41d4-a716-446655440000",
-      username: "alex",
+      username: "ramey",
     });
 
     assert.equal(parseSessionToken(`${token}x`), null);

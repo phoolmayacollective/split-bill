@@ -24,7 +24,7 @@ For interactive preview only:
 
 ```bash
 npm run dev:demo
-# Open http://localhost:3001/?demo_persona=Payer%20·%20Alex
+# Open http://localhost:3001/?demo_persona=Payer%20·%20Ramey
 ```
 
 ## Demo-only persona banner
@@ -73,10 +73,10 @@ npm run demo:composite   # Mux existing video + audio
 | Scene | `demo_persona` value |
 |-------|----------------------|
 | Landing | `Product demo` |
-| Payer flows | `Payer · Alex` |
-| Sam (ower) | `Ower · Sam` |
-| Jordan (ower) | `Ower · Jordan` |
-| Dal Bhat menu | `Restaurant · Alex` |
+| Payer flows | `Payer · Ramey` |
+| Shyamey (ower) | `Ower · Shyamey` |
+| Harkey (ower) | `Ower · Harkey` |
+| Dal Bhat menu | `Restaurant · Ramey` |
 
 See `demo/COVERAGE.md` for the full 13-scene inventory.
 
@@ -84,5 +84,5 @@ See `demo/COVERAGE.md` for the full 13-scene inventory.
 
 ```bash
 npm run dev:demo
-# Open http://localhost:3001/?demo_persona=Payer%20·%20Alex
+# Open http://localhost:3001/?demo_persona=Payer%20·%20Ramey
 ```

@@ -87,7 +87,7 @@ export function ShareBillContent({ billId }: ShareBillContentProps) {
             <KeyRound className="size-3.5" aria-hidden />
             Password
           </p>
-          <CopyField value={password} label="Bill password" />
+          <CopyField value={password} label="Bill password" allowShare shareAs="text" />
         </div>
       ) : null}
 

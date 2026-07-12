@@ -13,6 +13,7 @@ import { StickyActionBar } from "@/components/layout/sticky-action-bar";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { EuroAmount, QtyControls } from "@/components/restaurant/menu-controls";
 import { MenuSearchFilter } from "@/components/restaurant/menu-search-filter";
+import { MenuSearchHighlight } from "@/components/restaurant/menu-search-highlight";
 import { ParticipantListEditor } from "@/components/participant-list-editor";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -96,9 +97,16 @@ type MenuItemRowProps = {
   item: MenuItem;
   cart: CartLine[];
   onCartChange: (cart: CartLine[]) => void;
+  searchQuery: string;
 };
 
-function MenuItemRow({ category, item, cart, onCartChange }: MenuItemRowProps) {
+function MenuItemRow({
+  category,
+  item,
+  cart,
+  onCartChange,
+  searchQuery,
+}: MenuItemRowProps) {
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(
     () => new Set(),
   );
@@ -157,10 +165,18 @@ function MenuItemRow({ category, item, cart, onCartChange }: MenuItemRowProps) {
     <div className="space-y-2 border-b border-border/60 pb-4 last:border-b-0 last:pb-0">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="font-medium leading-snug">{formatMenuItemName(item)}</p>
+          <p className="font-medium leading-snug">
+            <MenuSearchHighlight
+              text={formatMenuItemName(item)}
+              query={searchQuery}
+            />
+          </p>
           {item.description_en ? (
             <p className="text-muted-foreground text-sm leading-relaxed">
-              {item.description_en}
+              <MenuSearchHighlight
+                text={item.description_en}
+                query={searchQuery}
+              />
             </p>
           ) : null}
           {item.allergens?.length ? (
@@ -220,19 +236,23 @@ type RecommendationRowProps = {
   item: RecommendationItem;
   cart: CartLine[];
   onCartChange: (cart: CartLine[]) => void;
+  searchQuery: string;
 };
 
 function RecommendationRow({
   item,
   cart,
   onCartChange,
+  searchQuery,
 }: RecommendationRowProps) {
   return (
     <div className="space-y-3 border-b border-border/60 pb-4 last:border-b-0 last:pb-0">
       <div className="space-y-1">
-        <p className="font-medium">{item.name}</p>
+        <p className="font-medium">
+          <MenuSearchHighlight text={item.name} query={searchQuery} />
+        </p>
         <p className="text-muted-foreground text-sm leading-relaxed">
-          {item.description_en}
+          <MenuSearchHighlight text={item.description_en} query={searchQuery} />
         </p>
       </div>
       <div className="space-y-2">
@@ -246,7 +266,12 @@ function RecommendationRow({
               className="flex items-center justify-between gap-3 rounded-lg border bg-muted/30 px-3 py-2"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{portion.portion}</p>
+                <p className="text-sm font-medium">
+                  <MenuSearchHighlight
+                    text={portion.portion}
+                    query={searchQuery}
+                  />
+                </p>
                 <EuroAmount amount={portion.price} className="text-sm" />
               </div>
               <QtyControls
@@ -277,9 +302,10 @@ function RecommendationRow({
 type MomoPickerProps = {
   cart: CartLine[];
   onCartChange: (cart: CartLine[]) => void;
+  searchQuery: string;
 };
 
-function MomoPicker({ cart, onCartChange }: MomoPickerProps) {
+function MomoPicker({ cart, onCartChange, searchQuery }: MomoPickerProps) {
   const { momo } = dalbhatMenu.menu;
   const [fillingId, setFillingId] = useState(momo.fillings[0]?.id ?? "vegan");
   const [styleId, setStyleId] = useState(momo.styles_and_pricing[0]?.id ?? "steamed");
@@ -339,7 +365,9 @@ function MomoPicker({ cart, onCartChange }: MomoPickerProps) {
 
   return (
     <div className="space-y-4">
-      <p className="text-muted-foreground text-sm">{momo.description}</p>
+      <p className="text-muted-foreground text-sm">
+        <MenuSearchHighlight text={momo.description} query={searchQuery} />
+      </p>
 
       <div className="space-y-2">
         <Label>Filling</Label>
@@ -385,11 +413,17 @@ function MomoPicker({ cart, onCartChange }: MomoPickerProps) {
               )}
             >
               <p className="font-medium">
-                {style.style_de} / {style.style_en}
+                <MenuSearchHighlight
+                  text={`${style.style_de} / ${style.style_en}`}
+                  query={searchQuery}
+                />
               </p>
               {style.description_en ? (
                 <p className="text-muted-foreground text-sm">
-                  {style.description_en}
+                  <MenuSearchHighlight
+                    text={style.description_en}
+                    query={searchQuery}
+                  />
                 </p>
               ) : null}
             </button>
@@ -446,9 +480,16 @@ type DrinkRowProps = {
   item: DrinkItem;
   cart: CartLine[];
   onCartChange: (cart: CartLine[]) => void;
+  searchQuery: string;
 };
 
-function DrinkRow({ category, item, cart, onCartChange }: DrinkRowProps) {
+function DrinkRow({
+  category,
+  item,
+  cart,
+  onCartChange,
+  searchQuery,
+}: DrinkRowProps) {
   const [selectedSize, setSelectedSize] = useState(
     item.sizes?.[0]?.size ?? item.size ?? "default",
   );
@@ -501,12 +542,18 @@ function DrinkRow({ category, item, cart, onCartChange }: DrinkRowProps) {
     <div className="space-y-2 border-b border-border/60 pb-4 last:border-b-0 last:pb-0">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="font-medium leading-snug">{item.name}</p>
+          <p className="font-medium leading-snug">
+            <MenuSearchHighlight text={item.name} query={searchQuery} />
+          </p>
           {item.description ? (
-            <p className="text-muted-foreground text-sm">{item.description}</p>
+            <p className="text-muted-foreground text-sm">
+              <MenuSearchHighlight text={item.description} query={searchQuery} />
+            </p>
           ) : null}
           {item.producer ? (
-            <p className="text-muted-foreground text-sm">{item.producer}</p>
+            <p className="text-muted-foreground text-sm">
+              <MenuSearchHighlight text={item.producer} query={searchQuery} />
+            </p>
           ) : null}
         </div>
         <EuroAmount
@@ -683,6 +730,7 @@ export function DalbhatBillForm() {
                     item={item}
                     cart={cart}
                     onCartChange={setCart}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </div>
@@ -700,6 +748,7 @@ export function DalbhatBillForm() {
                   item={item}
                   cart={cart}
                   onCartChange={setCart}
+                  searchQuery={searchQuery}
                 />
               ))}
             </SectionCard>
@@ -715,6 +764,7 @@ export function DalbhatBillForm() {
                     item={item}
                     cart={cart}
                     onCartChange={setCart}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </div>
@@ -731,6 +781,7 @@ export function DalbhatBillForm() {
                     item={item}
                     cart={cart}
                     onCartChange={setCart}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </div>
@@ -739,7 +790,11 @@ export function DalbhatBillForm() {
 
           {filteredMenu.showMomo ? (
             <SectionCard title="Momo" id="momo">
-              <MomoPicker cart={cart} onCartChange={setCart} />
+              <MomoPicker
+                cart={cart}
+                onCartChange={setCart}
+                searchQuery={searchQuery}
+              />
             </SectionCard>
           ) : null}
 
@@ -753,6 +808,7 @@ export function DalbhatBillForm() {
                     item={item}
                     cart={cart}
                     onCartChange={setCart}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </div>
@@ -774,10 +830,15 @@ export function DalbhatBillForm() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1 space-y-1">
-                          <p className="font-medium">{name}</p>
+                          <p className="font-medium">
+                            <MenuSearchHighlight text={name} query={searchQuery} />
+                          </p>
                           {item.note ? (
                             <p className="text-muted-foreground text-sm">
-                              {item.note}
+                              <MenuSearchHighlight
+                                text={item.note}
+                                query={searchQuery}
+                              />
                             </p>
                           ) : null}
                         </div>
@@ -824,6 +885,7 @@ export function DalbhatBillForm() {
                     item={item}
                     cart={cart}
                     onCartChange={setCart}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </div>

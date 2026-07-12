@@ -20,10 +20,10 @@ const AUDIO_MANIFEST_PATH = path.join(ROOT, "demo/output/audio/manifest.json");
 
 export const DEMO_PERSONAS = {
   overview: "Product demo",
-  payer: "Payer · Alex",
-  ower: "Ower · Sam",
-  owerJordan: "Ower · Jordan",
-  restaurant: "Restaurant · Alex",
+  payer: "Payer · Ramey",
+  ower: "Ower · Shyamey",
+  owerHarkey: "Ower · Harkey",
+  restaurant: "Restaurant · Ramey",
 } as const;
 
 /** Clear stored ower name so a second person can pick from the roster. */

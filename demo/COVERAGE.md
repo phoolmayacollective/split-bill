@@ -13,10 +13,10 @@ Reference for what the automated demo shows vs what the app has shipped. Sources
 | Key | Banner label | Role | Scenes |
 |-----|--------------|------|--------|
 | `overview` | **Product demo** | Narrator / landing | Scene 1 — landing |
-| `payer` | **Payer · Alex** | Creates bill, adds payment, shares, tracks collection | Scenes 2–5, 10, 12 |
-| `ower` | **Ower · Sam** | Opens share link, claims items, sees payment | Scenes 6–8 |
-| `owerJordan` | **Ower · Jordan** | Second claimant, joins split, self-reports paid | Scenes 9, 11 |
-| `restaurant` | **Restaurant · Alex** | Dal Bhat menu bill create | Scene 13 |
+| `payer` | **Payer · Ramey** | Creates bill, adds payment, shares, tracks collection | Scenes 2–5, 10, 12 |
+| `ower` | **Ower · Shyamey** | Opens share link, claims items, sees payment | Scenes 6–8 |
+| `owerHarkey` | **Ower · Harkey** | Second claimant, joins split, self-reports paid | Scenes 9, 11 |
+| `restaurant` | **Restaurant · Ramey** | Dal Bhat menu bill create | Scene 13 |
 
 Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
@@ -24,9 +24,9 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
 | Persona | In demo? | Notes |
 |---------|----------|-------|
-| **Alex** (payer) | Yes | Creates bill, encrypts payment, watches collection |
-| **Sam** (ower) | Yes | Picks name from roster, claims items, copies PayPal |
-| **Jordan** (ower) | Yes | Joins split, self-reports paid |
+| **Ramey** (payer) | Yes | Creates bill, encrypts payment, watches collection |
+| **Shyamey** (ower) | Yes | Picks name from roster, claims items, copies PayPal |
+| **Harkey** (ower) | Yes | Joins split, self-reports paid |
 | **Guest payer** | Partial | Default path — no account; demo doesn't show optional account save (M14) |
 | **Restaurant payer** | Yes | Dal Bhat menu flow (`/restaurant/dalbhat`) |
 
@@ -114,18 +114,18 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | # | Scene ID | Persona | What it shows |
 |---|----------|---------|---------------|
 | 1 | `landing` | Product demo | Home page |
-| 2 | `create` | Payer · Alex | Manual create + tax/tip + participant roster |
-| 3 | `payment` | Payer · Alex | Encrypted PayPal entry |
-| 4 | `payer_dashboard` | Payer · Alex | Share dashboard (initial) |
-| 5 | `share_link` | Payer · Alex | Copy share link |
-| 6 | `ower_name` | Ower · Sam | Roster name pick |
-| 7 | `ower_items` | Ower · Sam | Claim item + split with 2 |
-| 8 | `ower_payment` | Ower · Sam | Decrypted PayPal + copy |
-| 9 | `ower_jordan` | Ower · Jordan | Joins same split |
-| 10 | `payer_progress` | Payer · Alex | Per-item progress + mark Sam paid |
-| 11 | `ower_jordan_paid` | Ower · Jordan | “I've paid” self-report |
-| 12 | `payer_update` | Payer · Alex | “2/2 people paid” |
-| 13 | `dalbhat` | Restaurant · Alex | Dal Bhat menu search + cart |
+| 2 | `create` | Payer · Ramey | Manual create + tax/tip + participant roster |
+| 3 | `payment` | Payer · Ramey | Encrypted PayPal entry |
+| 4 | `payer_dashboard` | Payer · Ramey | Share dashboard (initial) |
+| 5 | `share_link` | Payer · Ramey | Copy share link |
+| 6 | `ower_name` | Ower · Shyamey | Roster name pick |
+| 7 | `ower_items` | Ower · Shyamey | Claim item + split with 2 |
+| 8 | `ower_payment` | Ower · Shyamey | Decrypted PayPal + copy |
+| 9 | `ower_harkey` | Ower · Harkey | Joins same split |
+| 10 | `payer_progress` | Payer · Ramey | Per-item progress + mark Shyamey paid |
+| 11 | `ower_harkey_paid` | Ower · Harkey | “I've paid” self-report |
+| 12 | `payer_update` | Payer · Ramey | “2/2 people paid” |
+| 13 | `dalbhat` | Restaurant · Ramey | Dal Bhat menu search + cart |
 
 **Covered end-to-end:** Landing → manual create + tax/tip + participants → encrypted payment → payer dashboard → copy share link → ower roster name → claim + split → decrypted payment + copy → second ower joins split → payer progress + mark paid → ower self-report → collection update → Dal Bhat menu.
 
@@ -140,7 +140,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | QR code on share card | ❌ Not in walkthrough |
 | Decrypted payment details + copy PayPal | ✅ Scene 8 |
 | “Split with N people” | ✅ Scene 7 |
-| Second ower (Jordan) | ✅ Scenes 9, 11 |
+| Second ower (Harkey) | ✅ Scenes 9, 11 |
 | Payer “Mark paid” (vs ower self-report) | ✅ Both shown (scenes 10–11) |
 | Dal Bhat restaurant menu | ✅ Scene 13 (menu + cart; payment not repeated) |
 | Open bill link on landing | ❌ Skipped |

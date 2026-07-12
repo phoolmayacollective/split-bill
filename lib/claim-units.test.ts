@@ -9,24 +9,24 @@ import {
 } from "@/lib/claim-units";
 import type { BillItem } from "@/lib/database.types";
 
-const pizza: BillItem = { id: "pizza", name: "Pizza", price: 10, qty: 4 };
+const momo: BillItem = { id: "momo", name: "Momo (10 pc)", price: 10, qty: 4 };
 
 describe("draftToQuantities", () => {
   it("stores an equal fraction per enabled unit", () => {
     const quantities = draftToQuantities({
-      [makeUnitId("pizza", 0)]: { enabled: true, splitCount: 3 },
+      [makeUnitId("momo", 0)]: { enabled: true, splitCount: 3 },
     });
 
-    assert.equal(quantities[makeUnitId("pizza", 0)], 0.3333);
+    assert.equal(quantities[makeUnitId("momo", 0)], 0.3333);
   });
 });
 
 describe("getUnitPoolInfo", () => {
   it("reports remaining slots for a partial split", () => {
     const info = getUnitPoolInfo(
-      makeUnitId("pizza", 0),
-      [{ ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 0.3333 }],
-      "Bob",
+      makeUnitId("momo", 0),
+      [{ ower_name: "Ramey", item_id: makeUnitId("momo", 0), share: 0.3333 }],
+      "Shyamey",
     );
 
     assert.equal(info.splitCount, 3);
@@ -40,11 +40,11 @@ describe("getUnitPoolInfo", () => {
 describe("validateClaimDraft", () => {
   it("allows joining an existing split with the same count", () => {
     const error = validateClaimDraft(
-      [pizza],
-      [{ ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 0.3333 }],
-      "Bob",
+      [momo],
+      [{ ower_name: "Ramey", item_id: makeUnitId("momo", 0), share: 0.3333 }],
+      "Shyamey",
       {
-        [makeUnitId("pizza", 0)]: { enabled: true, splitCount: 3 },
+        [makeUnitId("momo", 0)]: { enabled: true, splitCount: 3 },
       },
     );
 
@@ -53,11 +53,11 @@ describe("validateClaimDraft", () => {
 
   it("rejects a different split count on the same unit", () => {
     const error = validateClaimDraft(
-      [pizza],
-      [{ ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 0.3333 }],
-      "Bob",
+      [momo],
+      [{ ower_name: "Ramey", item_id: makeUnitId("momo", 0), share: 0.3333 }],
+      "Shyamey",
       {
-        [makeUnitId("pizza", 0)]: { enabled: true, splitCount: 2 },
+        [makeUnitId("momo", 0)]: { enabled: true, splitCount: 2 },
       },
     );
 
