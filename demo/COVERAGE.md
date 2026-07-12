@@ -98,12 +98,12 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 |-----------|--------|-------------|
 | **M14** Account dashboards | `in_progress` | Optional username save stub — no dashboard list UI |
 | **M15** Demo video | `in_progress` | Silent walkthrough works; narrated MP4 needs GCP creds |
+| **M16** Receipt scan | `in_progress` | `/create/scan` — Tesseract.js browser OCR + heuristic parse + review; LLM text step pending |
 
 ### Pending (not built)
 
 | Milestone | Feature |
 |-----------|---------|
-| **M16** | Receipt scan (OCR) — UI stub only (“coming soon”) |
 | **M17** | Payer edit token & bill lifecycle |
 | **M18** | Deploy MVP |
 
@@ -158,5 +158,5 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | Status | Count | Milestones |
 |--------|-------|------------|
 | Completed | 13 | M1–M13 |
-| In progress | 2 | M14, M15 |
-| Pending | 3 | M16, M17, M18 |
+| In progress | 3 | M14, M15, M16 |
+| Pending | 2 | M17, M18 |

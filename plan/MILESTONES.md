@@ -23,7 +23,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `completed` | 9 |
 | 14 | [Payer & ower account dashboards](./milestones/14-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
 | 15 | [Automated demo video](./milestones/15-demo-video.md) | 6 | `in_progress` | 6, 9, 10 |
-| 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `pending` | 5 |
+| 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `in_progress` | 5 |
 | 17 | [Payer edit token & bill lifecycle](./milestones/17-bill-lifecycle.md) | 4 | `pending` | 8 |
 | 18 | [Deploy MVP](./milestones/18-deploy.md) | 4 | `pending` | 9, 11 |
 
@@ -41,8 +41,8 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 ## Progress
 
 - **Completed:** 13 / 18 (M1–M13)
-- **In progress:** 2 (M14, M15)
-- **Pending:** 3 (M16, M17, M18)
+- **In progress:** 3 (M14, M15, M16)
+- **Pending:** 2 (M17, M18)
 
 ## Completed work log
 
@@ -170,9 +170,17 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/15-demo-video.md](./milestones/15-demo-video.md)
 
+### M16 — Receipt scan (OCR) (started 2026-07-12)
+
+**What:** Tesseract.js browser OCR spike — `/create/scan` with capture/upload, on-device text extraction, heuristic line-item parse, and review-before-continue flow.
+
+**How:** `lib/ocr/detect-text.ts` (Tesseract worker + line mapping), `parse-receipt-text.ts`, scan page with progress/confidence UI; `scripts/dev-phone.sh` for LAN phone testing. Capacitor/iOS Vision explored and rejected (web-only). LLM text-structuring API not yet added.
+
+**Details:** [milestones/16-receipt-scan.md](./milestones/16-receipt-scan.md)
+
 ## Next up
 
-**M16 — Receipt scan (OCR)** — Image upload → LLM vision → editable line items (Phase 3).
+**M16 — Receipt scan (OCR)** — Evaluate Tesseract on real receipts; add `POST /api/ocr` LLM text parse if quality is sufficient (Phase 3).
 
 ## How to update
 

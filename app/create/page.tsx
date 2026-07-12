@@ -5,7 +5,6 @@ import { Camera, PenLine } from "lucide-react";
 import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { StepIndicator } from "@/components/layout/step-indicator";
-import { SectionCard } from "@/components/layout/section-card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -47,20 +46,21 @@ export default function CreatePage() {
           </span>
         </Link>
 
-        <SectionCard className="opacity-75">
-          <div className="flex items-start gap-3">
-            <Camera
-              className="text-muted-foreground mt-0.5 size-5 shrink-0"
-              aria-hidden
-            />
-            <div className="space-y-1">
-              <p className="font-medium">Scan a receipt</p>
-              <p className="text-muted-foreground text-sm">
-                Snap a photo and we&apos;ll fill in the items — coming soon.
-              </p>
-            </div>
-          </div>
-        </SectionCard>
+        <Link
+          href="/create/scan"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "h-auto w-full flex-col items-start gap-2 px-5 py-5 text-left",
+          )}
+        >
+          <span className="flex items-center gap-2.5 text-base font-medium">
+            <Camera className="size-5" aria-hidden />
+            Scan a receipt
+          </span>
+          <span className="text-muted-foreground text-sm font-normal">
+            Browser OCR with Tesseract.js — review before continuing
+          </span>
+        </Link>
       </div>
     </PageShell>
   );

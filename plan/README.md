@@ -8,9 +8,9 @@
 
 ## Current progress
 
-**13 / 18 milestones completed** · **2 in progress** (M14–M15) · next up **M16 OCR**
+**13 / 18 milestones completed** · **3 in progress** (M14–M16)
 
-Milestones are numbered in **chronological build order** (M1–M13 done, M14–M15 active, M16–M18 planned).
+Milestones are numbered in **chronological build order** (M1–M13 done, M14–M16 active, M17–M18 planned).
 
 | # | Status | Milestone | Summary |
 |---|--------|-----------|---------|
@@ -29,7 +29,7 @@ Milestones are numbered in **chronological build order** (M1–M13 done, M14–M
 | 13 | ✅ | Mobile UX & share | Warm UI, sticky CTAs, copy/Web Share, QR code, separate-password mode |
 | 14 | 🔄 | Account dashboards | Optional username save; payer circle + dashboard UI pending |
 | 15 | 🔄 | Demo video | Playwright silent walkthrough; WaveNet narrated MP4 (GCP credentials pending) |
-| 16 | ⏳ | Receipt scan | OCR — image upload → LLM vision → editable line items |
+| 16 | 🔄 | Receipt scan | Tesseract.js browser OCR spike — `/create/scan`, heuristic parse, LLM text step TBD |
 | 17 | ⏳ | Bill lifecycle | Payer edit token & bill expiry |
 | 18 | ⏳ | Deploy MVP | Vercel + production smoke tests |
 
