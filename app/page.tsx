@@ -7,7 +7,7 @@ import { PageShell } from "@/components/layout/page-shell";
 
 export default function Home() {
   return (
-    <PageShell centered className="justify-center py-12 sm:py-16">
+    <PageShell centered className="justify-center py-8 sm:py-12">
       <Image
         src="/icon.png"
         alt=""
