@@ -1,6 +1,6 @@
 # Milestones
 
-Last updated: 2026-07-12
+Last updated: 2026-07-12 (M16 completed — receipt scan shipped)
 
 Milestones **M1–M18** are numbered in **chronological build order**: completed work first (M1–M12), then active work by start date (M13–M15), then planned work (M16–M18).
 
@@ -23,7 +23,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `completed` | 9 |
 | 14 | [Payer & ower account dashboards](./milestones/14-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
 | 15 | [Automated demo video](./milestones/15-demo-video.md) | 6 | `in_progress` | 6, 9, 10 |
-| 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `in_progress` | 5 |
+| 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `completed` | 5 |
 | 17 | [Payer edit token & bill lifecycle](./milestones/17-bill-lifecycle.md) | 4 | `pending` | 8 |
 | 18 | [Deploy MVP](./milestones/18-deploy.md) | 4 | `pending` | 9, 11 |
 
@@ -40,8 +40,8 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 13 / 18 (M1–M13)
-- **In progress:** 3 (M14, M15, M16)
+- **Completed:** 14 / 18 (M1–M13, M16)
+- **In progress:** 2 (M14, M15)
 - **Pending:** 2 (M17, M18)
 
 ## Completed work log
@@ -170,17 +170,17 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/15-demo-video.md](./milestones/15-demo-video.md)
 
-### M16 — Receipt scan (OCR) (started 2026-07-12)
+### M16 — Receipt scan (OCR) (2026-07-12)
 
-**What:** Tesseract.js browser OCR spike — `/create/scan` with capture/upload, on-device text extraction, heuristic line-item parse, and review-before-continue flow.
+**What:** End-to-end receipt scan — browser OCR → server text parse → review with **tax inclusive toggle**; home + `/create` scan entry; neutral product copy (no engine names in UI).
 
-**How:** `lib/ocr/detect-text.ts` (Tesseract worker + line mapping), `parse-receipt-text.ts`, scan page with progress/confidence UI; `scripts/dev-phone.sh` for LAN phone testing. Capacitor/iOS Vision explored and rejected (web-only). LLM text-structuring API not yet added.
+**How:** `detect-text.ts` → scan page POSTs OCR lines to `/api/ocr` (`parse-receipt-gemini.ts`) → `BillItemEditor` review; `HomePageActions` + `/create` hub link to `/create/scan`. Live German receipt test passed; `npm test` + `npm run build` pass.
 
 **Details:** [milestones/16-receipt-scan.md](./milestones/16-receipt-scan.md)
 
 ## Next up
 
-**M16 — Receipt scan (OCR)** — Evaluate Tesseract on real receipts; add `POST /api/ocr` LLM text parse if quality is sufficient (Phase 3).
+**M14 — Account dashboards** — Payer circle + dashboard list UI (Phase 4). Optional: broader receipt quality trials and a scan demo scene (M15/M16 follow-up).
 
 ## How to update
 

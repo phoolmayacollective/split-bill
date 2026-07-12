@@ -1,6 +1,6 @@
 # Demo coverage & feature inventory
 
-Last updated: 2026-07-12
+Last updated: 2026-07-12 (M16 receipt scan shipped)
 
 Reference for what the automated demo shows vs what the app has shipped. Sources: `plan/MILESTONES.md`, route/component code, `e2e/demo-walkthrough.spec.ts`, `demo/scenes.json`.
 
@@ -34,7 +34,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
 ---
 
-## Completed features (13 / 18 milestones)
+## Completed features (14 / 18 milestones)
 
 ### Phase 1 — Core flow (M1–M6) ✅
 
@@ -92,13 +92,23 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | QR code for share URL | `ShareQrCode`, `components/share-qr-code.tsx` |
 | Separate-password sharing mode | `ShareBillContent` toggle + `BillPasswordPrompt` fallback |
 
+### Phase 3 — Receipt scan (M16) ✅
+
+| Feature | Route / component |
+|---------|-------------------|
+| Create hub — manual or scan | `/create`, `/create/manual`, `/create/scan` |
+| Home page scan entry | `/`, `HomePageActions` |
+| Capture/upload + on-device text extraction | `app/create/scan/page.tsx`, `lib/ocr/detect-text.ts` |
+| Server text parse → editable items | `POST /api/ocr`, `parse-receipt-gemini.ts`, tax inclusive toggle on review |
+
+Requires `GEMINI_API_KEY` on the server for structured line items; product UI does not mention OCR/LLM vendors.
+
 ### In progress (not complete)
 
 | Milestone | Status | What exists |
 |-----------|--------|-------------|
 | **M14** Account dashboards | `in_progress` | Optional username save stub — no dashboard list UI |
 | **M15** Demo video | `in_progress` | Silent walkthrough works; narrated MP4 needs GCP creds |
-| **M16** Receipt scan | `in_progress` | `/create/scan` — Tesseract.js browser OCR + heuristic parse + review; LLM text step pending |
 
 ### Pending (not built)
 
@@ -147,6 +157,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | Optional account save | ❌ M15 stub not shown |
 | Per-item progress bars detail | ✅ Scene 10 |
 | `/create` hub | ❌ Demo goes straight to `/create/manual` |
+| Receipt scan (home + `/create/scan`) | ❌ Not in automated walkthrough (needs `GEMINI_API_KEY`) |
 | Multi-qty unit rows | ~ Split-with-N shown instead |
 | Manual password entry | ❌ Auto via hash only |
 | IBAN payment type | ❌ Demo uses PayPal only |
@@ -157,6 +168,6 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
 | Status | Count | Milestones |
 |--------|-------|------------|
-| Completed | 13 | M1–M13 |
-| In progress | 3 | M14, M15, M16 |
+| Completed | 14 | M1–M13, M16 |
+| In progress | 2 | M14, M15 |
 | Pending | 2 | M17, M18 |

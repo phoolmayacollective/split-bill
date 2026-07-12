@@ -12,7 +12,7 @@ Goal: let one person (the **payer**) close out a shared bill without anyone need
 |---|---|---|
 | Split model | **Claim items** | Owers check off what they consumed; shared items split among claimers. Fits restaurant/grocery receipts. |
 | Encryption | **Client-side (zero-knowledge)** | Password never reaches the server. Server only ever stores/serves ciphertext. |
-| OCR | **Tesseract.js → LLM text** (in progress) | Browser OCR extracts text on-device; server LLM structures line items from text only (cheaper than vision). Human review required. |
+| OCR | **Tesseract.js → Gemini text** (shipped) | Browser OCR on-device; Gemini structures all OCR text; **tax inclusive toggle** on review (default on, Germany/EU). Human review required. |
 | No sign-up | **Anonymous, link-based** | Bill identified by a random ID; access gated by password held in the URL fragment. |
 
 ## The Encryption Model (most important part)
@@ -60,7 +60,7 @@ flowchart TD
 ### Payer flow
 1. Land on home page → "Create a bill" (no sign-up).
 2. **Scan** a receipt photo *or* **manually add** items.
-   - Scan: upload/capture image → Tesseract.js OCR (browser) → editable list of `{ name, price, qty }` (LLM text parse planned).
+   - Scan: upload/capture image → Tesseract.js OCR (browser) → Gemini text parse → review (tax inclusive toggle) → editable `{ name, price, qty }`.
 3. **Review & fix**: edit any line item, add/remove items, set tax/tip/total.
 4. **Add payment details**: PayPal address and/or IBAN.
 5. Browser **encrypts** payment details (see model above), sets/generates password.
@@ -105,7 +105,7 @@ claims
 - **Next.js (App Router)** — pages + API routes in one deploy.
 - **Postgres** via **Supabase** or **Neon** — `jsonb` for items, easy hosting, no ORM lock-in.
 - **Web Crypto API** (`crypto.subtle`) — native PBKDF2 + AES-GCM in the browser, no crypto library needed.
-- **Tesseract.js + LLM text** for OCR (in progress) — browser extracts receipt text on-device; API route structures line items from text only (cheaper than vision). Image not stored.
+- **Tesseract.js + Gemini text** for OCR (shipped) — browser OCR on-device; `POST /api/ocr` on every scan; tax inclusive/exclusive toggle on review (default inclusive). `GEMINI_API_KEY` server-side only.
 - **Tailwind + shadcn/ui** — fast, clean, mobile-first (owers will mostly be on phones).
 - Deploy on **Vercel**.
 
@@ -124,7 +124,7 @@ claims
 - Show decrypted payment details on ower summary.
 
 ### Phase 3 — OCR scanning
-- Image upload/capture → Tesseract.js (browser) → text → LLM or heuristic parse → line items.
+- Image upload/capture → Tesseract.js (browser) → text → Gemini LLM parse → line items.
 - Editable review step before saving.
 
 ### Phase 4 — Polish

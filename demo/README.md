@@ -79,6 +79,8 @@ npm run demo:composite   # Mux existing video + audio
 | Dal Bhat menu | `Restaurant · Ramey` |
 
 See `demo/COVERAGE.md` for the full 13-scene inventory.
+Receipt scan (`/create/scan` and home page) is **not** in the automated walkthrough yet — see `demo/COVERAGE.md` (M16).
+
 
 ### Manual testing
 
