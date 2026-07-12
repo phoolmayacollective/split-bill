@@ -8,7 +8,7 @@
 
 ## Current progress
 
-**10 / 16 milestones completed** · **2 in progress** (M13 UI/UX, M16 account stub) · next up **M11 OCR**
+**11 / 16 milestones completed** · **2 in progress** (M13 UI/UX, M16 account stub) · next up **M11 OCR**
 
 | Done | Milestone | Summary |
 |------|-----------|---------|
@@ -22,6 +22,7 @@
 | ✅ | M8 Encrypted payment | PayPal/IBAN encrypt on create, share link with `#password` |
 | ✅ | M9 Ower decrypt | Summary decrypts payment details client-side; copy PayPal/IBAN |
 | ✅ | M10 Payer bill view & roster | Item progress bars, mark paid, participant roster at create |
+| ✅ | M12 Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
 | 🔄 | M13 Mobile UX & share | Warm UI refresh, sticky CTAs, copy/share, loading states (QR pending) |
 | 🔄 | M16 Account dashboards | Optional username save after bill; dashboard UI pending |
 | ⏳ | M11 Receipt scan | Next feature milestone (Phase 3) |

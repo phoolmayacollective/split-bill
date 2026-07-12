@@ -23,13 +23,14 @@ export function ItemProgressBar({ progress }: ItemProgressBarProps) {
 
   const segments = progress.claimants.map((claimant) => ({
     key: claimant.ower_name,
-    width: (claimant.share / progress.claimed_share) * 100,
+    width: claimant.share * 100,
     paid: claimant.paid,
   }));
+  const unclaimedWidth = Math.max(0, (1 - progress.claimed_share) * 100);
 
   return (
     <div
-      className="flex h-2.5 overflow-hidden rounded-full"
+      className="bg-muted flex h-2.5 overflow-hidden rounded-full"
       role="progressbar"
       aria-valuenow={progress.percent_paid}
       aria-valuemin={0}
@@ -46,6 +47,12 @@ export function ItemProgressBar({ progress }: ItemProgressBarProps) {
           style={{ width: `${segment.width}%` }}
         />
       ))}
+      {unclaimedWidth > 0 ? (
+        <div
+          className="bg-muted-foreground/15 h-full"
+          style={{ width: `${unclaimedWidth}%` }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -57,6 +64,10 @@ export function progressLabel(progress: ItemProgress): string {
 
   if (progress.status === "settled") {
     return "All paid";
+  }
+
+  if (progress.percent_claimed < 100) {
+    return `${progress.percent_claimed}% claimed · ${progress.percent_paid}% paid`;
   }
 
   return `${progress.percent_paid}% paid`;

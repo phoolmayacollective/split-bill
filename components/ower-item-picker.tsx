@@ -4,16 +4,22 @@ import { useMemo } from "react";
 
 import { MoneyAmount } from "@/components/bill/money-amount";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatMoney, itemLineTotal } from "@/lib/bill-totals";
+import { Button } from "@/components/ui/button";
+import { formatMoney } from "@/lib/bill-totals";
 import {
-  type ClaimQuantities,
-  getMaxClaimableUnits,
-  getOthersClaimedUnits,
+  expandBillItems,
+  formatUnitLabel,
+  countUnitsForItem,
+} from "@/lib/bill-units";
+import {
+  type ClaimDraft,
+  draftToQuantities,
+  getUnitPoolInfo,
 } from "@/lib/claim-units";
 import {
+  formatClaimedPercent,
   formatSplitBetweenPeople,
-  formatUnitClaimLabel,
-  getItemClaimantCount,
+  formatSplitSlotsTaken,
 } from "@/lib/item-split-display";
 import { cn } from "@/lib/utils";
 import type { BillItem, BillTotals } from "@/lib/database.types";
@@ -24,118 +30,126 @@ type OwerItemPickerProps = {
   totals: BillTotals;
   owerName: string;
   existingClaims: SplitClaim[];
-  claimQuantities: ClaimQuantities;
-  onClaimQuantitiesChange: (quantities: ClaimQuantities) => void;
+  claimDraft: ClaimDraft;
+  onClaimDraftChange: (draft: ClaimDraft) => void;
 };
 
 function buildPreviewClaims(
   existingClaims: SplitClaim[],
   owerName: string,
-  claimQuantities: ClaimQuantities,
+  claimDraft: ClaimDraft,
 ): SplitClaim[] {
   const otherClaims = existingClaims.filter(
     (claim) => claim.ower_name !== owerName,
   );
 
-  const draftClaims = Object.entries(claimQuantities)
-    .filter(([, share]) => share > 0)
-    .map(([item_id, share]) => ({
+  const draftClaims = Object.entries(draftToQuantities(claimDraft)).map(
+    ([item_id, share]) => ({
       ower_name: owerName,
       item_id,
       share,
-    }));
+    }),
+  );
 
   return [...otherClaims, ...draftClaims];
 }
 
-type MultiQtyUnitPickerProps = {
-  item: BillItem;
-  claimedQty: number;
-  maxClaimable: number;
-  othersClaimed: number;
-  onQuantityChange: (quantity: number) => void;
+type UnitRowProps = {
+  unitId: string;
+  name: string;
+  price: number;
+  enabled: boolean;
+  splitCount: number;
+  splitLocked: boolean;
+  poolLabel: string | null;
+  disabled: boolean;
+  onToggle: (checked: boolean) => void;
+  onSplitCountChange: (splitCount: number) => void;
 };
 
-function MultiQtyUnitPicker({
-  item,
-  claimedQty,
-  maxClaimable,
-  othersClaimed,
-  onQuantityChange,
-}: MultiQtyUnitPickerProps) {
-  function handleUnitClick(unitIndex: number) {
-    const taken = unitIndex < othersClaimed;
-    if (taken) {
-      return;
-    }
-
-    const yours = unitIndex < othersClaimed + claimedQty;
-    const nextQuantity = yours
-      ? unitIndex - othersClaimed
-      : unitIndex - othersClaimed + 1;
-
-    onQuantityChange(nextQuantity);
-  }
-
-  const unitLabel = formatUnitClaimLabel(claimedQty, item.qty);
-
+function UnitRow({
+  unitId,
+  name,
+  price,
+  enabled,
+  splitCount,
+  splitLocked,
+  poolLabel,
+  disabled,
+  onToggle,
+  onSplitCountChange,
+}: UnitRowProps) {
   return (
-    <div className="space-y-2">
-      <p className="text-muted-foreground text-xs">Tap each one you had</p>
-      <div className="flex flex-wrap gap-2">
-        {Array.from({ length: item.qty }, (_, unitIndex) => {
-          const taken = unitIndex < othersClaimed;
-          const yours = !taken && unitIndex < othersClaimed + claimedQty;
-
-          return (
-            <button
-              key={unitIndex}
-              type="button"
-              disabled={taken}
-              aria-label={
-                taken
-                  ? `${item.name} ${unitIndex + 1} already claimed`
-                  : yours
-                    ? `Remove ${item.name} ${unitIndex + 1} from your claim`
-                    : `Claim ${item.name} ${unitIndex + 1}`
-              }
-              aria-pressed={yours}
-              onClick={() => handleUnitClick(unitIndex)}
-              className={cn(
-                "size-11 rounded-lg border text-sm font-medium tabular-nums transition-colors",
-                taken &&
-                  "bg-muted text-muted-foreground cursor-not-allowed opacity-60",
-                yours && "border-primary bg-primary/10 text-primary",
-                !taken &&
-                  !yours &&
-                  "hover:border-primary/50 bg-background",
-              )}
-            >
-              {unitIndex + 1}
-            </button>
-          );
-        })}
-      </div>
-      <p className="text-muted-foreground text-xs">
-        {unitLabel ? (
-          <>
-            You&apos;re claiming <span className="font-medium">{unitLabel}</span>
-            {othersClaimed > 0 ? (
-              <>
-                {" "}
-                · {othersClaimed} already taken by others
-              </>
-            ) : null}
-          </>
-        ) : othersClaimed > 0 ? (
-          <>
-            {othersClaimed} already claimed by others · {maxClaimable} left for
-            you
-          </>
-        ) : (
-          `${maxClaimable} available`
+    <div
+      className={cn(
+        "shadow-card rounded-xl border bg-card p-4 transition-all",
+        "hover:border-primary/20",
+        enabled && "border-primary/40 bg-primary/5",
+        disabled && "opacity-70",
+      )}
+    >
+      <label
+        htmlFor={`claim-${unitId}`}
+        className={cn(
+          "flex items-start gap-3",
+          disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}
-      </p>
+      >
+        <Checkbox
+          id={`claim-${unitId}`}
+          checked={enabled}
+          disabled={disabled}
+          onCheckedChange={(nextChecked) => onToggle(nextChecked === true)}
+          className="mt-1 size-5"
+        />
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-medium leading-snug">{name}</p>
+            <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
+              {formatMoney(price)}
+            </span>
+          </div>
+          {poolLabel ? (
+            <p className="text-primary text-sm font-medium">{poolLabel}</p>
+          ) : null}
+        </div>
+      </label>
+
+      {enabled ? (
+        <div className="mt-3 flex items-center justify-between gap-3 border-t pt-3">
+          <p className="text-muted-foreground text-sm">Split with</p>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-9"
+              disabled={splitLocked || splitCount <= 1}
+              aria-label="Fewer people"
+              onClick={() => onSplitCountChange(splitCount - 1)}
+            >
+              −
+            </Button>
+            <span className="min-w-8 text-center text-sm font-medium tabular-nums">
+              {splitCount}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-9"
+              disabled={splitLocked || splitCount >= 12}
+              aria-label="More people"
+              onClick={() => onSplitCountChange(splitCount + 1)}
+            >
+              +
+            </Button>
+            <span className="text-muted-foreground text-sm">
+              {splitCount === 1 ? "person (just me)" : "people"}
+            </span>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -145,12 +159,25 @@ export function OwerItemPicker({
   totals,
   owerName,
   existingClaims,
-  claimQuantities,
-  onClaimQuantitiesChange,
+  claimDraft,
+  onClaimDraftChange,
 }: OwerItemPickerProps) {
+  const units = useMemo(() => expandBillItems(items), [items]);
+  const unitsByParent = useMemo(() => {
+    const groups = new Map<string, typeof units>();
+
+    for (const unit of units) {
+      const group = groups.get(unit.parentItemId) ?? [];
+      group.push(unit);
+      groups.set(unit.parentItemId, group);
+    }
+
+    return groups;
+  }, [units]);
+
   const previewClaims = useMemo(
-    () => buildPreviewClaims(existingClaims, owerName, claimQuantities),
-    [claimQuantities, existingClaims, owerName],
+    () => buildPreviewClaims(existingClaims, owerName, claimDraft),
+    [claimDraft, existingClaims, owerName],
   );
 
   const preview = useMemo(() => {
@@ -162,122 +189,94 @@ export function OwerItemPicker({
     });
   }, [items, owerName, previewClaims, totals]);
 
-  function setQuantity(itemId: string, nextQuantity: number) {
-    onClaimQuantitiesChange({
-      ...claimQuantities,
-      [itemId]: nextQuantity,
+  function updateUnit(
+    unitId: string,
+    patch: Partial<ClaimDraft[string]>,
+  ) {
+    const current = claimDraft[unitId] ?? { enabled: false, splitCount: 1 };
+
+    onClaimDraftChange({
+      ...claimDraft,
+      [unitId]: {
+        ...current,
+        ...patch,
+      },
     });
   }
 
-  function toggleSingleItem(itemId: string, checked: boolean) {
-    setQuantity(itemId, checked ? 1 : 0);
-  }
-
-  const hasAnySelection = Object.values(claimQuantities).some(
-    (quantity) => quantity > 0,
-  );
+  const hasAnySelection = Object.values(claimDraft).some((state) => state.enabled);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {items.map((item) => {
-        const claimedQty = claimQuantities[item.id] ?? 0;
-        const maxClaimable = getMaxClaimableUnits(
-          item,
-          existingClaims,
-          owerName,
-        );
-        const othersClaimed = getOthersClaimedUnits(
-          item.id,
-          existingClaims,
-          owerName,
-        );
-        const lineTotal = itemLineTotal(item);
-        const isMultiQty = item.qty > 1;
-        const claimantCount = getItemClaimantCount(item.id, previewClaims);
-        const splitLabel = formatSplitBetweenPeople(claimantCount);
-        const othersSharing =
-          !isMultiQty &&
-          getItemClaimantCount(item.id, existingClaims) > 0 &&
-          claimedQty === 0;
+        const itemUnits = unitsByParent.get(item.id) ?? [];
+        const showGroupLabel = countUnitsForItem(item) > 1;
 
         return (
-          <div
-            key={item.id}
-            className={cn(
-              "shadow-card rounded-xl border bg-card p-4 transition-all",
-              "hover:border-primary/20",
-              claimedQty > 0 && "border-primary/40 bg-primary/5",
-            )}
-          >
-            {!isMultiQty ? (
-              <label
-                htmlFor={`claim-${item.id}`}
-                className="flex cursor-pointer items-start gap-3"
-              >
-                <Checkbox
-                  id={`claim-${item.id}`}
-                  checked={claimedQty > 0}
-                  onCheckedChange={(nextChecked) =>
-                    toggleSingleItem(item.id, nextChecked === true)
-                  }
-                  className="mt-1 size-5"
-                />
-                <div className="min-w-0 flex-1 space-y-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-medium leading-snug">{item.name}</p>
-                    <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
-                      {formatMoney(lineTotal)}
-                    </span>
-                  </div>
-                  {splitLabel ? (
-                    <p className="text-primary text-sm font-medium">
-                      {splitLabel}
-                    </p>
-                  ) : othersSharing ? (
-                    <p className="text-muted-foreground text-sm">
-                      {formatSplitBetweenPeople(
-                        getItemClaimantCount(item.id, existingClaims),
-                      )}
-                    </p>
-                  ) : null}
-                </div>
-              </label>
-            ) : (
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-medium leading-snug">{item.name}</p>
-                    <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
-                      {formatMoney(lineTotal)}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {item.qty} × {formatMoney(item.price)}
-                  </p>
-                  {splitLabel ? (
-                    <p className="text-primary text-sm font-medium">
-                      {splitLabel}
-                    </p>
-                  ) : othersSharing ? (
-                    <p className="text-muted-foreground text-sm">
-                      {formatSplitBetweenPeople(
-                        getItemClaimantCount(item.id, existingClaims),
-                      )}
-                    </p>
-                  ) : null}
-                </div>
+          <div key={item.id} className="space-y-2">
+            {showGroupLabel ? (
+              <p className="text-muted-foreground px-1 text-xs font-medium tracking-wide uppercase">
+                {item.name} · {item.qty} × {formatMoney(item.price)}
+              </p>
+            ) : null}
 
-                <MultiQtyUnitPicker
-                  item={item}
-                  claimedQty={claimedQty}
-                  maxClaimable={maxClaimable}
-                  othersClaimed={othersClaimed}
-                  onQuantityChange={(quantity) =>
-                    setQuantity(item.id, quantity)
-                  }
-                />
-              </div>
-            )}
+            <div className="space-y-2">
+              {itemUnits.map((unit) => {
+                const state = claimDraft[unit.id] ?? {
+                  enabled: false,
+                  splitCount: 1,
+                };
+                const pool = getUnitPoolInfo(
+                  unit.id,
+                  previewClaims.filter((claim) => claim.ower_name !== owerName),
+                  owerName,
+                );
+                const splitLocked =
+                  pool.splitCount !== null &&
+                  previewClaims.some(
+                    (claim) =>
+                      claim.item_id === unit.id &&
+                      claim.ower_name !== owerName,
+                  );
+                const displaySplitCount = splitLocked
+                  ? (pool.splitCount ?? state.splitCount)
+                  : state.splitCount;
+                const disabled = pool.isFull && !state.enabled;
+                const unitLabel = formatUnitLabel(unit, itemUnits.length);
+
+                let poolLabel: string | null = null;
+                if (pool.splitCount !== null && !state.enabled) {
+                  poolLabel = `${formatSplitBetweenPeople(pool.splitCount)} · ${formatSplitSlotsTaken(pool.claimantCount, pool.splitCount)}`;
+                } else if (pool.claimedFraction > 0 && !state.enabled) {
+                  poolLabel = formatClaimedPercent(pool.claimedFraction);
+                } else if (state.enabled && displaySplitCount > 1) {
+                  poolLabel = `Your share · ${formatMoney(unit.price / displaySplitCount)}`;
+                }
+
+                return (
+                  <UnitRow
+                    key={unit.id}
+                    unitId={unit.id}
+                    name={unitLabel}
+                    price={unit.price}
+                    enabled={state.enabled}
+                    splitCount={displaySplitCount}
+                    splitLocked={splitLocked}
+                    poolLabel={poolLabel}
+                    disabled={disabled}
+                    onToggle={(checked) =>
+                      updateUnit(unit.id, {
+                        enabled: checked,
+                        splitCount: pool.splitCount ?? state.splitCount ?? 1,
+                      })
+                    }
+                    onSplitCountChange={(nextSplitCount) =>
+                      updateUnit(unit.id, { splitCount: nextSplitCount })
+                    }
+                  />
+                );
+              })}
+            </div>
           </div>
         );
       })}
@@ -297,14 +296,10 @@ export function useOwerPreviewTotal(
   totals: BillTotals,
   owerName: string,
   existingClaims: SplitClaim[],
-  claimQuantities: ClaimQuantities,
+  claimDraft: ClaimDraft,
 ): number {
   return useMemo(() => {
-    const claims = buildPreviewClaims(
-      existingClaims,
-      owerName,
-      claimQuantities,
-    );
+    const claims = buildPreviewClaims(existingClaims, owerName, claimDraft);
     const result = calculateOwerTotal({
       items,
       totals,
@@ -313,5 +308,5 @@ export function useOwerPreviewTotal(
     });
 
     return result?.total ?? 0;
-  }, [claimQuantities, existingClaims, items, owerName, totals]);
+  }, [claimDraft, existingClaims, items, owerName, totals]);
 }

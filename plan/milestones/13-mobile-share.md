@@ -46,3 +46,4 @@ Mobile refinements and easier sharing for payers.
 ## Updates
 
 - **2026-07-11:** Started warm-modern UI/UX refresh across completed flows. Copy/share, sticky footers, loading/empty states, and mobile tap targets done; QR and separate-password mode still pending.
+- **2026-07-12:** Fixed bill refresh recursion — `useOwerSession` defers name read until after mount; payer dashboard polls every 30s (visible tab only) and skips re-render when view signature unchanged.

@@ -158,7 +158,7 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 9 | Ower decrypt & payment summary | 2 | `completed` |
 | 10 | Payer bill view, item progress & participant roster | 2 | `completed` |
 | 11 | Receipt scan (OCR) | 3 | `pending` |
-| 12 | Shared-item & tax/tip polish | 4 | `pending` |
+| 12 | Shared-item & tax/tip polish | 4 | `completed` |
 | 13 | Mobile UX & share tools (QR, copy) | 4 | `in_progress` |
 | 14 | Payer edit token & bill lifecycle | 4 | `pending` |
 | 15 | Deploy MVP | 4 | `pending` |

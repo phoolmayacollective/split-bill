@@ -1,6 +1,6 @@
 # Milestones
 
-Last updated: 2026-07-11
+Last updated: 2026-07-12
 
 Track progress here and in each file under [`milestones/`](./milestones/).
 
@@ -17,7 +17,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 9 | [Ower decrypt & payment summary](./milestones/09-ower-decrypt.md) | 2 | `completed` | 6, 7, 8 |
 | 10 | [Participants roster & item payment progress](./milestones/10-participants-and-item-progress.md) | 2 | `completed` | 6, 8 |
 | 11 | [Receipt scan (OCR)](./milestones/11-receipt-scan.md) | 3 | `pending` | 5 |
-| 12 | [Shared-item & tax/tip polish](./milestones/12-split-polish.md) | 4 | `pending` | 6 |
+| 12 | [Shared-item & tax/tip polish](./milestones/12-split-polish.md) | 4 | `completed` | 6 |
 | 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `in_progress` | 9 |
 | 14 | [Payer edit token & bill lifecycle](./milestones/14-bill-lifecycle.md) | 4 | `pending` | 8 |
 | 15 | [Deploy MVP](./milestones/15-deploy.md) | 4 | `pending` | 9, 12 |
@@ -34,9 +34,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 10 / 16
+- **Completed:** 11 / 16
 - **In progress:** 2 (M13 UI/UX polish, M16 account stub)
-- **Pending:** 4
+- **Pending:** 3
 
 ## Completed work log
 
@@ -121,6 +121,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 **How:** `ower_payments` table + `calculateItemProgress()` power segmented progress bars on `/bill/{id}/payer`; `participants jsonb` on bills with `ParticipantListEditor` at create and roster chips on the ower name step; 21 unit tests, build/lint verified.
 
 **Details:** [milestones/10-participants-and-item-progress.md](./milestones/10-participants-and-item-progress.md)
+
+### M12 — Shared-item & tax/tip polish (2026-07-12)
+
+**What:** Unit-level shared claiming — multi-qty items expand to individual rows; explicit “split with N people”; fractional payer progress; refresh recursion fixed.
+
+**How:** `lib/bill-units.ts` + `lib/claim-units.ts` with pool validation; split/progress/API updated for unit IDs; `useOwerSession` + 30s payer poll with `payerViewSignature` silent refresh; 41 tests, build verified.
+
+**Details:** [milestones/12-split-polish.md](./milestones/12-split-polish.md)
 
 ## In progress work log
 

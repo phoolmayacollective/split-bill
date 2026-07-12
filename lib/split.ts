@@ -1,3 +1,10 @@
+import {
+  expandBillItems,
+  formatUnitLabel,
+  normalizeClaimsToUnits,
+  countUnitsForItem,
+  type BillUnit,
+} from "@/lib/bill-units";
 import type { BillItem, BillTotals } from "@/lib/database.types";
 import { getLineSplitLabel } from "@/lib/item-split-display";
 
@@ -31,11 +38,7 @@ function roundMoney(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
 
-function itemCost(item: BillItem): number {
-  return item.price * item.qty;
-}
-
-function groupClaimsByItem(claims: SplitClaim[]): Map<string, SplitClaim[]> {
+function groupClaimsByUnit(claims: SplitClaim[]): Map<string, SplitClaim[]> {
   const map = new Map<string, SplitClaim[]>();
 
   for (const claim of claims) {
@@ -71,21 +74,8 @@ function allocateTaxOrTip(
   return distributeProportionally(pool, owerSubtotals);
 }
 
-function claimLineAmount(
-  item: BillItem,
-  claim: SplitClaim,
-  totalShare: number,
-): number {
-  if (item.qty > 1) {
-    return roundMoney(item.price * claim.share);
-  }
-
-  const cost = itemCost(item);
-  return roundMoney((cost * claim.share) / totalShare);
-}
-
-function formatItemLineName(item: BillItem): string {
-  return item.name;
+function claimLineAmount(unit: BillUnit, claim: SplitClaim): number {
+  return roundMoney(unit.price * claim.share);
 }
 
 function distributeProportionally(
@@ -128,40 +118,41 @@ function distributeProportionally(
 }
 
 /**
- * Compute per-ower amounts from bill items, tax/tip totals, and item claims.
- * Unclaimed items are excluded. Shared items split by claim share weights.
+ * Compute per-ower amounts from bill items, tax/tip totals, and unit claims.
+ * Each claim share is a fraction of one unit (e.g. 1/3 = 0.3333).
  */
 export function calculateSplits(input: {
   items: BillItem[];
   totals: BillTotals;
   claims: SplitClaim[];
 }): OwerSplitResult[] {
+  const units = expandBillItems(input.items);
+  const unitsById = new Map(units.map((unit) => [unit.id, unit]));
   const itemsById = new Map(input.items.map((item) => [item.id, item]));
-  const claimsByItem = groupClaimsByItem(input.claims);
+  const normalizedClaims = normalizeClaimsToUnits(input.claims, input.items);
+  const claimsByUnit = groupClaimsByUnit(normalizedClaims);
 
   const owerSubtotals = new Map<string, number>();
   const owerLines = new Map<string, OwerItemLine[]>();
 
-  for (const [itemId, itemClaims] of claimsByItem) {
-    const item = itemsById.get(itemId);
-    if (!item) {
+  for (const [unitId, unitClaims] of claimsByUnit) {
+    const unit = unitsById.get(unitId);
+    if (!unit) {
       continue;
     }
 
-    const totalShare = itemClaims.reduce((sum, claim) => sum + claim.share, 0);
+    const parent = itemsById.get(unit.parentItemId);
+    const unitCount = parent ? countUnitsForItem(parent) : 1;
+    const lineName = formatUnitLabel(unit, unitCount);
 
-    if (totalShare <= 0) {
-      continue;
-    }
-
-    for (const claim of itemClaims) {
-      const amount = claimLineAmount(item, claim, totalShare);
+    for (const claim of unitClaims) {
+      const amount = claimLineAmount(unit, claim);
       const lines = owerLines.get(claim.ower_name) ?? [];
       lines.push({
-        item_id: item.id,
-        item_name: formatItemLineName(item),
+        item_id: unit.id,
+        item_name: lineName,
         amount,
-        split_label: getLineSplitLabel(item, claim, itemClaims),
+        split_label: getLineSplitLabel(unit, claim, unitClaims),
       });
       owerLines.set(claim.ower_name, lines);
 

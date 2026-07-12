@@ -1,5 +1,6 @@
 import { toPublicBill } from "@/lib/api/bills";
 import { createClaimsSchema } from "@/lib/api/schemas";
+import { getUnitIds } from "@/lib/bill-units";
 import { validateClaimQuantities } from "@/lib/claim-units";
 import { jsonError, jsonResponse, parseBillId, parseJsonBody } from "@/lib/api/http";
 import {
@@ -33,10 +34,10 @@ export async function POST(
     }
 
     const normalized = normalizeBill(bill);
-    const itemIds = new Set(normalized.items.map((item) => item.id));
+    const unitIds = getUnitIds(normalized.items);
     const invalidItemIds = parsedBody.data.claims
       .map((claim) => claim.item_id)
-      .filter((itemId) => !itemIds.has(itemId));
+      .filter((itemId) => !unitIds.has(itemId));
 
     if (invalidItemIds.length > 0) {
       return jsonError("One or more item ids do not exist on this bill", 400, {

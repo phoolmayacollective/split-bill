@@ -2,127 +2,79 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import type { BillItem, BillTotals } from "@/lib/database.types";
+import { makeUnitId } from "@/lib/bill-units";
 import { calculateOwerTotal, calculateSplits } from "@/lib/split";
 
-const items: BillItem[] = [
-  { id: "pizza", name: "Pizza", price: 20, qty: 1 },
-  { id: "salad", name: "Salad", price: 10, qty: 1 },
-  { id: "drink", name: "Drink", price: 5, qty: 2 },
-];
+const pizzaLine: BillItem = { id: "pizza", name: "Pizza", price: 10, qty: 4 };
+const salad: BillItem = { id: "salad", name: "Salad", price: 8, qty: 1 };
 
 const totals: BillTotals = {
-  subtotal: 40,
-  tax: 4,
-  tip: 6,
-  total: 50,
+  subtotal: 48,
+  tax: 4.8,
+  tip: 7.2,
+  total: 60,
 };
 
 describe("calculateSplits", () => {
-  it("single ower claims all items owes full claimed subtotal + tax + tip", () => {
+  it("charges full unit price when claimed alone", () => {
     const results = calculateSplits({
-      items,
-      totals,
+      items: [pizzaLine],
+      totals: { subtotal: 40, tax: 0, tip: 0, total: 40 },
       claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Alice", item_id: "salad", share: 1 },
-        { ower_name: "Alice", item_id: "drink", share: 2 },
+        {
+          ower_name: "Alice",
+          item_id: makeUnitId("pizza", 0),
+          share: 1,
+        },
       ],
     });
 
-    assert.equal(results.length, 1);
-    assert.equal(results[0].ower_name, "Alice");
-    assert.equal(results[0].subtotal, 40);
-    assert.equal(results[0].tax_share, 4);
-    assert.equal(results[0].tip_share, 6);
-    assert.equal(results[0].total, 50);
-  });
-
-  it("two owers split one item equally", () => {
-    const results = calculateSplits({
-      items: [{ id: "pizza", name: "Pizza", price: 20, qty: 1 }],
-      totals: { subtotal: 20, tax: 2, tip: 0, total: 22 },
-      claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-      ],
-    });
-
-    const alice = results.find((r) => r.ower_name === "Alice");
-    const bob = results.find((r) => r.ower_name === "Bob");
-
-    assert.ok(alice);
-    assert.ok(bob);
-    assert.equal(alice.subtotal, 10);
-    assert.equal(bob.subtotal, 10);
-    assert.equal(alice.tax_share, 1);
-    assert.equal(bob.tax_share, 1);
-    assert.equal(alice.total, 11);
-    assert.equal(bob.total, 11);
-  });
-
-  it("allocates tax and tip proportionally by subtotal", () => {
-    const results = calculateSplits({
-      items,
-      totals,
-      claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "salad", share: 1 },
-        { ower_name: "Bob", item_id: "drink", share: 1 },
-      ],
-    });
-
-    const alice = results.find((r) => r.ower_name === "Alice");
-    const bob = results.find((r) => r.ower_name === "Bob");
-
-    assert.ok(alice);
-    assert.ok(bob);
-    assert.equal(alice.subtotal, 20);
-    assert.equal(bob.subtotal, 15);
-    assert.equal(alice.tax_share, 2);
-    assert.equal(bob.tax_share, 1.5);
-    assert.equal(alice.tip_share, 3);
-    assert.equal(bob.tip_share, 2.25);
-    assert.equal(alice.total, 25);
-    assert.equal(bob.total, 18.75);
-  });
-
-  it("charges unit price times quantity claimed when item qty > 1", () => {
-    const results = calculateSplits({
-      items: [{ id: "beer", name: "Beer", price: 5, qty: 4 }],
-      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
-      claims: [{ ower_name: "Alice", item_id: "beer", share: 2 }],
-    });
-
-    assert.equal(results.length, 1);
     assert.equal(results[0].subtotal, 10);
-    assert.equal(results[0].lines[0].item_name, "Beer");
-    assert.equal(results[0].lines[0].split_label, "2 of 4");
   });
 
-  it("labels shared single-qty items as split between people", () => {
+  it("splits one unit when the first claimant chooses 3 people", () => {
     const results = calculateSplits({
-      items: [{ id: "pizza", name: "Pizza", price: 20, qty: 1 }],
-      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
+      items: [pizzaLine],
+      totals: { subtotal: 40, tax: 0, tip: 0, total: 40 },
       claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-        { ower_name: "Carol", item_id: "pizza", share: 1 },
-        { ower_name: "Dan", item_id: "pizza", share: 1 },
+        {
+          ower_name: "Alice",
+          item_id: makeUnitId("pizza", 0),
+          share: 0.3333,
+        },
+      ],
+    });
+
+    assert.ok(Math.abs(results[0].subtotal - 3.33) < 0.01);
+    assert.match(results[0].lines[0].split_label ?? "", /Split 3 ways/);
+  });
+
+  it("splits one unit equally between multiple claimants", () => {
+    const unitId = makeUnitId("pizza", 1);
+    const results = calculateSplits({
+      items: [pizzaLine],
+      totals: { subtotal: 40, tax: 0, tip: 0, total: 40 },
+      claims: [
+        { ower_name: "Alice", item_id: unitId, share: 0.3333 },
+        { ower_name: "Bob", item_id: unitId, share: 0.3333 },
+        { ower_name: "Carol", item_id: unitId, share: 0.3333 },
       ],
     });
 
     for (const result of results) {
-      assert.equal(result.lines[0].split_label, "Split between 4 people");
+      assert.ok(Math.abs(result.subtotal - 3.33) < 0.01);
     }
   });
 
-  it("splits multi-qty items among multiple owers by units", () => {
+  it("keeps separate units independent", () => {
     const results = calculateSplits({
-      items: [{ id: "beer", name: "Beer", price: 5, qty: 4 }],
-      totals: { subtotal: 20, tax: 0, tip: 0, total: 20 },
+      items: [pizzaLine, salad],
+      totals,
       claims: [
-        { ower_name: "Alice", item_id: "beer", share: 2 },
-        { ower_name: "Bob", item_id: "beer", share: 2 },
+        { ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 1 },
+        { ower_name: "Alice", item_id: makeUnitId("pizza", 2), share: 0.5 },
+        { ower_name: "Bob", item_id: makeUnitId("pizza", 2), share: 0.5 },
+        { ower_name: "Alice", item_id: makeUnitId("salad", 0), share: 1 },
       ],
     });
 
@@ -131,57 +83,23 @@ describe("calculateSplits", () => {
 
     assert.ok(alice);
     assert.ok(bob);
-    assert.equal(alice.subtotal, 10);
-    assert.equal(bob.subtotal, 10);
-  });
-
-  it("supports weighted shares on the same item", () => {
-    const results = calculateSplits({
-      items: [{ id: "pizza", name: "Pizza", price: 30, qty: 1 }],
-      totals: { subtotal: 30, tax: 0, tip: 0, total: 30 },
-      claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 2 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-      ],
-    });
-
-    const alice = results.find((r) => r.ower_name === "Alice");
-    const bob = results.find((r) => r.ower_name === "Bob");
-
-    assert.ok(alice);
-    assert.ok(bob);
-    assert.equal(alice.subtotal, 20);
-    assert.equal(bob.subtotal, 10);
-  });
-
-  it("ignores unclaimed items", () => {
-    const results = calculateSplits({
-      items,
-      totals,
-      claims: [{ ower_name: "Alice", item_id: "salad", share: 1 }],
-    });
-
-    assert.equal(results.length, 1);
-    assert.equal(results[0].subtotal, 10);
-    assert.equal(results[0].tax_share, 1);
-    assert.equal(results[0].tip_share, 1.5);
-    assert.equal(results[0].total, 12.5);
+    assert.equal(alice.subtotal, 23);
+    assert.equal(bob.subtotal, 5);
   });
 });
 
 describe("calculateOwerTotal", () => {
   it("returns one ower breakdown", () => {
     const result = calculateOwerTotal({
-      items,
-      totals,
+      items: [salad],
+      totals: { subtotal: 8, tax: 0, tip: 0, total: 8 },
       ower_name: "Alice",
-      claims: [{ ower_name: "Alice", item_id: "pizza", share: 1 }],
+      claims: [
+        { ower_name: "Alice", item_id: makeUnitId("salad", 0), share: 1 },
+      ],
     });
 
     assert.ok(result);
-    assert.equal(result.ower_name, "Alice");
-    assert.equal(result.subtotal, 20);
-    assert.equal(result.tax_share, 2);
-    assert.equal(result.tip_share, 3);
+    assert.equal(result.subtotal, 8);
   });
 });

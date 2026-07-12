@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check, Wallet } from "lucide-react";
 
 import { MoneyAmount } from "@/components/bill/money-amount";
@@ -28,7 +27,7 @@ import {
   decryptPaymentDetails,
   type PaymentDetails,
 } from "@/lib/crypto";
-import { getOwerName } from "@/lib/ower-session";
+import { useOwerSession } from "@/lib/use-ower-session";
 import { buildPayerAuthHeaders } from "@/lib/payer-password";
 import type { OwerSummary } from "@/lib/split";
 import { cn } from "@/lib/utils";
@@ -70,8 +69,7 @@ function hasEncryptedPayment(
 }
 
 export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
-  const router = useRouter();
-  const owerName = useMemo(() => getOwerName(billId), [billId]);
+  const { ready, owerName } = useOwerSession(billId);
   const [summary, setSummary] = useState<OwerSummary | null>(null);
   const [encryptedBill, setEncryptedBill] = useState<PublicBill | null>(null);
   const [paymentState, setPaymentState] = useState<PaymentState>({
@@ -108,8 +106,7 @@ export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
   );
 
   useEffect(() => {
-    if (!owerName) {
-      router.replace(`/bill/${billId}/name`);
+    if (!ready || !owerName) {
       return;
     }
 
@@ -175,7 +172,7 @@ export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
     }
 
     void loadData();
-  }, [billId, owerName, router, tryDecrypt]);
+  }, [billId, owerName, ready, tryDecrypt]);
 
   function handlePasswordSubmit(password: string) {
     if (!hasEncryptedPayment(encryptedBill)) {
@@ -224,7 +221,7 @@ export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
 
   const showStickyPaid = Boolean(summary && !summary.paid_at);
 
-  if (!owerName) {
+  if (!ready || !owerName) {
     return (
       <PageShell centered>
         <LoadingState message="Loading…" />

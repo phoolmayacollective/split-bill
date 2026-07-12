@@ -1,12 +1,16 @@
+import {
+  splitCountFromShare,
+  type BillUnit,
+} from "@/lib/bill-units";
 import type { SplitClaim } from "@/lib/split";
 
 export function getItemClaimantCount(
-  itemId: string,
+  unitId: string,
   claims: SplitClaim[],
 ): number {
   return new Set(
     claims
-      .filter((claim) => claim.item_id === itemId && claim.share > 0)
+      .filter((claim) => claim.item_id === unitId && claim.share > 0)
       .map((claim) => claim.ower_name),
   ).size;
 }
@@ -16,35 +20,35 @@ export function formatSplitBetweenPeople(count: number): string | null {
     return null;
   }
 
-  return `Split between ${count} people`;
+  return `Split ${count} ways`;
 }
 
-export function formatUnitClaimLabel(
-  claimedUnits: number,
-  totalUnits: number,
-): string | null {
-  if (totalUnits <= 1 || claimedUnits <= 0) {
-    return null;
-  }
+export function formatSplitSlotsTaken(
+  claimantCount: number,
+  splitCount: number,
+): string {
+  return `${claimantCount} of ${splitCount} spots claimed`;
+}
 
-  return `${claimedUnits} of ${totalUnits}`;
+export function formatClaimedPercent(claimedFraction: number): string {
+  return `${Math.round(claimedFraction * 100)}% claimed`;
 }
 
 export function getLineSplitLabel(
-  item: { id: string; qty: number },
+  _unit: BillUnit,
   claim: { share: number },
-  itemClaims: SplitClaim[],
+  unitClaims: SplitClaim[],
 ): string | null {
-  const claimantCount = getItemClaimantCount(item.id, itemClaims);
+  const splitCount = splitCountFromShare(claim.share);
+  const peopleLabel = formatSplitBetweenPeople(splitCount);
 
-  if (item.qty > 1) {
-    const unitLabel = formatUnitClaimLabel(claim.share, item.qty);
-    if (unitLabel) {
-      return unitLabel;
-    }
-
-    return formatSplitBetweenPeople(claimantCount);
+  if (!peopleLabel) {
+    return null;
   }
 
-  return formatSplitBetweenPeople(claimantCount);
+  if (unitClaims.length < splitCount) {
+    return `${peopleLabel} · ${formatSplitSlotsTaken(unitClaims.length, splitCount)}`;
+  }
+
+  return peopleLabel;
 }

@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CollectionProgress } from "@/components/bill/collection-progress";
-import { ItemProgressBar } from "@/components/bill/item-progress-bar";
+import { ItemProgressBar, progressLabel } from "@/components/bill/item-progress-bar";
 import { MoneyAmount } from "@/components/bill/money-amount";
 import { StatusBadge } from "@/components/bill/status-badge";
 import { BillPasswordPrompt } from "@/components/bill-password-prompt";
@@ -28,6 +28,7 @@ import {
 import type { BillItem, BillTotals } from "@/lib/database.types";
 import type { ItemProgress } from "@/lib/item-progress";
 import { buildPayerAuthHeaders } from "@/lib/payer-password";
+import { payerViewSignature } from "@/lib/payer-view-signature";
 import type { OwerSummary } from "@/lib/split";
 
 type PayerBillPageProps = {
@@ -47,7 +48,7 @@ type PayerView = {
   };
 };
 
-const POLL_MS = 4_000;
+const POLL_MS = 30_000;
 
 const PAYER_STEPS = [
   { label: "Items" },
@@ -79,6 +80,7 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
   );
   const [isUnlocking, setIsUnlocking] = useState(false);
   const isUnlockedRef = useRef(false);
+  const viewSignatureRef = useRef("");
 
   useEffect(() => {
     isUnlockedRef.current = accessState.status === "unlocked";
@@ -106,43 +108,23 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
     return { ok: true as const, data };
   }, [billId]);
 
-  const loadView = useCallback(async () => {
-    try {
-      const result = await fetchView();
+  const applyView = useCallback((data: PayerView, options?: { silent?: boolean }) => {
+    const signature = payerViewSignature(data);
 
-      if (!result.ok) {
-        if (result.needsPassword) {
-          setAccessState({ status: "needs_password" });
-          setView(null);
-          setError(null);
-          return;
-        }
-
-        setError(result.error ?? "Failed to load bill.");
-        setAccessState({ status: "error" });
-        return;
-      }
-
-      setView(result.data);
-      setAccessState({ status: "unlocked" });
-      setError(null);
-    } catch {
-      setError("Failed to load bill.");
-      setAccessState({ status: "error" });
+    if (options?.silent && signature === viewSignatureRef.current) {
+      return;
     }
-  }, [fetchView]);
 
-  useEffect(() => {
-    syncBillPasswordFromHash(billId);
-    let active = true;
+    viewSignatureRef.current = signature;
+    setView(data);
+    setAccessState({ status: "unlocked" });
+    setError(null);
+  }, []);
 
-    async function initialLoad() {
+  const loadView = useCallback(
+    async (options?: { silent?: boolean }) => {
       try {
         const result = await fetchView();
-
-        if (!active) {
-          return;
-        }
 
         if (!result.ok) {
           if (result.needsPassword) {
@@ -157,41 +139,51 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
           return;
         }
 
-        setView(result.data);
-        setAccessState({ status: "unlocked" });
-        setError(null);
+        applyView(result.data, options);
       } catch {
-        if (active) {
-          setError("Failed to load bill.");
-          setAccessState({ status: "error" });
-        }
+        setError("Failed to load bill.");
+        setAccessState({ status: "error" });
       }
+    },
+    [applyView, fetchView],
+  );
+
+  const loadViewRef = useRef(loadView);
+  loadViewRef.current = loadView;
+
+  useEffect(() => {
+    syncBillPasswordFromHash(billId);
+
+    async function initialLoad() {
+      await loadViewRef.current();
     }
 
     void initialLoad();
 
     const intervalId = window.setInterval(() => {
-      if (!isUnlockedRef.current) {
+      if (
+        !isUnlockedRef.current ||
+        document.visibilityState !== "visible"
+      ) {
         return;
       }
 
-      void loadView();
+      void loadViewRef.current({ silent: true });
     }, POLL_MS);
 
     function handleVisibilityChange() {
       if (document.visibilityState === "visible" && isUnlockedRef.current) {
-        void loadView();
+        void loadViewRef.current({ silent: true });
       }
     }
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      active = false;
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [billId, fetchView, loadView]);
+  }, [billId]);
 
   async function handleUnlock(password: string) {
     setIsUnlocking(true);
@@ -211,6 +203,7 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
       }
 
       setView(result.data);
+      viewSignatureRef.current = payerViewSignature(result.data);
       setAccessState({ status: "unlocked" });
       setError(null);
     } catch {
@@ -333,6 +326,9 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
                     </div>
 
                     <ItemProgressBar progress={progress} />
+                    <p className="text-muted-foreground text-xs">
+                      {progressLabel(progress)}
+                    </p>
 
                     {progress.claimants.length > 0 ? (
                       <ul className="text-muted-foreground space-y-1 text-xs">
@@ -429,7 +425,7 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
             {view.owers.length > 0 ? (
               <p className="text-muted-foreground text-xs">
                 People can also tap &ldquo;I&apos;ve paid&rdquo; on their summary.
-                This page refreshes automatically.
+                Updates every 30 seconds while this tab is open.
               </p>
             ) : null}
           </div>

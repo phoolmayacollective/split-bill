@@ -1,71 +1,33 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { makeUnitId } from "@/lib/bill-units";
 import {
   formatSplitBetweenPeople,
-  formatUnitClaimLabel,
-  getItemClaimantCount,
+  formatSplitSlotsTaken,
   getLineSplitLabel,
 } from "@/lib/item-split-display";
 
 describe("formatSplitBetweenPeople", () => {
-  it("returns null for one or fewer people", () => {
-    assert.equal(formatSplitBetweenPeople(0), null);
-    assert.equal(formatSplitBetweenPeople(1), null);
-  });
-
   it("describes shared items by people count", () => {
-    assert.equal(formatSplitBetweenPeople(4), "Split between 4 people");
-  });
-});
-
-describe("formatUnitClaimLabel", () => {
-  it("describes claimed units out of total", () => {
-    assert.equal(formatUnitClaimLabel(2, 4), "2 of 4");
-    assert.equal(formatUnitClaimLabel(1, 4), "1 of 4");
-  });
-
-  it("returns null for single-unit items", () => {
-    assert.equal(formatUnitClaimLabel(1, 1), null);
-  });
-});
-
-describe("getItemClaimantCount", () => {
-  it("counts distinct claimants on an item", () => {
-    const count = getItemClaimantCount("pizza", [
-      { ower_name: "Alice", item_id: "pizza", share: 1 },
-      { ower_name: "Bob", item_id: "pizza", share: 1 },
-      { ower_name: "Alice", item_id: "salad", share: 1 },
-    ]);
-
-    assert.equal(count, 2);
+    assert.equal(formatSplitBetweenPeople(3), "Split 3 ways");
   });
 });
 
 describe("getLineSplitLabel", () => {
-  it("prefers unit counts for multi-qty items", () => {
+  it("shows open spots while a split is filling up", () => {
     const label = getLineSplitLabel(
-      { id: "beer", qty: 4 },
-      { share: 2 },
-      [
-        { ower_name: "Alice", item_id: "beer", share: 2 },
-        { ower_name: "Bob", item_id: "beer", share: 2 },
-      ],
+      {
+        id: makeUnitId("pizza", 0),
+        parentItemId: "pizza",
+        unitIndex: 0,
+        name: "Pizza",
+        price: 10,
+      },
+      { share: 0.3333 },
+      [{ ower_name: "Alice", item_id: makeUnitId("pizza", 0), share: 0.3333 }],
     );
 
-    assert.equal(label, "2 of 4");
-  });
-
-  it("uses people framing for shared single items", () => {
-    const label = getLineSplitLabel(
-      { id: "pizza", qty: 1 },
-      { share: 1 },
-      [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-      ],
-    );
-
-    assert.equal(label, "Split between 2 people");
+    assert.equal(label, `Split 3 ways · ${formatSplitSlotsTaken(1, 3)}`);
   });
 });

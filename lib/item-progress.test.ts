@@ -2,68 +2,59 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import type { BillItem } from "@/lib/database.types";
+import { makeUnitId } from "@/lib/bill-units";
 import { calculateItemProgress } from "@/lib/item-progress";
 
-const pizza: BillItem = { id: "pizza", name: "Pizza", price: 30, qty: 1 };
-const beer: BillItem = { id: "beer", name: "Beer", price: 5, qty: 4 };
+const pizza: BillItem = { id: "pizza", name: "Pizza", price: 10, qty: 4 };
 
 describe("calculateItemProgress", () => {
-  it("marks unclaimed items as 0% with unclaimed status", () => {
+  it("tracks each unit separately", () => {
     const results = calculateItemProgress({
       items: [pizza],
-      claims: [],
+      claims: [
+        {
+          ower_name: "Alice",
+          item_id: makeUnitId("pizza", 0),
+          share: 0.3333,
+        },
+      ],
       paidOwerNames: new Set(),
     });
 
-    assert.equal(results.length, 1);
+    assert.equal(results.length, 4);
+    assert.equal(results[0].percent_claimed, 33);
     assert.equal(results[0].percent_paid, 0);
-    assert.equal(results[0].status, "unclaimed");
-    assert.equal(results[0].claimants.length, 0);
+    assert.equal(results[0].status, "pending");
+    assert.equal(results[1].status, "unclaimed");
   });
 
-  it("shows 33% when one of three equal sharers has paid", () => {
+  it("shows paid progress as a fraction of the unit", () => {
+    const unitId = makeUnitId("pizza", 0);
     const results = calculateItemProgress({
       items: [pizza],
       claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-        { ower_name: "Carol", item_id: "pizza", share: 1 },
+        { ower_name: "Alice", item_id: unitId, share: 0.3333 },
+        { ower_name: "Bob", item_id: unitId, share: 0.3333 },
+        { ower_name: "Carol", item_id: unitId, share: 0.3333 },
       ],
       paidOwerNames: new Set(["Alice"]),
     });
 
+    assert.equal(results[0].percent_claimed, 100);
     assert.equal(results[0].percent_paid, 33);
     assert.equal(results[0].status, "pending");
-    assert.equal(results[0].paid_share, 1);
-    assert.equal(results[0].claimed_share, 3);
   });
 
-  it("marks item settled when every claimant has paid", () => {
+  it("marks a unit settled when fully claimed and paid", () => {
+    const unitId = makeUnitId("pizza", 1);
     const results = calculateItemProgress({
       items: [pizza],
-      claims: [
-        { ower_name: "Alice", item_id: "pizza", share: 1 },
-        { ower_name: "Bob", item_id: "pizza", share: 1 },
-      ],
-      paidOwerNames: new Set(["Alice", "Bob"]),
-    });
-
-    assert.equal(results[0].percent_paid, 100);
-    assert.equal(results[0].status, "settled");
-  });
-
-  it("tracks multi-qty items by claimed units", () => {
-    const results = calculateItemProgress({
-      items: [beer],
-      claims: [
-        { ower_name: "Alice", item_id: "beer", share: 2 },
-        { ower_name: "Bob", item_id: "beer", share: 2 },
-      ],
+      claims: [{ ower_name: "Alice", item_id: unitId, share: 1 }],
       paidOwerNames: new Set(["Alice"]),
     });
 
-    assert.equal(results[0].percent_paid, 50);
-    assert.equal(results[0].claimed_share, 4);
-    assert.equal(results[0].paid_share, 2);
+    assert.equal(results[1].percent_claimed, 100);
+    assert.equal(results[1].percent_paid, 100);
+    assert.equal(results[1].status, "settled");
   });
 });

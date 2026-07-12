@@ -16,15 +16,17 @@ import { StepIndicator } from "@/components/layout/step-indicator";
 import { StickyActionBar } from "@/components/layout/sticky-action-bar";
 import { MoneyAmount } from "@/components/bill/money-amount";
 import { Button } from "@/components/ui/button";
+import { expandBillItems } from "@/lib/bill-units";
 import {
-  claimsMatchQuantities,
-  getOwerClaimQuantities,
+  claimsMatchDraft,
+  draftToQuantities,
+  getOwerClaimDraft,
   hasAnyClaim,
   toClaimPayload,
-  validateClaimQuantities,
+  validateClaimDraft,
 } from "@/lib/claim-units";
 import type { BillItem, BillTotals } from "@/lib/database.types";
-import { getOwerName } from "@/lib/ower-session";
+import { useOwerSession } from "@/lib/use-ower-session";
 import type { SplitClaim } from "@/lib/split";
 
 const OWER_STEPS = [
@@ -47,27 +49,27 @@ export function OwerItemsPage({
   existingClaims,
 }: OwerItemsPageProps) {
   const router = useRouter();
-  const owerName = useMemo(() => getOwerName(billId), [billId]);
-  const [claimQuantities, setClaimQuantities] = useState(() => {
-    const name = getOwerName(billId);
-    return name ? getOwerClaimQuantities(name, existingClaims) : {};
-  });
+  const units = useMemo(() => expandBillItems(items), [items]);
+  const { ready, owerName } = useOwerSession(billId);
+  const [claimDraft, setClaimDraft] = useState<ReturnType<typeof getOwerClaimDraft>>({});
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!owerName) {
-      router.replace(`/bill/${billId}/name`);
+    if (!ready || !owerName) {
+      return;
     }
-  }, [billId, owerName, router]);
+
+    setClaimDraft(getOwerClaimDraft(owerName, units, existingClaims));
+  }, [existingClaims, owerName, ready, units]);
 
   const runningTotal = useOwerPreviewTotal(
     items,
     totals,
     owerName ?? "",
     existingClaims,
-    claimQuantities,
+    claimDraft,
   );
 
   const hasChanges = useMemo(() => {
@@ -75,10 +77,10 @@ export function OwerItemsPage({
       return false;
     }
 
-    return !claimsMatchQuantities(existingClaims, owerName, claimQuantities);
-  }, [claimQuantities, existingClaims, owerName]);
+    return !claimsMatchDraft(existingClaims, owerName, units, claimDraft);
+  }, [claimDraft, existingClaims, owerName, units]);
 
-  const hasSelection = hasAnyClaim(claimQuantities);
+  const hasSelection = hasAnyClaim(claimDraft);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,11 +95,11 @@ export function OwerItemsPage({
       return;
     }
 
-    const validationError = validateClaimQuantities(
+    const validationError = validateClaimDraft(
       items,
       existingClaims,
       owerName,
-      claimQuantities,
+      claimDraft,
     );
 
     if (validationError) {
@@ -114,7 +116,7 @@ export function OwerItemsPage({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ower_name: owerName,
-            claims: toClaimPayload(claimQuantities),
+            claims: toClaimPayload(draftToQuantities(claimDraft)),
           }),
         });
 
@@ -135,7 +137,7 @@ export function OwerItemsPage({
     }
   }
 
-  if (!owerName) {
+  if (!ready || !owerName) {
     return (
       <PageShell centered>
         <LoadingState message="Loading…" />
@@ -156,14 +158,14 @@ export function OwerItemsPage({
       <PageShell withStickyFooter>
         <PageHeader
           title="Claim your items"
-          description={`Hi ${owerName} — check everything you're paying for.`}
+          description={`Hi ${owerName} — pick what you had and how you split it.`}
           backHref={`/bill/${billId}/name`}
           backLabel="Change name"
         />
 
         <StepIndicator steps={OWER_STEPS} currentStep={2} />
 
-        <BillContextCard itemCount={items.length} totals={totals} />
+        <BillContextCard itemCount={units.length} totals={totals} />
 
         <form id="ower-claims-form" onSubmit={handleSubmit}>
           <OwerItemPicker
@@ -171,8 +173,8 @@ export function OwerItemsPage({
             totals={totals}
             owerName={owerName}
             existingClaims={existingClaims}
-            claimQuantities={claimQuantities}
-            onClaimQuantitiesChange={setClaimQuantities}
+            claimDraft={claimDraft}
+            onClaimDraftChange={setClaimDraft}
           />
 
           {error ? (

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/item-split-display.test.ts"
+    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/bill-units.test.ts lib/claim-units.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/item-split-display.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
