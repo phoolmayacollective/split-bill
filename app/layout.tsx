@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 
 import { DemoPersonaBanner } from "@/components/demo-persona-banner";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { isDemoModeEnabled } from "@/lib/demo-mode";
 import "./globals.css";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
           </Suspense>
         ) : null}
         {children}
+        <SiteFooter />
       </body>
     </html>
   );
