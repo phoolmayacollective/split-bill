@@ -12,16 +12,27 @@ import { normalizeParticipants } from "@/lib/participants";
 type ParticipantListEditorProps = {
   participants: string[];
   onChange: (participants: string[]) => void;
+  /** Registered usernames from the signed-in payer's circle */
+  circleMembers?: string[];
 };
 
 export function ParticipantListEditor({
   participants,
   onChange,
+  circleMembers = [],
 }: ParticipantListEditorProps) {
   const [draft, setDraft] = useState("");
 
-  function addParticipant() {
-    const next = normalizeParticipants([...participants, draft]);
+  const availableCircleMembers = circleMembers.filter(
+    (name) =>
+      !participants.some(
+        (participant) => participant.toLowerCase() === name.toLowerCase(),
+      ),
+  );
+
+  function addParticipant(name?: string) {
+    const nextName = name ?? draft;
+    const next = normalizeParticipants([...participants, nextName]);
     if (next.length === participants.length) {
       setDraft("");
       return;
@@ -62,6 +73,29 @@ export function ParticipantListEditor({
         </div>
       ) : null}
 
+      {availableCircleMembers.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-muted-foreground text-sm">
+            Quick add from your circle
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {availableCircleMembers.map((name) => (
+              <Button
+                key={name}
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                onClick={() => addParticipant(name)}
+              >
+                <Plus />
+                {name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex gap-2">
         <div className="min-w-0 flex-1 space-y-2">
           <Label htmlFor="participant-name" className="sr-only">
@@ -84,7 +118,7 @@ export function ParticipantListEditor({
           type="button"
           variant="outline"
           className="mt-auto shrink-0"
-          onClick={addParticipant}
+          onClick={() => addParticipant()}
           disabled={!draft.trim()}
         >
           <Plus />

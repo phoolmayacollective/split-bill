@@ -15,9 +15,10 @@ import { EuroAmount, QtyControls } from "@/components/restaurant/menu-controls";
 import { MenuSearchFilter } from "@/components/restaurant/menu-search-filter";
 import { MenuSearchHighlight } from "@/components/restaurant/menu-search-highlight";
 import { ParticipantListEditor } from "@/components/participant-list-editor";
+import { usePayerCircle } from "@/hooks/use-payer-circle";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import {
   buildTotals,
@@ -622,6 +623,7 @@ function EuroBreakdown({ lines, total }: EuroBreakdownProps) {
 
 export function DalbhatBillForm() {
   const router = useRouter();
+  const { circleMembers } = usePayerCircle();
   const [cart, setCart] = useState<CartLine[]>([]);
   const [participants, setParticipants] = useState<string[]>([]);
   const [tax, setTax] = useState(0);
@@ -919,44 +921,25 @@ export function DalbhatBillForm() {
           <ParticipantListEditor
             participants={participants}
             onChange={setParticipants}
+            circleMembers={circleMembers}
           />
 
           <SectionCard title="Tax & tip">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="dalbhat-tax">Tax</Label>
-                <Input
+                <NumericInput
                   id="dalbhat-tax"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step="0.01"
                   value={tax}
-                  onChange={(event) =>
-                    setTax(
-                      event.target.value === ""
-                        ? 0
-                        : Math.max(0, Number(event.target.value)),
-                    )
-                  }
+                  onChange={setTax}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="dalbhat-tip">Tip</Label>
-                <Input
+                <NumericInput
                   id="dalbhat-tip"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step="0.01"
                   value={tip}
-                  onChange={(event) =>
-                    setTip(
-                      event.target.value === ""
-                        ? 0
-                        : Math.max(0, Number(event.target.value)),
-                    )
-                  }
+                  onChange={setTip}
                 />
               </div>
             </div>

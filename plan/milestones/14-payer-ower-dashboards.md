@@ -60,29 +60,29 @@ The app must remain **fully usable as a guest**: create bill → share link → 
 
 ### Dashboard (pending)
 
-- [ ] `GET /api/payer/bills` — list bills for session payer
-- [ ] `/dashboard` or `/me` — payer bill list UI
-- [ ] Landing secondary link: “Sign in” → dashboard (when implemented)
+- [x] `GET /api/payer/bills` — list bills for session payer
+- [x] `/dashboard` — payer bill list UI + sign-in
+- [x] Landing secondary link: “Sign in” → dashboard
 - [ ] Ower bill history (design + implement)
 
 ### Circle data & API (pending)
 
-- [ ] `payer_circle` table — `owner_payer_id`, `member_payer_id`, `created_at`; unique `(owner_payer_id, member_payer_id)`
-- [ ] `GET /api/payer/circle` — list circle members for session payer (return usernames)
-- [ ] `POST /api/payer/circle` — add member by username (validate exists, not self, not duplicate)
-- [ ] `DELETE /api/payer/circle/{memberPayerId}` — remove from circle
+- [x] `payer_circle` table — `owner_payer_id`, `member_payer_id`, `created_at`; unique `(owner_payer_id, member_payer_id)`
+- [x] `GET /api/payer/circle` — list circle members for session payer (return usernames)
+- [x] `POST /api/payer/circle` — add member by username (validate exists, not self, not duplicate)
+- [x] `DELETE /api/payer/circle/{memberPayerId}` — remove from circle
 
 ### Circle & create-flow UI (pending)
 
-- [ ] Circle management section on `/dashboard` or `/me` — list, add-by-username, remove
-- [ ] Empty state copy in friends-app tone (e.g. “People you split with often”)
-- [ ] Fetch circle when signed in on create pages; pass to `ParticipantListEditor`
-- [ ] Circle quick-add chips; skip already-added roster names
-- [ ] Works on manual create and Dal Bhat form (`components/restaurant/dalbhat-bill-form.tsx`)
+- [x] Circle management section on `/dashboard` — list, add-by-username, remove
+- [x] Empty state copy in friends-app tone (e.g. “People you split with often”)
+- [x] Fetch circle when signed in on create pages; pass to `ParticipantListEditor`
+- [x] Circle quick-add chips; skip already-added roster names
+- [x] Works on manual create and Dal Bhat form (`components/restaurant/dalbhat-bill-form.tsx`)
 
 ### Tests (pending)
 
-- [ ] Unit tests for circle validation (self-add, unknown username, dedupe)
+- [x] Unit tests for circle validation (self-add, unknown username, dedupe)
 - [ ] API or integration tests for add/list/remove
 
 ## UX principles
@@ -103,16 +103,16 @@ The app must remain **fully usable as a guest**: create bill → share link → 
 
 ### Dashboard (pending)
 
-- [ ] Payer can sign in later and see linked bills on a dashboard
+- [x] Payer can sign in later and see linked bills on a dashboard
 - [ ] Ower can return to past bills (TBD design)
 
 ### Circle (pending)
 
-- [ ] Signed-in payer with `alex` and `bob` in circle opens create bill → taps both → roster shows `alex`, `bob` without typing
-- [ ] Guest payer (no session) sees no circle UI; free-text roster still works
-- [ ] Adding a non-existent username to circle returns a clear error
-- [ ] Circle member removed from circle no longer appears as quick-add chip on future bills (existing bills unchanged)
-- [ ] Ower name step still works — circle usernames appear as selectable roster chips (reuses M10 `OwerNameForm`)
+- [x] Signed-in payer with `alex` and `bob` in circle opens create bill → taps both → roster shows `alex`, `bob` without typing
+- [x] Guest payer (no session) sees no circle UI; free-text roster still works
+- [x] Adding a non-existent username to circle returns a clear error
+- [x] Circle member removed from circle no longer appears as quick-add chip on future bills (existing bills unchanged)
+- [x] Ower name step still works — circle usernames appear as selectable roster chips (reuses M10 `OwerNameForm`)
 
 ---
 
@@ -134,7 +134,31 @@ The app must remain **fully usable as a guest**: create bill → share link → 
 4. Landing CTA goes directly to bill creation; account save is dismissible with “Continue as guest”.
 5. Verified auth + link API with unit tests and production build.
 
+## What was done (2026-07-12)
+
+| Area | Deliverable |
+|------|-------------|
+| Migration | `006_payer_circle.sql` — one-way saved contacts with self-add guard + unique pair |
+| Circle API | `GET/POST /api/payer/circle`, `DELETE /api/payer/circle/[memberPayerId]` |
+| Bills API | `GET /api/payer/bills`, `GET /api/payer/me` — session-scoped bill list |
+| Dashboard | `/dashboard` — sign-in, linked bill list, circle management, sign-out |
+| Create UX | `ParticipantListEditor` circle quick-add chips; `usePayerCircle` on manual + Dal Bhat |
+| Landing | Secondary “Sign in” CTA → `/dashboard` |
+| Post-save UX | `OptionalSaveAccount` links to dashboard after username save |
+| Tests | `lib/payer-circle.test.ts` — validation (self-add, dedupe, invalid username) |
+
+## How it was done (2026-07-12)
+
+1. Added `payer_circle` migration and `lib/db/payer-circle.ts` helpers (list/add/remove with username join).
+2. Built circle validation in `lib/payer-circle.ts` with unit tests; API routes use `requirePayerSession`.
+3. Added `GET /api/payer/bills` returning bill summaries for the signed-in payer.
+4. Built `PayerDashboardPage` at `/dashboard` — auth form when unsigned, bill list + circle section when signed in.
+5. Extended `ParticipantListEditor` with optional `circleMembers` quick-add chips; wired via `usePayerCircle` hook on create flows.
+6. Updated landing page and `OptionalSaveAccount` success copy to point at the live dashboard.
+7. Verified with `npm test` (61 tests) and `npm run build`.
+
 ## Updates
 
 - **2026-07-11:** Milestone added. Stub shipped: optional post-create username save, no login gate on create. Dashboard UI deferred.
 - **2026-07-12:** Scope expanded — payer circle (one-way saved contacts) + quick-add to participant roster at bill create. Dashboard bill list still pending.
+- **2026-07-12:** Payer dashboard + circle shipped end-to-end. Ower bill history still TBD.

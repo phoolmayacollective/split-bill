@@ -1,6 +1,22 @@
 import type { PayerInsert, PayerRow } from "@/lib/database.types";
 import { createServerSupabaseClient } from "@/lib/supabase";
 
+export async function getPayerById(id: string): Promise<PayerRow | null> {
+  const supabase = createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("payers")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch payer: ${error.message}`);
+  }
+
+  return data;
+}
+
 export async function getPayerByUsername(
   username: string,
 ): Promise<PayerRow | null> {

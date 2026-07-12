@@ -76,6 +76,22 @@ export async function createBill(input: {
   return data;
 }
 
+export async function listBillsByPayerId(payerId: string): Promise<BillRow[]> {
+  const supabase = createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("bills")
+    .select("*")
+    .eq("payer_id", payerId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to list bills: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
 export async function getBillById(id: string): Promise<BillWithClaims | null> {
   const supabase = createServerSupabaseClient();
 

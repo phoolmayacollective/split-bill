@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -26,7 +27,11 @@ export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
     return saved ? (
       <p className="text-muted-foreground text-center text-sm">
         Saved to <span className="text-foreground font-medium">{username}</span>
-        . Your dashboard is coming soon — keep your share link for now.
+        .{" "}
+        <Link href="/dashboard" className="text-foreground font-medium underline">
+          Open your dashboard
+        </Link>{" "}
+        anytime to see this bill.
       </p>
     ) : null;
   }
@@ -89,7 +94,7 @@ export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
   return (
     <SectionCard
       title="Find this bill later? (optional)"
-      description="No account needed to use the app. Pick a username if you want to come back to this bill once dashboards launch."
+      description="No account needed to use the app. Pick a username if you want to come back to this bill later."
       className="border-dashed"
     >
       <Button

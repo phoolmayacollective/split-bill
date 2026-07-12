@@ -83,6 +83,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      payer_circle: {
+        Row: {
+          created_at: string;
+          id: string;
+          member_payer_id: string;
+          owner_payer_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          member_payer_id: string;
+          owner_payer_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          member_payer_id?: string;
+          owner_payer_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payer_circle_member_payer_id_fkey";
+            columns: ["member_payer_id"];
+            isOneToOne: false;
+            referencedRelation: "payers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payer_circle_owner_payer_id_fkey";
+            columns: ["owner_payer_id"];
+            isOneToOne: false;
+            referencedRelation: "payers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       claims: {
         Row: {
           bill_id: string;
@@ -178,6 +214,10 @@ export type BillRow = Database["public"]["Tables"]["bills"]["Row"];
 export type BillInsert = Database["public"]["Tables"]["bills"]["Insert"];
 export type PayerRow = Database["public"]["Tables"]["payers"]["Row"];
 export type PayerInsert = Database["public"]["Tables"]["payers"]["Insert"];
+export type PayerCircleRow =
+  Database["public"]["Tables"]["payer_circle"]["Row"];
+export type PayerCircleInsert =
+  Database["public"]["Tables"]["payer_circle"]["Insert"];
 export type ClaimRow = Database["public"]["Tables"]["claims"]["Row"];
 export type ClaimInsert = Database["public"]["Tables"]["claims"]["Insert"];
 

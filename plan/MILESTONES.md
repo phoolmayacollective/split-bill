@@ -156,9 +156,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ### M14 — Payer & ower account dashboards (started 2026-07-11)
 
-**What:** Optional payer username auth stub — no login gate on create; save username after bill is done; link bill to account for future dashboard and a saved circle of registered usernames for quick participant add at bill create.
+**What:** Optional payer username auth — no login gate on create; save username after bill is done; payer dashboard with linked bills; saved circle of registered usernames for quick participant add at bill create.
 
-**How:** `POST /api/payer/auth` (auto sign-up/sign-in), `payers` table, `OptionalSaveAccount` on payer dashboard, `POST /api/bills/{id}/payer/link`. Create flow primary path is guest → items → payment → share. Planned: `payer_circle` table + circle APIs + dashboard management + `ParticipantListEditor` quick-add chips. Dashboard bill list UI not yet built.
+**How:** Auth stub (2026-07-11): `POST /api/payer/auth`, `payers` table, `OptionalSaveAccount`, bill linking. Dashboard + circle (2026-07-12): `payer_circle` migration, circle CRUD APIs, `/dashboard` UI, `ParticipantListEditor` quick-add chips on manual + Dal Bhat create. Ower bill history still TBD.
 
 **Details:** [milestones/14-payer-ower-dashboards.md](./milestones/14-payer-ower-dashboards.md)
 

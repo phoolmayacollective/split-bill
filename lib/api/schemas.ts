@@ -78,3 +78,9 @@ export const payerAuthSchema = z.object({
 });
 
 export type PayerAuthInput = z.infer<typeof payerAuthSchema>;
+
+export const payerCircleAddSchema = z.object({
+  username: z.string().trim().min(1, "Username is required"),
+});
+
+export type PayerCircleAddInput = z.infer<typeof payerCircleAddSchema>;

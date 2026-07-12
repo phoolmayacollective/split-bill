@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { BillItemEditor } from "@/components/bill-item-editor";
 import { MoneyBreakdown } from "@/components/bill/money-breakdown";
 import { ParticipantListEditor } from "@/components/participant-list-editor";
+import { usePayerCircle } from "@/hooks/use-payer-circle";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
@@ -15,7 +16,7 @@ import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
 import { StickyActionBar } from "@/components/layout/sticky-action-bar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import {
   buildTotals,
@@ -56,6 +57,7 @@ function getItemError(item: BillItem): string | null {
 
 export default function ManualBillPage() {
   const router = useRouter();
+  const { circleMembers } = usePayerCircle();
   const [items, setItems] = useState<BillItem[]>([createEmptyItem()]);
   const [participants, setParticipants] = useState<string[]>([]);
   const [tax, setTax] = useState(0);
@@ -194,45 +196,26 @@ export default function ManualBillPage() {
           <ParticipantListEditor
             participants={participants}
             onChange={setParticipants}
+            circleMembers={circleMembers}
           />
 
           <SectionCard title="Tax & tip">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="bill-tax">Tax</Label>
-                <Input
+                <NumericInput
                   id="bill-tax"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step="0.01"
                   value={tax}
-                  onChange={(event) =>
-                    setTax(
-                      event.target.value === ""
-                        ? 0
-                        : Math.max(0, Number(event.target.value)),
-                    )
-                  }
+                  onChange={setTax}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="bill-tip">Tip</Label>
-                <Input
+                <NumericInput
                   id="bill-tip"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step="0.01"
                   value={tip}
-                  onChange={(event) =>
-                    setTip(
-                      event.target.value === ""
-                        ? 0
-                        : Math.max(0, Number(event.target.value)),
-                    )
-                  }
+                  onChange={setTip}
                 />
               </div>
             </div>

@@ -6,6 +6,7 @@ import { SectionCard } from "@/components/layout/section-card";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { MoneyAmount } from "@/components/bill/money-amount";
 import type { BillItem } from "@/lib/database.types";
@@ -58,42 +59,23 @@ export function BillItemEditor({
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label htmlFor={`item-price-${item.id}`}>Price</Label>
-          <Input
+          <NumericInput
             id={`item-price-${item.id}`}
-            type="number"
-            inputMode="decimal"
-            min="0"
-            step="0.01"
             placeholder="0.00"
-            value={Number.isNaN(item.price) ? "" : item.price}
-            onChange={(event) =>
-              onChange({
-                ...item,
-                price: event.target.value === "" ? 0 : Number(event.target.value),
-              })
-            }
+            value={item.price}
+            onChange={(price) => onChange({ ...item, price })}
             aria-invalid={invalid && item.price <= 0}
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor={`item-qty-${item.id}`}>Qty</Label>
-          <Input
+          <NumericInput
             id={`item-qty-${item.id}`}
-            type="number"
-            inputMode="numeric"
-            min="1"
-            step="1"
-            value={Number.isNaN(item.qty) ? "" : item.qty}
-            onChange={(event) =>
-              onChange({
-                ...item,
-                qty:
-                  event.target.value === ""
-                    ? 1
-                    : Math.max(1, Number(event.target.value)),
-              })
-            }
+            integer
+            min={1}
+            value={item.qty}
+            onChange={(qty) => onChange({ ...item, qty })}
           />
         </div>
       </div>

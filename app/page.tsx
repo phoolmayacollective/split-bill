@@ -37,6 +37,15 @@ export default function Home() {
         >
           Create a bill
         </Link>
+        <Link
+          href="/dashboard"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "w-full",
+          )}
+        >
+          Sign in
+        </Link>
       </div>
 
       <OpenBillLink />
