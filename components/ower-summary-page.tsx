@@ -10,7 +10,7 @@ import { BillPasswordPrompt } from "@/components/bill-password-prompt";
 import { CopyField } from "@/components/feedback/copy-field";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
@@ -233,7 +233,7 @@ export function OwerSummaryPage({ billId }: OwerSummaryPageProps) {
   return (
     <>
       <PageShell centered withStickyFooter={showStickyPaid}>
-        <PageHeader
+        <AppPageHeader
           title={
             summary ? `You owe ${formatMoney(summary.total)}` : "Your summary"
           }

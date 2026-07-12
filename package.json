@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/bill-units.test.ts lib/claim-units.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/payer-circle.test.ts lib/item-split-display.test.ts lib/web-share.test.ts lib/fuzzy-search.test.ts lib/restaurants/dalbhat-menu-search.test.ts",
+    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/bill-units.test.ts lib/claim-units.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/payer-circle.test.ts lib/api/payer-auth.test.ts lib/item-split-display.test.ts lib/web-share.test.ts lib/fuzzy-search.test.ts lib/restaurants/dalbhat-menu-search.test.ts",
     "demo:video": "node scripts/run-demo-video.mjs",
     "demo:video:headed": "playwright test e2e/demo-walkthrough.spec.ts --headed",
     "demo:narration": "node scripts/generate-narration.mjs",

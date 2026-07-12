@@ -1,11 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
 
+import { HomePageActions } from "@/components/home-page-actions";
 import { HowItWorks } from "@/components/how-it-works";
 import { OpenBillLink } from "@/components/open-bill-link";
-import { buttonVariants } from "@/components/ui/button";
 import { PageShell } from "@/components/layout/page-shell";
-import { cn } from "@/lib/utils";
 
 export default function Home() {
   return (
@@ -30,23 +28,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="flex w-full flex-col gap-3">
-        <Link
-          href="/create/manual"
-          className={cn(buttonVariants({ size: "lg" }), "shadow-card w-full")}
-        >
-          Create a bill
-        </Link>
-        <Link
-          href="/dashboard"
-          className={cn(
-            buttonVariants({ variant: "outline", size: "lg" }),
-            "w-full",
-          )}
-        >
-          Sign in
-        </Link>
-      </div>
+      <HomePageActions />
 
       <OpenBillLink />
 

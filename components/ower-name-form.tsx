@@ -7,7 +7,7 @@ import { User } from "lucide-react";
 import { BillContextCard } from "@/components/bill/bill-context-card";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { StepIndicator } from "@/components/layout/step-indicator";
 import { Button } from "@/components/ui/button";
@@ -109,7 +109,7 @@ export function OwerNameForm({
 
   return (
     <PageShell>
-      <PageHeader
+      <AppPageHeader
         title="What's your name?"
         description={
           hasRoster

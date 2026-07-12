@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Lock, RefreshCw } from "lucide-react";
 
 import { ErrorMessage } from "@/components/feedback/error-message";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
@@ -104,7 +104,7 @@ export function PaymentForm({ billId }: PaymentFormProps) {
   return (
     <>
       <PageShell withStickyFooter>
-        <PageHeader
+        <AppPageHeader
           title="Payment details"
           description="Add how owers should pay you. Details are encrypted in your browser before anything is saved."
           backHref="/create"

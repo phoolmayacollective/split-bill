@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 
-import { BackLink } from "@/components/layout/back-link";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { buttonVariants } from "@/components/ui/button";
@@ -135,18 +135,16 @@ const SECTIONS: FeatureSection[] = [
 export default function FeaturesPage() {
   return (
     <PageShell wide className="pb-12">
-      <BackLink href="/" label="Home" />
-
-      <header className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          How Split Bill works
-        </h1>
-        <p className="text-muted-foreground text-lg leading-relaxed">
-          A shared dinner should not end in spreadsheet math. Split Bill walks
-          your group from receipt to settled — create once, share a link, and
-          let everyone claim what they owe.
-        </p>
-      </header>
+      <AppPageHeader
+        title="How Split Bill works"
+        description={
+          <>
+            A shared dinner should not end in spreadsheet math. Split Bill walks
+            your group from receipt to settled — create once, share a link, and
+            let everyone claim what they owe.
+          </>
+        }
+      />
 
       <SectionCard highlight className="overflow-hidden p-0">
         <div className="bg-muted/30 p-4 sm:p-5">

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { DemoPersonaBanner } from "@/components/demo-persona-banner";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { PayerSessionProvider } from "@/components/payer-session-provider";
 import { isDemoModeEnabled } from "@/lib/demo-mode";
 import "./globals.css";
 
@@ -46,8 +47,10 @@ export default function RootLayout({
             <DemoPersonaBanner />
           </Suspense>
         ) : null}
-        {children}
-        <SiteFooter />
+        <PayerSessionProvider>
+          {children}
+          <SiteFooter />
+        </PayerSessionProvider>
       </body>
     </html>
   );

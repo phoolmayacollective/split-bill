@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { UtensilsCrossed } from "lucide-react";
 
 import { ErrorMessage } from "@/components/feedback/error-message";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
@@ -691,7 +691,7 @@ export function DalbhatBillForm() {
   return (
     <>
       <PageShell withStickyFooter wide>
-        <PageHeader
+        <AppPageHeader
           title={dalbhatMenu.restaurant}
           description="Select items from the menu to create a split bill."
           icon={

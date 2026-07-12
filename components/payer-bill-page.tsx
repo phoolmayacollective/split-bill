@@ -16,7 +16,7 @@ import {
   LoadingSkeleton,
   LoadingState,
 } from "@/components/feedback/loading-state";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
@@ -256,11 +256,9 @@ export function PayerBillPage({ billId }: PayerBillPageProps) {
 
   return (
     <PageShell wide>
-      <PageHeader
+      <AppPageHeader
         title="Your bill"
         description="Track who has claimed items and who has paid you back."
-        backHref="/"
-        backLabel="Home"
       />
 
       <StepIndicator steps={PAYER_STEPS} currentStep={3} />

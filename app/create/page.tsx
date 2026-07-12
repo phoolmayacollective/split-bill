@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Camera, PenLine } from "lucide-react";
 
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { StepIndicator } from "@/components/layout/step-indicator";
 import { SectionCard } from "@/components/layout/section-card";
@@ -23,11 +23,9 @@ const PAYER_STEPS = [
 export default function CreatePage() {
   return (
     <PageShell>
-      <PageHeader
+      <AppPageHeader
         title="Create a bill"
         description="Add your items, set up payment, then share the link."
-        backHref="/"
-        backLabel="Home"
       />
 
       <StepIndicator steps={PAYER_STEPS} currentStep={1} />

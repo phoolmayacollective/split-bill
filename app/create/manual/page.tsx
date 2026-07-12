@@ -10,7 +10,7 @@ import { MoneyBreakdown } from "@/components/bill/money-breakdown";
 import { ParticipantListEditor } from "@/components/participant-list-editor";
 import { usePayerCircle } from "@/hooks/use-payer-circle";
 import { ErrorMessage } from "@/components/feedback/error-message";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
@@ -157,7 +157,7 @@ export default function ManualBillPage() {
   return (
     <>
       <PageShell withStickyFooter>
-        <PageHeader
+        <AppPageHeader
           title="Add bill items"
           description="Enter each line item. You'll add payment details on the next step."
           backHref="/create"

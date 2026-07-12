@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { SectionCard } from "@/components/layout/section-card";
+import { usePayerSession } from "@/components/payer-session-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ type OptionalSaveAccountProps = {
 };
 
 export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
+  const { isLoggedIn, isLoading, refresh } = usePayerSession();
   const [dismissed, setDismissed] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +25,16 @@ export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  if (dismissed || saved) {
-    return saved ? (
+  if (isLoading) {
+    return null;
+  }
+
+  if (dismissed) {
+    return null;
+  }
+
+  if (saved) {
+    return (
       <p className="text-muted-foreground text-center text-sm">
         Saved to <span className="text-foreground font-medium">{username}</span>
         .{" "}
@@ -33,7 +43,11 @@ export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
         </Link>{" "}
         anytime to see this bill.
       </p>
-    ) : null;
+    );
+  }
+
+  if (isLoggedIn) {
+    return null;
   }
 
   async function handleSave(event: React.FormEvent<HTMLFormElement>) {
@@ -84,6 +98,7 @@ export function OptionalSaveAccount({ billId }: OptionalSaveAccountProps) {
       }
 
       setSaved(true);
+      await refresh();
     } catch {
       setError("Something went wrong. Try again.");
     } finally {

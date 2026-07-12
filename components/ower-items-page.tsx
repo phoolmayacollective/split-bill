@@ -10,7 +10,7 @@ import {
 } from "@/components/ower-item-picker";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { StepIndicator } from "@/components/layout/step-indicator";
 import { StickyActionBar } from "@/components/layout/sticky-action-bar";
@@ -156,7 +156,7 @@ export function OwerItemsPage({
   return (
     <>
       <PageShell withStickyFooter>
-        <PageHeader
+        <AppPageHeader
           title="Claim your items"
           description={`Hi ${owerName} — pick what you had and how you split it.`}
           backHref={`/bill/${billId}/name`}

@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Eye, EyeOff, LogOut, Plus, Receipt, UserMinus } from "lucide-react";
+import { Eye, EyeOff, Plus, Receipt, UserMinus } from "lucide-react";
 
 import { ErrorMessage } from "@/components/feedback/error-message";
-import { PageHeader } from "@/components/layout/page-header";
+import { AppPageHeader } from "@/components/layout/app-page-header";
 import { PageShell } from "@/components/layout/page-shell";
+import { PayerHeaderTrailing } from "@/components/layout/payer-header-trailing";
 import { SectionCard } from "@/components/layout/section-card";
+import { usePayerSession } from "@/components/payer-session-provider";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,10 +44,10 @@ function formatBillDate(iso: string): string {
 }
 
 export function PayerDashboardPage() {
-  const [payer, setPayer] = useState<PayerInfo | null>(null);
+  const { payer, isLoading: isSessionLoading, refresh } = usePayerSession();
   const [bills, setBills] = useState<BillSummary[]>([]);
   const [circle, setCircle] = useState<CircleMember[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingBills, setIsLoadingBills] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [username, setUsername] = useState("");
@@ -64,7 +66,6 @@ export function PayerDashboardPage() {
 
     const response = await fetch("/api/payer/bills");
     if (response.status === 401) {
-      setPayer(null);
       setBills([]);
       setCircle([]);
       return;
@@ -80,7 +81,6 @@ export function PayerDashboardPage() {
       bills: BillSummary[];
     };
 
-    setPayer(data.payer);
     setBills(data.bills);
 
     const circleResponse = await fetch("/api/payer/circle");
@@ -93,9 +93,14 @@ export function PayerDashboardPage() {
   }, []);
 
   useEffect(() => {
+    if (isSessionLoading || !payer) {
+      return;
+    }
+
     let cancelled = false;
 
     async function init() {
+      setIsLoadingBills(true);
       try {
         await loadDashboard();
       } catch (loadError) {
@@ -108,7 +113,7 @@ export function PayerDashboardPage() {
         }
       } finally {
         if (!cancelled) {
-          setIsLoading(false);
+          setIsLoadingBills(false);
         }
       }
     }
@@ -118,7 +123,7 @@ export function PayerDashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [loadDashboard]);
+  }, [isSessionLoading, payer, loadDashboard]);
 
   async function handleSignIn(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -143,23 +148,15 @@ export function PayerDashboardPage() {
       }
 
       setPassword("");
-      setIsLoading(true);
+      setIsLoadingBills(true);
+      await refresh();
       await loadDashboard();
     } catch {
       setSignInError("Something went wrong. Try again.");
     } finally {
       setIsSigningIn(false);
-      setIsLoading(false);
+      setIsLoadingBills(false);
     }
-  }
-
-  async function handleLogout() {
-    await fetch("/api/payer/logout", { method: "POST" });
-    setPayer(null);
-    setBills([]);
-    setCircle([]);
-    setUsername("");
-    setPassword("");
   }
 
   async function handleAddToCircle(event: React.FormEvent<HTMLFormElement>) {
@@ -222,14 +219,12 @@ export function PayerDashboardPage() {
     }
   }
 
-  if (isLoading) {
+  if (isSessionLoading) {
     return (
       <PageShell wide>
-        <PageHeader
+        <AppPageHeader
           title="Your bills"
           description="Loading…"
-          backHref="/"
-          backLabel="Home"
         />
       </PageShell>
     );
@@ -238,11 +233,9 @@ export function PayerDashboardPage() {
   if (!payer) {
     return (
       <PageShell wide>
-        <PageHeader
+        <AppPageHeader
           title="Your bills"
           description="Sign in with your username to see bills you've saved and people you split with often."
-          backHref="/"
-          backLabel="Home"
         />
 
         {error ? <ErrorMessage message={error} /> : null}
@@ -302,19 +295,15 @@ export function PayerDashboardPage() {
 
   return (
     <PageShell wide>
-      <PageHeader
+      <AppPageHeader
         title={`Hi, ${payer.username}`}
         description="Your saved bills and circle — optional, but handy when you split often."
-        backHref="/"
-        backLabel="Home"
+        trailing={<PayerHeaderTrailing showSignOut />}
       />
 
-      <div className="flex justify-end">
-        <Button type="button" variant="outline" size="sm" onClick={handleLogout}>
-          <LogOut />
-          Sign out
-        </Button>
-      </div>
+      {isLoadingBills ? (
+        <p className="text-muted-foreground text-sm">Loading your bills…</p>
+      ) : null}
 
       {error ? <ErrorMessage message={error} /> : null}
 
