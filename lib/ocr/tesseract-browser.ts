@@ -81,11 +81,11 @@ export function loadTesseractBrowser(): Promise<TesseractBrowser> {
           resolve(window.Tesseract);
           return;
         }
-        reject(new Error("OCR engine loaded but is unavailable."));
+        reject(new Error("Receipt scanner is unavailable. Try again or enter items manually."));
       };
       script.onerror = () => {
         loadPromise = null;
-        reject(new Error("Failed to load OCR engine."));
+        reject(new Error("Could not start receipt scanner. Try again or enter items manually."));
       };
       document.head.appendChild(script);
     });

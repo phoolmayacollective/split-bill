@@ -16,6 +16,7 @@ import { SectionCard } from "@/components/layout/section-card";
 import { StepIndicator } from "@/components/layout/step-indicator";
 import { StickyActionBar } from "@/components/layout/sticky-action-bar";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,7 +30,7 @@ import {
   revokeImagePreviewUrl,
 } from "@/lib/ocr/capture-image";
 import type { OcrProgress } from "@/lib/ocr/detect-text";
-import { parseReceiptLines } from "@/lib/ocr/parse-receipt-text";
+import type { ParsedReceipt } from "@/lib/ocr/parse-receipt-text";
 import type { BillItem } from "@/lib/database.types";
 
 const PAYER_STEPS = [
@@ -85,6 +86,41 @@ function formatConfidence(confidence: number): string {
   return `${Math.round(confidence)}%`;
 }
 
+type ParseReceiptResult =
+  | { ok: true; parsed: ParsedReceipt }
+  | { ok: false; error: string };
+
+async function parseReceiptFromOcrLines(
+  lines: string[],
+  onProgress?: (progress: OcrProgress) => void,
+): Promise<ParseReceiptResult> {
+  onProgress?.({ status: "Parsing line items…", progress: 1 });
+
+  try {
+    const response = await fetch("/api/ocr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lines }),
+    });
+
+    const data = (await response.json()) as ParsedReceipt & { error?: string };
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: data.error ?? "Failed to parse receipt. Add items manually.",
+      };
+    }
+
+    return { ok: true, parsed: data };
+  } catch {
+    return {
+      ok: false,
+      error: "Could not read the receipt. Add items manually.",
+    };
+  }
+}
+
 export default function ScanBillPage() {
   const router = useRouter();
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -95,6 +131,8 @@ export default function ScanBillPage() {
   const [items, setItems] = useState<BillItem[]>([createEmptyItem()]);
   const [participants, setParticipants] = useState<string[]>([]);
   const [tax, setTax] = useState(0);
+  const [parsedTax, setParsedTax] = useState(0);
+  const [taxInclusive, setTaxInclusive] = useState(true);
   const [tip, setTip] = useState(0);
   const [rawText, setRawText] = useState<string[]>([]);
   const [lineConfidences, setLineConfidences] = useState<number[]>([]);
@@ -106,9 +144,10 @@ export default function ScanBillPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const subtotal = useMemo(() => calculateSubtotal(items), [items]);
+  const effectiveTax = taxInclusive ? 0 : tax;
   const total = useMemo(
-    () => calculateTotal(subtotal, tax, tip),
-    [subtotal, tax, tip],
+    () => calculateTotal(subtotal, effectiveTax, tip),
+    [subtotal, effectiveTax, tip],
   );
   const averageConfidence = useMemo(() => {
     const scored = lineConfidences.filter((value) => value > 0);
@@ -142,7 +181,7 @@ export default function ScanBillPage() {
   async function processReceiptImage(file: File) {
     setError(null);
     setIsScanning(true);
-    setScanProgress({ status: "Loading OCR engine…", progress: 0 });
+    setScanProgress({ status: "Getting ready…", progress: 0 });
 
     if (previewUrl) {
       revokeImagePreviewUrl(previewUrl);
@@ -153,20 +192,36 @@ export default function ScanBillPage() {
       const { detectTextFromImage } = await import("@/lib/ocr/detect-text");
       const lines = await detectTextFromImage(file, setScanProgress);
       const detectedText = lines.map((line) => line.text);
-      const parsed = parseReceiptLines(detectedText);
+      const parseResult = await parseReceiptFromOcrLines(
+        detectedText,
+        setScanProgress,
+      );
 
       setRawText(detectedText);
       setLineConfidences(lines.map((line) => line.confidence));
-      setItems(createItemsFromParsed(parsed.items));
-      setTax(parsed.tax ?? 0);
-      setTip(parsed.tip ?? 0);
       setInvalidItemIds(new Set());
       setStep("review");
 
-      if (parsed.items.length === 0) {
-        setError(
-          "Tesseract read the receipt but couldn't find line items. Review the extracted text below and add items manually.",
-        );
+      if (parseResult.ok) {
+        const { parsed } = parseResult;
+        setItems(createItemsFromParsed(parsed.items));
+        setParsedTax(parsed.tax ?? 0);
+        setTaxInclusive(true);
+        setTax(0);
+        setTip(parsed.tip ?? 0);
+
+        if (parsed.items.length === 0) {
+          setError(
+            "We read the receipt but couldn't find line items. Review the extracted text below and add items manually.",
+          );
+        }
+      } else {
+        setItems([createEmptyItem()]);
+        setParsedTax(0);
+        setTaxInclusive(true);
+        setTax(0);
+        setTip(0);
+        setError(parseResult.error);
       }
     } catch (scanError) {
       const message =
@@ -241,7 +296,7 @@ export default function ScanBillPage() {
         price: roundMoney(item.price),
         qty: item.qty,
       })),
-      totals: buildTotals(validItems, tax, tip),
+      totals: buildTotals(validItems, effectiveTax, tip),
       ...(participants.length > 0 ? { participants } : {}),
     };
 
@@ -279,8 +334,8 @@ export default function ScanBillPage() {
           title={step === "capture" ? "Scan a receipt" : "Review scanned items"}
           description={
             step === "capture"
-              ? "Upload or photograph a receipt. Tesseract.js runs OCR in your browser — nothing is uploaded until you continue."
-              : "Check every line item before continuing. OCR can miss prices or names."
+              ? "Upload or photograph a receipt. We'll pull out the line items for you to review."
+              : "Check every line item before continuing. Scans can miss prices or names."
           }
           backHref="/create"
         />
@@ -292,8 +347,8 @@ export default function ScanBillPage() {
             <SectionCard>
               <div className="space-y-4">
                 <p className="text-muted-foreground text-sm">
-                  First scan downloads the OCR engine (~2–5 MB). Recognition
-                  usually takes 10–30 seconds on a phone.
+                  The first scan may take a little longer while we get ready.
+                  After that, recognition usually takes 10–30 seconds on a phone.
                 </p>
 
                 <input
@@ -354,7 +409,7 @@ export default function ScanBillPage() {
             </SectionCard>
 
             {isScanning && scanProgress ? (
-              <SectionCard title="OCR progress">
+              <SectionCard title="Scanning receipt">
                 <p className="text-sm">{scanProgress.status}</p>
                 <div className="bg-muted mt-2 h-2 overflow-hidden rounded-full">
                   <div
@@ -390,25 +445,6 @@ export default function ScanBillPage() {
               </SectionCard>
             ) : null}
 
-            <SectionCard title="Extracted text (Tesseract.js)">
-              {averageConfidence !== null ? (
-                <p className="text-muted-foreground mb-2 text-xs">
-                  Average line confidence: {formatConfidence(averageConfidence)}
-                </p>
-              ) : null}
-              <pre className="text-muted-foreground max-h-48 overflow-auto whitespace-pre-wrap text-xs">
-                {rawText
-                  .map((line, index) => {
-                    const confidence = lineConfidences[index];
-                    if (confidence && confidence > 0) {
-                      return `${line}  [${formatConfidence(confidence)}]`;
-                    }
-                    return line;
-                  })
-                  .join("\n")}
-              </pre>
-            </SectionCard>
-
             <div className="space-y-3">
               {items.map((item, index) => (
                 <BillItemEditor
@@ -443,13 +479,39 @@ export default function ScanBillPage() {
             />
 
             <SectionCard title="Tax & tip">
+              <div className="mb-4 flex items-start gap-3">
+                <Checkbox
+                  id="scan-tax-inclusive"
+                  checked={taxInclusive}
+                  onCheckedChange={(checked) => {
+                    setTaxInclusive(checked);
+                    if (checked) {
+                      setTax(0);
+                    } else {
+                      setTax(parsedTax);
+                    }
+                  }}
+                />
+                <div className="space-y-1">
+                  <Label htmlFor="scan-tax-inclusive" className="cursor-pointer">
+                    Line item prices include tax
+                  </Label>
+                  <p className="text-muted-foreground text-xs">
+                    {taxInclusive
+                      ? "Tax on the receipt is already in each item price (typical in Germany/EU)."
+                      : "Tax is added on top of item prices (e.g. US-style sales tax)."}
+                  </p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="scan-bill-tax">Tax</Label>
                   <NumericInput
                     id="scan-bill-tax"
-                    value={tax}
+                    value={taxInclusive ? 0 : tax}
                     onChange={setTax}
+                    disabled={taxInclusive}
                   />
                 </div>
 
@@ -466,7 +528,9 @@ export default function ScanBillPage() {
               <MoneyBreakdown
                 lines={[
                   { label: "Subtotal", amount: subtotal },
-                  { label: "Tax", amount: tax },
+                  ...(taxInclusive
+                    ? []
+                    : [{ label: "Tax", amount: effectiveTax }]),
                   { label: "Tip", amount: tip },
                 ]}
                 total={total}

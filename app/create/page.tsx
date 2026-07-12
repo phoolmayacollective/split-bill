@@ -34,14 +34,14 @@ export default function CreatePage() {
           href="/create/manual"
           className={cn(
             buttonVariants({ size: "lg" }),
-            "shadow-card h-auto w-full flex-col items-start gap-2 px-5 py-5 text-left",
+            "shadow-card h-auto w-full min-w-0 flex-col items-start gap-2 whitespace-normal px-5 py-5 text-left",
           )}
         >
           <span className="flex items-center gap-2.5 text-base font-medium">
             <PenLine className="size-5" aria-hidden />
             Enter items manually
           </span>
-          <span className="text-primary-foreground/80 text-sm font-normal">
+          <span className="text-primary-foreground/80 w-full text-sm leading-snug font-normal text-pretty">
             Type each line item, tax, and tip
           </span>
         </Link>
@@ -50,15 +50,15 @@ export default function CreatePage() {
           href="/create/scan"
           className={cn(
             buttonVariants({ variant: "outline", size: "lg" }),
-            "h-auto w-full flex-col items-start gap-2 px-5 py-5 text-left",
+            "h-auto w-full min-w-0 flex-col items-start gap-2 whitespace-normal px-5 py-5 text-left",
           )}
         >
           <span className="flex items-center gap-2.5 text-base font-medium">
             <Camera className="size-5" aria-hidden />
             Scan a receipt
           </span>
-          <span className="text-muted-foreground text-sm font-normal">
-            Browser OCR with Tesseract.js — review before continuing
+          <span className="text-muted-foreground w-full text-sm leading-snug font-normal text-pretty">
+            Photo or upload a receipt, then review and edit line items
           </span>
         </Link>
       </div>

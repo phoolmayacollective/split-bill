@@ -79,6 +79,12 @@ export const payerAuthSchema = z.object({
 
 export type PayerAuthInput = z.infer<typeof payerAuthSchema>;
 
+export const ocrParseSchema = z.object({
+  lines: z.array(z.string()).min(1, "OCR text is required"),
+});
+
+export type OcrParseInput = z.infer<typeof ocrParseSchema>;
+
 export const payerCircleAddSchema = z.object({
   username: z.string().trim().min(1, "Username is required"),
 });

@@ -63,13 +63,11 @@ function normalizeOcrError(error: unknown): Error {
 function formatProgressStatus(status: string): string {
   switch (status) {
     case "loading tesseract core":
-      return "Loading OCR engine…";
     case "initializing tesseract":
-      return "Initializing OCR…";
     case "initializing api":
-      return "Preparing OCR…";
+      return "Getting ready…";
     case "recognizing text":
-      return "Reading receipt text…";
+      return "Reading receipt…";
     default:
       return "Scanning receipt…";
   }
@@ -170,7 +168,22 @@ export async function detectTextFromImage(
       "Receipt scan timed out. Try again or enter items manually.",
     );
 
-    return extractLinesFromPage(result.data);
+    const lines = extractLinesFromPage(result.data);
+
+    console.log("[receipt-ocr] scan results", {
+      rawTextLines: result.data.text
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+      lines,
+      lineConfidences: lines.map(({ text, confidence, top }) => ({
+        text,
+        confidence,
+        top,
+      })),
+    });
+
+    return lines;
   } catch (error) {
     await terminateOcrWorker();
     throw normalizeOcrError(error);
