@@ -8,34 +8,40 @@
 
 ## Current progress
 
-**12 / 17 milestones completed** · **2 in progress** (M13 UI/UX, M16 account stub) · next up **M11 OCR**
+**12 / 18 milestones completed** · **3 in progress** (M13–M15) · next up **M16 OCR**
 
-| Done | Milestone | Summary |
-|------|-----------|---------|
-| ✅ | M1 Bootstrap | Next.js 16 + shadcn/ui + Supabase client stub |
-| ✅ | M2 Database | `bills`/`claims` tables via Supabase MCP + `lib/db/bills.ts` |
-| ✅ | M3 Split logic | `lib/split.ts` + unit tests (`npm test`) |
-| ✅ | M4 Bill API | `POST/GET /api/bills`, claims + summary routes |
-| ✅ | M5 Payer UI | Manual bill entry, share link with copy |
-| ✅ | M6 Ower UI | Name → claim items → summary total |
-| ✅ | M7 Client crypto | PBKDF2 + AES-GCM encrypt/decrypt in `lib/crypto.ts` |
-| ✅ | M8 Encrypted payment | PayPal/IBAN encrypt on create, share link with `#password` |
-| ✅ | M9 Ower decrypt | Summary decrypts payment details client-side; copy PayPal/IBAN |
-| ✅ | M10 Payer bill view & roster | Item progress bars, mark paid, participant roster at create |
-| ✅ | M12 Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
-| ✅ | M17 Dal Bhat menu | `/restaurant/dalbhat` menu picker, search/filter, EUR prices → bill → payment → share |
-| 🔄 | M13 Mobile UX & share | Warm UI refresh, sticky CTAs, copy/share, loading states (QR pending) |
-| 🔄 | M16 Account dashboards | Optional username save after bill; dashboard UI pending |
-| ⏳ | M11 Receipt scan | Next feature milestone (Phase 3) |
+Milestones are numbered in **chronological build order** (M1–M12 done, M13–M15 active, M16–M18 planned).
+
+| # | Status | Milestone | Summary |
+|---|--------|-----------|---------|
+| 1 | ✅ | Bootstrap | Next.js 16 + shadcn/ui + Supabase client stub |
+| 2 | ✅ | Database | `bills`/`claims` tables via Supabase MCP + `lib/db/bills.ts` |
+| 3 | ✅ | Split logic | `lib/split.ts` + unit tests (`npm test`) |
+| 4 | ✅ | Bill API | `POST/GET /api/bills`, claims + summary routes |
+| 5 | ✅ | Payer UI | Manual bill entry, share link with copy |
+| 6 | ✅ | Ower UI | Name → claim items → summary total |
+| 7 | ✅ | Client crypto | PBKDF2 + AES-GCM encrypt/decrypt in `lib/crypto.ts` |
+| 8 | ✅ | Encrypted payment | PayPal/IBAN encrypt on create, share link with `#password` |
+| 9 | ✅ | Ower decrypt | Summary decrypts payment details client-side; copy PayPal/IBAN |
+| 10 | ✅ | Payer bill view & roster | Item progress bars, mark paid, participant roster at create |
+| 11 | ✅ | Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
+| 12 | ✅ | Dal Bhat menu | `/restaurant/dalbhat` menu picker, search/filter, EUR prices → bill → payment → share |
+| 13 | 🔄 | Mobile UX & share | Warm UI refresh, sticky CTAs, copy/share, loading states (QR pending) |
+| 14 | 🔄 | Account dashboards | Optional username save after bill; dashboard UI pending |
+| 15 | 🔄 | Demo video | Playwright silent walkthrough; WaveNet narrated MP4 (GCP credentials pending) |
+| 16 | ⏳ | Receipt scan | OCR — image upload → LLM vision → editable line items |
+| 17 | ⏳ | Bill lifecycle | Payer edit token & bill expiry |
+| 18 | ⏳ | Deploy MVP | Vercel + production smoke tests |
 
 See [MILESTONES.md](./MILESTONES.md) for the full log and [milestones/](./milestones/) for step-by-step details.
 
 ## Milestones map to plan phases
 
 ```
-Phase 1 (core flow)     → M1–M6
-Phase 2 (zero-knowledge)→ M7–M10
-Phase 3 (OCR)           → M11
-Phase 4 (polish)        → M12–M16
-Phase 5 (restaurants)   → M17
+Phase 1 (core flow)      → M1–M6
+Phase 2 (zero-knowledge) → M7–M10
+Phase 3 (OCR)            → M16
+Phase 4 (polish & ship)  → M11, M13, M14, M17, M18
+Phase 5 (restaurants)    → M12
+Phase 6 (demo tooling)   → M15
 ```

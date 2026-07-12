@@ -47,7 +47,7 @@ Payer can manually add items, review, and get a share link (no encryption yet).
 
 ## How it was done
 
-1. **Create flow** — `/create` offers manual entry (active) and receipt scan (placeholder for M11). `/create/manual` is a client form with `nanoid` item ids.
+1. **Create flow** — `/create` offers manual entry (active) and receipt scan (placeholder for M16). `/create/manual` is a client form with `nanoid` item ids.
 2. **Item editing** — `BillItemEditor` renders each line item card; payer can add/remove items, set tax/tip; subtotal and total update live via `lib/bill-totals.ts`.
 3. **Submit** — form POSTs to `POST /api/bills`, then `router.push` to `/bill/{id}/share` on success; validation errors shown inline.
 4. **Share page** — server component verifies bill exists (`getBillById`), builds share URL from env, renders `CopyShareLink` for one-tap copy.

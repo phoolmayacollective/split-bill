@@ -22,7 +22,9 @@ export function useOwerSession(billId: string) {
       return;
     }
 
-    router.replace(`/bill/${billId}/name`);
+    router.replace(
+      `/bill/${billId}/name${window.location.search}${window.location.hash}`,
+    );
   }, [billId, owerName, pathname, ready, router]);
 
   return { ready, owerName };

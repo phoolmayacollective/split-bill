@@ -1,4 +1,4 @@
-# M16 — Payer & ower account dashboards
+# Milestone 14: Payer & ower account dashboards
 
 **Status:** `in_progress`  
 **Phase:** 4 — Polish & ship  

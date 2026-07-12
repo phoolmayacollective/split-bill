@@ -1,8 +1,8 @@
-# Milestone 15: Deploy MVP
+# Milestone 18: Deploy MVP
 
 **Status:** `pending`  
 **Phase:** 4 — Polish  
-**Depends on:** Milestones 9, 12
+**Depends on:** Milestones 9, 11
 
 ## Goal
 

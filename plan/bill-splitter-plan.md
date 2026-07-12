@@ -139,7 +139,7 @@ Shipped in **M10** (Phase 2):
 - **Participant roster** — payer adds expected names at bill creation; owers pick from the list on the name step.
 - **Item payment progress** — payer bill view shows per-item settlement (e.g. 1 of 3 shares paid → 33%) with inline progress bars.
 
-Remaining post-MVP ideas (not yet scheduled): edit token, bill expiry, rate limiting — see M14 / open questions.
+Remaining post-MVP ideas (not yet scheduled): edit token, bill expiry, rate limiting — see M17 / open questions.
 
 ## Milestones
 
@@ -157,12 +157,14 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 8 | Encrypted payment flow (payer) | 2 | `completed` |
 | 9 | Ower decrypt & payment summary | 2 | `completed` |
 | 10 | Payer bill view, item progress & participant roster | 2 | `completed` |
-| 11 | Receipt scan (OCR) | 3 | `pending` |
-| 12 | Shared-item & tax/tip polish | 4 | `completed` |
+| 11 | Shared-item & tax/tip polish | 4 | `completed` |
+| 12 | Dal Bhat restaurant menu | 5 | `completed` |
 | 13 | Mobile UX & share tools (QR, copy) | 4 | `in_progress` |
-| 14 | Payer edit token & bill lifecycle | 4 | `pending` |
-| 15 | Deploy MVP | 4 | `pending` |
-| 16 | Payer & ower account dashboards (optional username) | 4 | `in_progress` |
+| 14 | Payer & ower account dashboards (optional username) | 4 | `in_progress` |
+| 15 | Automated demo video | 6 | `in_progress` |
+| 16 | Receipt scan (OCR) | 3 | `pending` |
+| 17 | Payer edit token & bill lifecycle | 4 | `pending` |
+| 18 | Deploy MVP | 4 | `pending` |
 
 ## Open Questions / Risks
 

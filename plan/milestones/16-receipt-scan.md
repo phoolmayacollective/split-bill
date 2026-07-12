@@ -1,4 +1,4 @@
-# Milestone 11: Receipt scan (OCR)
+# Milestone 16: Receipt scan (OCR)
 
 **Status:** `pending`  
 **Phase:** 3 — OCR  

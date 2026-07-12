@@ -19,7 +19,7 @@ Make group bills faster to join and give the payer a live, visual picture of how
 
 ### 2. Shared-item splits with payment progress
 
-- Ower can split one item among multiple people (builds on M12 shared-item claiming).
+- Ower can split one item among multiple people (builds on M11 shared-item claiming).
 - Payer sees per-item payment progress on the bill — e.g. a pizza split 3 ways shows **33% paid** after one person settles their share.
 - Progress shown with friendly in-bill graphics (progress ring, segmented bar, or similar) on the payer's bill view.
 
@@ -51,7 +51,7 @@ Make group bills faster to join and give the payer a live, visual picture of how
 
 ## Notes
 
-- **M12** covers shared-item claiming and tax/tip breakdown; this milestone adds roster UX and settlement visibility for the payer.
+- **M11** covers shared-item claiming and tax/tip breakdown; this milestone adds roster UX and settlement visibility for the payer.
 - Payment progress is **settlement tracking**, not on-chain or automated payment verification — it reflects who the payer (or group) considers paid.
 - Ower self-report ("I've paid" on summary) and payer "Mark paid" both write to the same `ower_payments` table.
 

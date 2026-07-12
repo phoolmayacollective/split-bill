@@ -1,4 +1,4 @@
-# Milestone 17: Dal Bhat restaurant menu
+# Milestone 12: Dal Bhat restaurant menu
 
 **Status:** `completed`  
 **Completed:** 2026-07-12  

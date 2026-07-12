@@ -1,4 +1,4 @@
-# Milestone 12: Shared-item & tax/tip polish
+# Milestone 11: Shared-item & tax/tip polish
 
 **Status:** `completed`  
 **Completed:** 2026-07-12  

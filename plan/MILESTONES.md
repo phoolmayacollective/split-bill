@@ -2,6 +2,8 @@
 
 Last updated: 2026-07-12
 
+Milestones **M1–M18** are numbered in **chronological build order**: completed work first (M1–M12), then active work by start date (M13–M15), then planned work (M16–M18).
+
 Track progress here and in each file under [`milestones/`](./milestones/).
 
 | # | Milestone | Phase | Status | Depends on |
@@ -16,13 +18,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 8 | [Encrypted payment flow](./milestones/08-encrypted-payment.md) | 2 | `completed` | 5, 7 |
 | 9 | [Ower decrypt & payment summary](./milestones/09-ower-decrypt.md) | 2 | `completed` | 6, 7, 8 |
 | 10 | [Participants roster & item payment progress](./milestones/10-participants-and-item-progress.md) | 2 | `completed` | 6, 8 |
-| 11 | [Receipt scan (OCR)](./milestones/11-receipt-scan.md) | 3 | `pending` | 5 |
-| 12 | [Shared-item & tax/tip polish](./milestones/12-split-polish.md) | 4 | `completed` | 6 |
+| 11 | [Shared-item & tax/tip polish](./milestones/11-split-polish.md) | 4 | `completed` | 6 |
+| 12 | [Dal Bhat restaurant menu](./milestones/12-dalbhat-restaurant-menu.md) | 5 | `completed` | 4, 5, 8 |
 | 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `in_progress` | 9 |
-| 14 | [Payer edit token & bill lifecycle](./milestones/14-bill-lifecycle.md) | 4 | `pending` | 8 |
-| 15 | [Deploy MVP](./milestones/15-deploy.md) | 4 | `pending` | 9, 12 |
-| 16 | [Payer & ower account dashboards](./milestones/16-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
-| 17 | [Dal Bhat restaurant menu](./milestones/17-dalbhat-restaurant-menu.md) | 5 | `completed` | 4, 5, 8 |
+| 14 | [Payer & ower account dashboards](./milestones/14-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
+| 15 | [Automated demo video](./milestones/15-demo-video.md) | 6 | `in_progress` | 6, 9, 10 |
+| 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `pending` | 5 |
+| 17 | [Payer edit token & bill lifecycle](./milestones/17-bill-lifecycle.md) | 4 | `pending` | 8 |
+| 18 | [Deploy MVP](./milestones/18-deploy.md) | 4 | `pending` | 9, 11 |
 
 ## Phase summary
 
@@ -30,15 +33,16 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 |-------|------------|------|
 | **1 — Core flow** | 1–6 | Manual bill, claim items, summary — no crypto, no OCR |
 | **2 — Zero-knowledge payment** | 7–10 | Encrypt payment details client-side; payer bill view, settlement tracking, participant roster |
-| **3 — OCR** | 11 | Scan receipt → editable line items |
-| **4 — Polish & ship** | 12–16 | Splitting UX, mobile, edit token, deploy, optional account dashboards |
-| **5 — Restaurant menus** | 17 | Static restaurant menu → bill create (Dal Bhat first) |
+| **3 — OCR** | 16 | Scan receipt → editable line items |
+| **4 — Polish & ship** | 11, 13, 14, 17, 18 | Splitting UX, mobile, account dashboards, edit token, deploy |
+| **5 — Restaurant menus** | 12 | Static restaurant menu → bill create (Dal Bhat first) |
+| **6 — Demo tooling** | 15 | Scripted product walkthrough → silent or narrated MP4 |
 
 ## Progress
 
-- **Completed:** 12 / 17
-- **In progress:** 2 (M13 UI/UX polish, M16 account stub)
-- **Pending:** 3
+- **Completed:** 12 / 18 (M1–M12)
+- **In progress:** 3 (M13, M14, M15)
+- **Pending:** 3 (M16, M17, M18)
 
 ## Completed work log
 
@@ -124,21 +128,21 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/10-participants-and-item-progress.md](./milestones/10-participants-and-item-progress.md)
 
-### M12 — Shared-item & tax/tip polish (2026-07-12)
+### M11 — Shared-item & tax/tip polish (2026-07-12)
 
 **What:** Unit-level shared claiming — multi-qty items expand to individual rows; explicit “split with N people”; fractional payer progress; refresh recursion fixed.
 
 **How:** `lib/bill-units.ts` + `lib/claim-units.ts` with pool validation; split/progress/API updated for unit IDs; `useOwerSession` + 30s payer poll with `payerViewSignature` silent refresh; 41 tests, build verified.
 
-**Details:** [milestones/12-split-polish.md](./milestones/12-split-polish.md)
+**Details:** [milestones/11-split-polish.md](./milestones/11-split-polish.md)
 
-### M17 — Dal Bhat restaurant menu (2026-07-12)
+### M12 — Dal Bhat restaurant menu (2026-07-12)
 
 **What:** Static Dal Bhat menu at `/restaurant/dalbhat` — searchable picker with options, momo portions, drink sizes; posts to existing bill API and continues through payment → share.
 
 **How:** `data/restaurants/dalbhat-menu.json` + typed helpers in `lib/restaurants/`; `DalbhatBillForm` cart with `filterDalbhatMenu()` search/filter; `formatEuro()` for prices; `POST /api/bills` then redirect to `/create/{id}/payment`. URL-only route — no home page link.
 
-**Details:** [milestones/17-dalbhat-restaurant-menu.md](./milestones/17-dalbhat-restaurant-menu.md)
+**Details:** [milestones/12-dalbhat-restaurant-menu.md](./milestones/12-dalbhat-restaurant-menu.md)
 
 ## In progress work log
 
@@ -150,17 +154,25 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/13-mobile-share.md](./milestones/13-mobile-share.md)
 
-### M16 — Payer & ower account dashboards (started 2026-07-11)
+### M14 — Payer & ower account dashboards (started 2026-07-11)
 
 **What:** Optional payer username auth stub — no login gate on create; save username after bill is done; link bill to account for future dashboard.
 
 **How:** `POST /api/payer/auth` (auto sign-up/sign-in), `payers` table, `OptionalSaveAccount` on payer dashboard, `POST /api/bills/{id}/payer/link`. Create flow primary path is guest → items → payment → share. Dashboard list UI not yet built.
 
-**Details:** [milestones/16-payer-ower-dashboards.md](./milestones/16-payer-ower-dashboards.md)
+**Details:** [milestones/14-payer-ower-dashboards.md](./milestones/14-payer-ower-dashboards.md)
+
+### M15 — Automated demo video (started 2026-07-12)
+
+**What:** Playwright silent walkthrough with demo-only persona banner; WaveNet narrated MP4 pipeline scoped.
+
+**How:** `e2e/demo-walkthrough.spec.ts` + `scripts/run-demo-video.mjs` on port 3001; `DemoPersonaBanner` gated by `NEXT_PUBLIC_DEMO_MODE`. Narration (GCP WaveNet + ffmpeg) pending user credentials.
+
+**Details:** [milestones/15-demo-video.md](./milestones/15-demo-video.md)
 
 ## Next up
 
-**M11 — Receipt scan (OCR)** — Image upload → LLM vision → editable line items (Phase 3).
+**M16 — Receipt scan (OCR)** — Image upload → LLM vision → editable line items (Phase 3).
 
 ## How to update
 

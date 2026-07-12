@@ -14,7 +14,9 @@ export function ShareBillRedirect({ billId }: ShareBillRedirectProps) {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace(`/bill/${billId}/payer${window.location.hash}`);
+    router.replace(
+      `/bill/${billId}/payer${window.location.search}${window.location.hash}`,
+    );
   }, [billId, router]);
 
   return (

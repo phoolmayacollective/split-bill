@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+
+import { DemoPersonaBanner } from "@/components/demo-persona-banner";
+import { isDemoModeEnabled } from "@/lib/demo-mode";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,6 +40,11 @@ export default function RootLayout({
     >
       <body className="bg-background min-h-full flex flex-col">
         <div className="from-primary/8 via-background to-background pointer-events-none fixed inset-0 -z-10 bg-gradient-to-b" />
+        {isDemoModeEnabled() ? (
+          <Suspense fallback={null}>
+            <DemoPersonaBanner />
+          </Suspense>
+        ) : null}
         {children}
       </body>
     </html>

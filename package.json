@@ -4,10 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:demo": "NEXT_PUBLIC_DEMO_MODE=true next dev -p 3001",
+    "build:demo": "NEXT_PUBLIC_DEMO_MODE=true NEXT_PUBLIC_APP_URL=http://localhost:3001 next build",
+    "start:demo": "NEXT_PUBLIC_DEMO_MODE=true NEXT_PUBLIC_APP_URL=http://localhost:3001 next start -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/bill-units.test.ts lib/claim-units.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/item-split-display.test.ts"
+    "test": "node --import tsx --test lib/split.test.ts lib/crypto.test.ts lib/item-progress.test.ts lib/bill-units.test.ts lib/claim-units.test.ts lib/participants.test.ts lib/payer-password.test.ts lib/payer-account.test.ts lib/item-split-display.test.ts",
+    "demo:video": "node scripts/run-demo-video.mjs",
+    "demo:video:headed": "playwright test e2e/demo-walkthrough.spec.ts --headed",
+    "demo:narration": "node scripts/generate-narration.mjs",
+    "demo:composite": "node scripts/composite-demo.mjs",
+    "demo:video:narrated": "node scripts/run-demo-narrated.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -25,6 +33,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@google-cloud/text-to-speech": "^6.4.0",
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
