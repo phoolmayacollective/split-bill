@@ -8,9 +8,9 @@
 
 ## Current progress
 
-**12 / 18 milestones completed** · **3 in progress** (M13–M15) · next up **M16 OCR**
+**13 / 18 milestones completed** · **2 in progress** (M14–M15) · next up **M16 OCR**
 
-Milestones are numbered in **chronological build order** (M1–M12 done, M13–M15 active, M16–M18 planned).
+Milestones are numbered in **chronological build order** (M1–M13 done, M14–M15 active, M16–M18 planned).
 
 | # | Status | Milestone | Summary |
 |---|--------|-----------|---------|
@@ -26,7 +26,7 @@ Milestones are numbered in **chronological build order** (M1–M12 done, M13–M
 | 10 | ✅ | Payer bill view & roster | Item progress bars, mark paid, participant roster at create |
 | 11 | ✅ | Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
 | 12 | ✅ | Dal Bhat menu | `/restaurant/dalbhat` menu picker, search/filter, EUR prices → bill → payment → share |
-| 13 | 🔄 | Mobile UX & share | Warm UI refresh, sticky CTAs, copy/share, loading states (QR pending) |
+| 13 | ✅ | Mobile UX & share | Warm UI, sticky CTAs, copy/Web Share, QR code, separate-password mode |
 | 14 | 🔄 | Account dashboards | Optional username save after bill; dashboard UI pending |
 | 15 | 🔄 | Demo video | Playwright silent walkthrough; WaveNet narrated MP4 (GCP credentials pending) |
 | 16 | ⏳ | Receipt scan | OCR — image upload → LLM vision → editable line items |

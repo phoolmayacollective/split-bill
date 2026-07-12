@@ -159,7 +159,7 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 10 | Payer bill view, item progress & participant roster | 2 | `completed` |
 | 11 | Shared-item & tax/tip polish | 4 | `completed` |
 | 12 | Dal Bhat restaurant menu | 5 | `completed` |
-| 13 | Mobile UX & share tools (QR, copy) | 4 | `in_progress` |
+| 13 | Mobile UX & share tools (QR, copy) | 4 | `completed` |
 | 14 | Payer & ower account dashboards (optional username) | 4 | `in_progress` |
 | 15 | Automated demo video | 6 | `in_progress` |
 | 16 | Receipt scan (OCR) | 3 | `pending` |

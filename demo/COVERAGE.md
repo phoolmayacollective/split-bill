@@ -27,14 +27,14 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | **Alex** (payer) | Yes | Creates bill, encrypts payment, watches collection |
 | **Sam** (ower) | Yes | Picks name from roster, claims items, copies PayPal |
 | **Jordan** (ower) | Yes | Joins split, self-reports paid |
-| **Guest payer** | Partial | Default path — no account; demo doesn't show optional account save (M15) |
+| **Guest payer** | Partial | Default path — no account; demo doesn't show optional account save (M14) |
 | **Restaurant payer** | Yes | Dal Bhat menu flow (`/restaurant/dalbhat`) |
 
-**Still missing for a complete demo:** optional account save (M15).
+**Still missing for a complete demo:** optional account save (M14).
 
 ---
 
-## Completed features (12 / 18 milestones)
+## Completed features (13 / 18 milestones)
 
 ### Phase 1 — Core flow (M1–M6) ✅
 
@@ -81,13 +81,23 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | Momo portions, drink sizes, add-ons | Menu JSON + picker |
 | Same payment → share flow as manual | Reuses M8 |
 
+
+### Phase 4 — Mobile UX & share (M13) ✅
+
+| Feature | Route / component |
+|---------|-------------------|
+| Warm OKLCH design + layout primitives | `components/layout/*`, `app/globals.css` |
+| Loading / empty / error states | `components/feedback/*`, `app/loading.tsx`, `error.tsx`, `not-found.tsx` |
+| Copy + Web Share on share link | `CopyField`, `ShareBillContent` |
+| QR code for share URL | `ShareQrCode`, `components/share-qr-code.tsx` |
+| Separate-password sharing mode | `ShareBillContent` toggle + `BillPasswordPrompt` fallback |
+
 ### In progress (not complete)
 
 | Milestone | Status | What exists |
 |-----------|--------|-------------|
-| **M13** Mobile UX & share | `in_progress` | UI refresh, copy/Web Share — QR & separate-password still open |
-| **M14** Demo video | `in_progress` | Silent walkthrough works; narrated MP4 needs GCP creds |
-| **M15** Account dashboards | `in_progress` | Optional username save stub — no dashboard list UI |
+| **M14** Account dashboards | `in_progress` | Optional username save stub — no dashboard list UI |
+| **M15** Demo video | `in_progress` | Silent walkthrough works; narrated MP4 needs GCP creds |
 
 ### Pending (not built)
 
@@ -127,6 +137,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 |-------------------|-------------|
 | Tax & tip entry | ✅ Shown in create |
 | Copy / Web Share link | ✅ Copy shown; Web Share skipped (not available in headless Chromium) |
+| QR code on share card | ❌ Not in walkthrough |
 | Decrypted payment details + copy PayPal | ✅ Scene 8 |
 | “Split with N people” | ✅ Scene 7 |
 | Second ower (Jordan) | ✅ Scenes 9, 11 |
@@ -146,6 +157,6 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 
 | Status | Count | Milestones |
 |--------|-------|------------|
-| Completed | 12 | M1–M12 |
-| In progress | 3 | M13, M14, M15 |
+| Completed | 13 | M1–M13 |
+| In progress | 2 | M14, M15 |
 | Pending | 3 | M16, M17, M18 |

@@ -20,7 +20,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 10 | [Participants roster & item payment progress](./milestones/10-participants-and-item-progress.md) | 2 | `completed` | 6, 8 |
 | 11 | [Shared-item & tax/tip polish](./milestones/11-split-polish.md) | 4 | `completed` | 6 |
 | 12 | [Dal Bhat restaurant menu](./milestones/12-dalbhat-restaurant-menu.md) | 5 | `completed` | 4, 5, 8 |
-| 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `in_progress` | 9 |
+| 13 | [Mobile UX & share tools](./milestones/13-mobile-share.md) | 4 | `completed` | 9 |
 | 14 | [Payer & ower account dashboards](./milestones/14-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
 | 15 | [Automated demo video](./milestones/15-demo-video.md) | 6 | `in_progress` | 6, 9, 10 |
 | 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `pending` | 5 |
@@ -40,8 +40,8 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 ## Progress
 
-- **Completed:** 12 / 18 (M1–M12)
-- **In progress:** 3 (M13, M14, M15)
+- **Completed:** 13 / 18 (M1–M13)
+- **In progress:** 2 (M14, M15)
 - **Pending:** 3 (M16, M17, M18)
 
 ## Completed work log
@@ -144,15 +144,15 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/12-dalbhat-restaurant-menu.md](./milestones/12-dalbhat-restaurant-menu.md)
 
-## In progress work log
+### M13 — Mobile UX & share tools (2026-07-12)
 
-### M13 — Mobile UX & share tools (started 2026-07-11)
+**What:** Warm-modern mobile UX across payer/ower flows — layout primitives, sticky CTAs, copy/Web Share, QR code on payer share card, and optional separate-password sharing mode.
 
-**What:** Warm-modern UI refresh — shared layout components, mobile tap targets, sticky footers, copy/Web Share, loading/error/empty states across payer and ower flows.
-
-**How:** OKLCH tokens + `components/layout/*` and `components/feedback/*`; refactored all completed route pages; `CopyField` with clipboard + Web Share fallback; branded `loading`/`error`/`not-found` routes. QR and separate-password mode still open.
+**How:** OKLCH tokens + `components/layout/*` and `components/feedback/*`; `ShareQrCode` via `react-qr-code`; `ShareBillContent` toggle for link-only sharing with password `CopyField`; branded loading/error/404 routes. Verified with `npm test` and `npm run build`.
 
 **Details:** [milestones/13-mobile-share.md](./milestones/13-mobile-share.md)
+
+## In progress work log
 
 ### M14 — Payer & ower account dashboards (started 2026-07-11)
 
