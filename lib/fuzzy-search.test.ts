@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { fuzzyMatch, matchesFuzzySearch } from "./fuzzy-search";
+import { fuzzyMatch, fuzzyScore, matchesFuzzySearch } from "./fuzzy-search";
 
 describe("fuzzyMatch", () => {
   it("matches an empty query against any text", () => {
@@ -39,5 +39,34 @@ describe("matchesFuzzySearch", () => {
       true,
     );
     assert.equal(matchesFuzzySearch("Steamed Momo", "std"), true);
+  });
+});
+
+describe("fuzzyScore", () => {
+  it("ranks exact name matches above partial description matches", () => {
+    const exactName = fuzzyScore("Momo", "momo");
+    const partialName = fuzzyScore("Steamed Momo", "momo");
+    const descriptionOnly = fuzzyScore(
+      "A classic Nepalese platter with momo on the side",
+      "momo",
+    );
+
+    assert.ok(exactName > partialName);
+    assert.ok(partialName > descriptionOnly);
+  });
+
+  it("ranks tighter subsequence matches higher", () => {
+    const tight = fuzzyScore("Dal Bhat", "db");
+    const loose = fuzzyScore("Dal Bhat & Paprika (Chicken)", "db");
+
+    assert.ok(tight > loose);
+  });
+
+  it("returns -1 when the query does not match", () => {
+    assert.equal(fuzzyScore("Dal Bhat", "xyz"), -1);
+  });
+
+  it("returns 0 for an empty query", () => {
+    assert.equal(fuzzyScore("Dal Bhat", ""), 0);
   });
 });

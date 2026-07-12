@@ -1,4 +1,9 @@
-import { matchesFuzzySearch, normalizeSearchQuery } from "@/lib/fuzzy-search";
+import {
+  fuzzyScore,
+  matchesFuzzySearch,
+  normalizeSearchQuery,
+  sortByFuzzyRelevance,
+} from "@/lib/fuzzy-search";
 import {
   CATEGORY_LABELS,
   dalbhatMenu,
@@ -38,6 +43,55 @@ export const MENU_FILTER_OPTIONS: Array<{ id: MenuFilterId; label: string }> = [
 
 function matchesQuery(searchText: string, query: string): boolean {
   return matchesFuzzySearch(searchText, query);
+}
+
+function scorePrimaryFields(
+  primaryTexts: Array<string | undefined>,
+  fallbackText: string,
+  query: string,
+): number {
+  const primaryScore = Math.max(
+    -1,
+    ...primaryTexts
+      .filter((text): text is string => Boolean(text))
+      .map((text) => fuzzyScore(text, query)),
+  );
+
+  if (primaryScore >= 0) {
+    return primaryScore + 100;
+  }
+
+  return fuzzyScore(fallbackText, query);
+}
+
+function getMenuItemRelevance(item: MenuItem, query: string): number {
+  return scorePrimaryFields(
+    [item.name_en, item.name_de],
+    getMenuItemSearchText(item),
+    query,
+  );
+}
+
+function getRecommendationRelevance(
+  item: RecommendationItem,
+  query: string,
+): number {
+  return scorePrimaryFields([item.name], getRecommendationSearchText(item), query);
+}
+
+function getExtraRelevance(
+  item: { name_de: string; name_en: string; note?: string },
+  query: string,
+): number {
+  return scorePrimaryFields(
+    [item.name_en, item.name_de],
+    getExtraSearchText(item),
+    query,
+  );
+}
+
+function getDrinkRelevance(item: DrinkItem, query: string): number {
+  return scorePrimaryFields([item.name], getDrinkSearchText(item), query);
 }
 
 function joinSearchParts(parts: Array<string | undefined>): string {
@@ -135,31 +189,48 @@ export function filterDalbhatMenu(
   activeFilter: MenuFilterId,
 ): FilteredDalbhatMenu {
   const { menu } = dalbhatMenu;
+  const hasSearchQuery = normalizeSearchQuery(query).length > 0;
 
   const kleine_teller_small_plates = isCategoryVisible(
     "kleine_teller_small_plates",
     activeFilter,
   )
-    ? menu.kleine_teller_small_plates.filter((item) =>
-        matchesQuery(getMenuItemSearchText(item), query),
+    ? sortByFuzzyRelevance(
+        menu.kleine_teller_small_plates.filter((item) =>
+          matchesQuery(getMenuItemSearchText(item), query),
+        ),
+        query,
+        getMenuItemRelevance,
       )
     : [];
 
   const recommendations = isCategoryVisible("recommendations", activeFilter)
-    ? menu.recommendations.filter((item) =>
-        matchesQuery(getRecommendationSearchText(item), query),
+    ? sortByFuzzyRelevance(
+        menu.recommendations.filter((item) =>
+          matchesQuery(getRecommendationSearchText(item), query),
+        ),
+        query,
+        getRecommendationRelevance,
       )
     : [];
 
   const classics = isCategoryVisible("classics", activeFilter)
-    ? menu.classics.filter((item) =>
-        matchesQuery(getMenuItemSearchText(item), query),
+    ? sortByFuzzyRelevance(
+        menu.classics.filter((item) =>
+          matchesQuery(getMenuItemSearchText(item), query),
+        ),
+        query,
+        getMenuItemRelevance,
       )
     : [];
 
   const dalbhat = isCategoryVisible("dalbhat", activeFilter)
-    ? menu.dalbhat.filter((item) =>
-        matchesQuery(getMenuItemSearchText(item), query),
+    ? sortByFuzzyRelevance(
+        menu.dalbhat.filter((item) =>
+          matchesQuery(getMenuItemSearchText(item), query),
+        ),
+        query,
+        getMenuItemRelevance,
       )
     : [];
 
@@ -168,25 +239,53 @@ export function filterDalbhatMenu(
     matchesQuery(getMomoSearchText(), query);
 
   const desserts = isCategoryVisible("desserts", activeFilter)
-    ? menu.desserts.filter((item) =>
-        matchesQuery(getMenuItemSearchText(item), query),
+    ? sortByFuzzyRelevance(
+        menu.desserts.filter((item) =>
+          matchesQuery(getMenuItemSearchText(item), query),
+        ),
+        query,
+        getMenuItemRelevance,
       )
     : [];
 
   const extras = isCategoryVisible("extras", activeFilter)
-    ? menu.extras.filter((item) => matchesQuery(getExtraSearchText(item), query))
+    ? sortByFuzzyRelevance(
+        menu.extras.filter((item) => matchesQuery(getExtraSearchText(item), query)),
+        query,
+        getExtraRelevance,
+      )
     : [];
 
   let drinks: Record<string, DrinkItem[]> = {};
   if (isCategoryVisible("drinks", activeFilter)) {
     for (const [categoryKey, items] of Object.entries(menu.drinks)) {
-      const filteredItems = items.filter((item) =>
-        matchesQuery(getDrinkSearchText(item), query),
+      const filteredItems = sortByFuzzyRelevance(
+        items.filter((item) => matchesQuery(getDrinkSearchText(item), query)),
+        query,
+        getDrinkRelevance,
       );
       if (filteredItems.length > 0) {
         drinks[categoryKey] = filteredItems;
       }
     }
+  }
+
+  if (hasSearchQuery) {
+    drinks = Object.fromEntries(
+      Object.entries(drinks).sort(
+        ([leftKey, leftItems], [rightKey, rightItems]) => {
+          const leftScore = Math.max(
+            -1,
+            ...leftItems.map((item) => getDrinkRelevance(item, query)),
+          );
+          const rightScore = Math.max(
+            -1,
+            ...rightItems.map((item) => getDrinkRelevance(item, query)),
+          );
+          return rightScore - leftScore || leftKey.localeCompare(rightKey);
+        },
+      ),
+    );
   }
 
   const drinkCount = Object.values(drinks).reduce(
