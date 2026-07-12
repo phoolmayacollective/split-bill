@@ -27,7 +27,7 @@ Milestones are numbered in **chronological build order** (M1–M13 done, M14–M
 | 11 | ✅ | Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
 | 12 | ✅ | Dal Bhat menu | `/restaurant/dalbhat` menu picker, search/filter, EUR prices → bill → payment → share |
 | 13 | ✅ | Mobile UX & share | Warm UI, sticky CTAs, copy/Web Share, QR code, separate-password mode |
-| 14 | 🔄 | Account dashboards | Optional username save after bill; dashboard UI pending |
+| 14 | 🔄 | Account dashboards | Optional username save; payer circle + dashboard UI pending |
 | 15 | 🔄 | Demo video | Playwright silent walkthrough; WaveNet narrated MP4 (GCP credentials pending) |
 | 16 | ⏳ | Receipt scan | OCR — image upload → LLM vision → editable line items |
 | 17 | ⏳ | Bill lifecycle | Payer edit token & bill expiry |
