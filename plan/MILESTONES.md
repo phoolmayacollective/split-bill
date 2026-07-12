@@ -22,6 +22,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 14 | [Payer edit token & bill lifecycle](./milestones/14-bill-lifecycle.md) | 4 | `pending` | 8 |
 | 15 | [Deploy MVP](./milestones/15-deploy.md) | 4 | `pending` | 9, 12 |
 | 16 | [Payer & ower account dashboards](./milestones/16-payer-ower-dashboards.md) | 4 | `in_progress` | 8, 10 |
+| 17 | [Dal Bhat restaurant menu](./milestones/17-dalbhat-restaurant-menu.md) | 5 | `completed` | 4, 5, 8 |
 
 ## Phase summary
 
@@ -31,10 +32,11 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | **2 — Zero-knowledge payment** | 7–10 | Encrypt payment details client-side; payer bill view, settlement tracking, participant roster |
 | **3 — OCR** | 11 | Scan receipt → editable line items |
 | **4 — Polish & ship** | 12–16 | Splitting UX, mobile, edit token, deploy, optional account dashboards |
+| **5 — Restaurant menus** | 17 | Static restaurant menu → bill create (Dal Bhat first) |
 
 ## Progress
 
-- **Completed:** 11 / 16
+- **Completed:** 12 / 17
 - **In progress:** 2 (M13 UI/UX polish, M16 account stub)
 - **Pending:** 3
 
@@ -129,6 +131,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 **How:** `lib/bill-units.ts` + `lib/claim-units.ts` with pool validation; split/progress/API updated for unit IDs; `useOwerSession` + 30s payer poll with `payerViewSignature` silent refresh; 41 tests, build verified.
 
 **Details:** [milestones/12-split-polish.md](./milestones/12-split-polish.md)
+
+### M17 — Dal Bhat restaurant menu (2026-07-12)
+
+**What:** Static Dal Bhat menu at `/restaurant/dalbhat` — searchable picker with options, momo portions, drink sizes; posts to existing bill API and continues through payment → share.
+
+**How:** `data/restaurants/dalbhat-menu.json` + typed helpers in `lib/restaurants/`; `DalbhatBillForm` cart with `filterDalbhatMenu()` search/filter; `formatEuro()` for prices; `POST /api/bills` then redirect to `/create/{id}/payment`. URL-only route — no home page link.
+
+**Details:** [milestones/17-dalbhat-restaurant-menu.md](./milestones/17-dalbhat-restaurant-menu.md)
 
 ## In progress work log
 

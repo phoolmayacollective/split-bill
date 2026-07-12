@@ -1,0 +1,436 @@
+{
+  "restaurant": "Dal Bhat - Cafe & Eatery",
+  "website": "www.dalbhat.de",
+  "currency": "EUR",
+  "menu": {
+    "kleine_teller_small_plates": [
+      {
+        "id": "erdnusssalat",
+        "name_de": "Erdnusssalat",
+        "name_en": "Peanut salad",
+        "description_de": "mit Zwiebeln, Tomaten, Chilli und Gewürze",
+        "description_en": "with onions, tomatoes and house spice blend",
+        "allergens": ["e", "k"],
+        "price": 6.2
+      },
+      {
+        "id": "alu-achar",
+        "name_de": "Alu Achar",
+        "name_en": "Alu Achar",
+        "description_de": "nepalesischer Kartoffelsalat mit Sesam, temperiertem Bockshornklee und Chiliflocken",
+        "description_en": "Nepali potato salad with sesame, tempered fenugreek and chilli flakes",
+        "allergens": ["j", "k"],
+        "price": 6.2
+      },
+      {
+        "id": "chhoi-la",
+        "name_de": "Chhoi-La",
+        "name_en": "Chhoi-La",
+        "description_de": "gebratene Tofu oder gegrillte Hähnchensteak (+1€) / Wildkräuter Salat mit Mango Chutney Dressing, mit Senföl & verbrannte Gewürze",
+        "description_en": "Salad with fried Tofu or grilled chicken (+1€), with mustard oil and burnt spices",
+        "price": 8.2,
+        "options": [
+          {
+            "id": "chicken",
+            "name": "mit Hähnchen / with chicken",
+            "extra_charge": 1.0
+          }
+        ]
+      },
+      {
+        "id": "bara",
+        "name_de": "Bara",
+        "name_en": "Bara",
+        "description_de": "2 Linsen Pfannkuchen (mit bio Ei +2€)",
+        "description_en": "2 Lentil Pancakes (with bio Egg +2€)",
+        "allergens": ["h", "j"],
+        "price": 6.2,
+        "options": [
+          {
+            "id": "bio-egg",
+            "name": "mit bio Ei / with bio egg",
+            "extra_charge": 2.0
+          }
+        ]
+      },
+      {
+        "id": "linsensuppe",
+        "name_de": "Linsensuppe",
+        "name_en": "Lentils Soup",
+        "allergens": ["h", "j"],
+        "price": 5.2
+      },
+      {
+        "id": "chatpate",
+        "name_de": "Chatpate",
+        "name_en": "Chatpate",
+        "description_de": "scharfer Salat mit knusprige Nudeln, Puffreis, Gurke",
+        "description_en": "spicy salad with puffed rice, crispy noodles, cucumber",
+        "allergens": ["e", "k"],
+        "additives": ["4"],
+        "price": 7.2
+      },
+      {
+        "id": "chatamari",
+        "name_de": "Chatamari",
+        "name_en": "Chatamari",
+        "description_de": "Reismehlcrepe mit Kartoffeln, Ei und Cheddarkäse",
+        "description_en": "Riceflour crepe with potatoes, egg and Cheddar cheese",
+        "allergens": ["f", "j", "k"],
+        "price": 12.9
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "newari-set",
+        "name": "Newari Set",
+        "description_de": "mit Erdnusssalat, Alu Achar, Erbsencurry, Reisflocken, Linsenpfannkuchen. Wähle zwischen: Tofu Choila (vegan) oder Hähnchen Chhoila",
+        "description_en": "with Peanutsalad, Alu Achar, Chickpea Curry, Riceflakes, Lentil pancakes. Choice of: Tofu Choila (vegan) or Chicken Choila",
+        "allergens": ["e", "f", "h", "j"],
+        "pricing": [
+          {
+            "id": "1-person",
+            "portion": "für 1 Person / for 1 person",
+            "price": 14.9
+          },
+          {
+            "id": "2-people",
+            "portion": "für 2 Personen / for 2 people",
+            "price": 24.9
+          }
+        ]
+      }
+    ],
+    "classics": [
+      {
+        "id": "chowmein",
+        "name_de": "Chowmein",
+        "name_en": "Chowmein",
+        "description_de": "Bratnudeln mit Tofu oder Chicken (mit bio Ei +2€)",
+        "description_en": "fried Noodles with Tofu or chicken (add bio egg +2€)",
+        "allergens": ["a", "f"],
+        "price": 13.9,
+        "options": [
+          {
+            "id": "bio-egg",
+            "name": "mit bio Ei / with bio egg",
+            "extra_charge": 2.0
+          }
+        ]
+      },
+      {
+        "id": "keema-noodle",
+        "name_de": "Keema Noodle",
+        "name_en": "Keema Noodle",
+        "description_de": "Nudeln mit Hühnerhackfleisch, Erdnüsse, Chilliflocken und fermentierter Bohnensoße",
+        "description_en": "spicy Noodles with minced Chicken, Peanuts, Chilliflakes and fermented Bean sauce",
+        "allergens": ["a", "f", "j"],
+        "additives": ["2"],
+        "price": 13.9
+      },
+      {
+        "id": "tempeh-chilli",
+        "name_de": "Tempeh Chilli",
+        "name_en": "Tempeh Chilli",
+        "description_de": "Tempeh (ferment. Soja), pikante Tomaten-soße, mit Reis",
+        "description_en": "fermented Soyabean slices, spicy sauce and with rice",
+        "allergens": ["f", "k"],
+        "price": 12.9
+      },
+      {
+        "id": "sungur",
+        "name_de": "Sungur",
+        "name_en": "Sungur",
+        "description_de": "gebackener Schweinebauch mit einer pfeffrig scharfen Soße, fermentierten Senfgrünen & Reis",
+        "description_en": "baked Porkbelly with a peppery hot sauce, fermented Mustardgreens & Rice",
+        "allergens": ["a", "f", "j"],
+        "additives": ["2"],
+        "price": 14.9
+      }
+    ],
+    "dalbhat": [
+      {
+        "id": "dalbhat-paprika",
+        "name_de": "Dalbhat & Paprika",
+        "name_en": "Dalbhat & Paprika (Chicken & Paprika)",
+        "description_de": "Dal (Linsensuppe) & Bhat (Reis) mit einer kleinen Portion Pak Choi und Hähnchen & Paprika Curry",
+        "description_en": "Dal (Lentils soup) & Bhat (Rice) with a small portion Pak Choi and Chicken & Paprika Curry",
+        "allergens": ["j", "k"],
+        "price": 15.9
+      },
+      {
+        "id": "dalbhat-kichererbsen",
+        "name_de": "Dalbhat & Kichererbsen",
+        "name_en": "Dalbhat & Chickpea",
+        "description_de": "Dal (Linsensuppe) & Bhat (Reis) mit einer kleinen Portion Pak Choi und Kichererbsencurry",
+        "description_en": "Dal (Lentils soup) & Bhat (Rice) with a small portion Pak Choi and Chickpea Curry",
+        "allergens": ["h", "j"],
+        "price": 13.9
+      },
+      {
+        "id": "dalbhat-tarkari",
+        "name_de": "Dalbhat Tarkari (Thali)",
+        "name_en": "Dalbhat Tarkari (Thali)",
+        "description_de": "Reis, Dal, Hähnchen- oder Erbsencurry, Alu Achar, Pakchhoi, eingelegter Rettich und Achar",
+        "description_en": "Rice, Dal, Veggie, Chickencurry or Chickpeacurry, Alu Achar, Pakchoi, fermented Radish",
+        "allergens": ["h", "j"],
+        "price": 20.9
+      }
+    ],
+    "momo": {
+      "item_name": "MOMO",
+      "description": "handgemachte Teigtaschen / handrolled Dumplings",
+      "fillings": [
+        { "id": "vegan", "name": "Vegan" },
+        { "id": "chicken", "name": "Hähnchenhack / Chicken-mince" },
+        { "id": "beef", "name": "Rinderhack / Beef-mince" }
+      ],
+      "styles_and_pricing": [
+        {
+          "id": "steamed",
+          "style_de": "Gedämpft",
+          "style_en": "Steamed",
+          "allergens": ["a", "f"],
+          "prices": [
+            { "quantity": 6, "price": 9.9 },
+            { "quantity": 10, "price": 15.9 }
+          ]
+        },
+        {
+          "id": "jhol",
+          "style_de": "Jhol-Momo (mit Sesamsauce)",
+          "style_en": "Jhol-Momo (with Sesame sauce)",
+          "description_de": "in einer cremige Soße aus Sojabohnen, Erdnüsse",
+          "description_en": "in a creamy sauce with Soyabeans, peanuts",
+          "allergens": ["a", "f"],
+          "prices": [
+            { "quantity": 6, "price": 10.9 },
+            { "quantity": 10, "price": 16.9 }
+          ]
+        },
+        {
+          "id": "chilli-up",
+          "style_de": "Chilli'd Up",
+          "style_en": "Chilli'd Up",
+          "description_de": "im Wok gebraten mit einer pikanten süß-sauren Soße & Gemüse",
+          "description_en": "tossed in a wok with sweet & spicy tomato sauce & fresh veggies",
+          "allergens": ["a", "f"],
+          "prices": [
+            { "quantity": 6, "price": 11.9 },
+            { "quantity": 10, "price": 17.9 }
+          ]
+        }
+      ]
+    },
+    "desserts": [
+      {
+        "id": "halwa-cheese-cake",
+        "name_de": "Halwa Cheese Cake",
+        "name_en": "Halwa Cheese Cake",
+        "description_de": "Halwa (gekochte Möhrenstifte), Matcha-Käsekuchen Schaum",
+        "description_en": "Halwa (cooked Carrot), Matcha-Cheesecake Foam",
+        "allergens": ["a", "g"],
+        "price": 6.2
+      },
+      {
+        "id": "doodh-bhat",
+        "name_de": "Doodh bhat",
+        "name_en": "Doodh bhat",
+        "description_de": "cremiger Kokosmilch-Milchreis mit Yuzu & Kokosflocken",
+        "description_en": "creamy coconut Milk rice Pudding with Yuzu & Coconut flakes",
+        "additives": ["2", "11"],
+        "price": 7.2
+      }
+    ],
+    "extras": [
+      {
+        "id": "schale-reis",
+        "name_de": "Schale Reis",
+        "name_en": "Bowl of rice",
+        "price": 2.5
+      },
+      {
+        "id": "chilli-sosse",
+        "name_de": "Hausgemachte Chilli Soße",
+        "name_en": "Homemade Chili Sauce",
+        "price": 2.0,
+        "note": "Auch als Flasche erhältlich / Also available as bottle"
+      },
+      {
+        "id": "rettich-achar",
+        "name_de": "Fermentierter Rettich Achar",
+        "name_en": "Fermented Radish Achar",
+        "price": 2.0,
+        "note": "Auch als Flasche erhältlich / Also available as bottle"
+      },
+      {
+        "id": "furandana",
+        "name_de": "Furandana (Reisflocken)",
+        "name_en": "Furandana (Riceflakes)",
+        "price": 2.5
+      }
+    ],
+    "drinks": {
+      "tea": [
+        {
+          "id": "schluerf-bio-tee",
+          "name": "Schlürf Bio Tee (verschiedene Sorten)",
+          "price": 3.5
+        },
+        {
+          "id": "ingwer-minze-tee",
+          "name": "Frische Ingwer & Minze Tee",
+          "price": 4.5
+        },
+        {
+          "id": "chiya",
+          "name": "Chiya (Nepalesischer Masala Tee)",
+          "price": 4.2,
+          "allergens": ["g"],
+          "additives": ["9", "11"]
+        }
+      ],
+      "soft_drinks": [
+        {
+          "id": "apfel-schorle",
+          "name": "Apfel Schorle",
+          "size": "0.33l",
+          "price": 3.9
+        },
+        {
+          "id": "cola",
+          "name": "Cola / Cola Zero",
+          "size": "0.33l",
+          "price": 3.5,
+          "additives": ["1", "9", "11"]
+        },
+        {
+          "id": "wasser",
+          "name": "Wasser (mit/ohne)",
+          "sizes": [
+            { "size": "0.25l", "price": 2.9 },
+            { "size": "0.75l", "price": 6.5 }
+          ]
+        },
+        {
+          "id": "mango-lassi",
+          "name": "Mango Lassi",
+          "sizes": [
+            { "size": "0.2l", "price": 4.2 },
+            { "size": "0.4l", "price": 6.5 }
+          ],
+          "additives": ["1", "2", "11"]
+        }
+      ],
+      "craft_beer": [
+        {
+          "id": "brlo-naked",
+          "name": "BRLO Naked (Alcohol free)",
+          "size": "0.33l",
+          "price": 4.5
+        },
+        {
+          "id": "brlo-ipa",
+          "name": "BRLO IPA",
+          "size": "0.33l",
+          "price": 5.5
+        },
+        {
+          "id": "pils",
+          "name": "Pils",
+          "size": "0.33l",
+          "price": 4.5
+        }
+      ],
+      "long_drinks": [
+        {
+          "id": "aperol-spritz",
+          "name": "Aperol Spritz",
+          "size": "5cl",
+          "price": 7.9
+        },
+        {
+          "id": "gin-tonic",
+          "name": "Gin Tonic (Bombay Sapphire)",
+          "size": "4cl",
+          "price": 8.9
+        }
+      ],
+      "special_drinks_non_alcoholic": [
+        {
+          "id": "yuzu-lemonade",
+          "name": "Yuzu Lemonade",
+          "description": "Yuzu, Zitrone, Sprudelwasser",
+          "price": 5.5,
+          "additives": ["2", "11"]
+        },
+        {
+          "id": "iced-chiya",
+          "name": "Iced Chiya",
+          "description": "Iced Nepali Masala Tee",
+          "price": 5.2,
+          "allergens": ["g"],
+          "additives": ["9", "11"]
+        },
+        {
+          "id": "masala-coke",
+          "name": "Masala Coke",
+          "description": "Cola, Limetten, Schwarzer Himalaya Salz",
+          "price": 5.2,
+          "additives": ["1", "9", "11"]
+        }
+      ],
+      "special_drinks_alcoholic": [
+        {
+          "id": "lavender-gin-fizz",
+          "name": "Lavender Gin Fizz",
+          "description": "Bombay Sapphire, Lavendelsirup, Zitronensaft",
+          "price": 9.9
+        },
+        {
+          "id": "spicy-margarita",
+          "name": "Spicy Margarita",
+          "description": "Habanero infused Tequila, Yuzu Sake, Mango Sirup",
+          "price": 10.9
+        }
+      ],
+      "wine": [
+        {
+          "id": "riesling-2023",
+          "name": "2023 Riesling",
+          "producer": "Weinhof Scheu",
+          "size": "0.2l",
+          "price": 7.9,
+          "additives": ["1", "2", "5"]
+        },
+        {
+          "id": "faugeres-rose",
+          "name": "2023 Faugères Rosé 'Les Jardins'",
+          "description": "Faugeres AOP, Domaine Saint Antonin, Cabrerolles, Languedoc, Frankreich",
+          "size": "0.2l",
+          "price": 7.9,
+          "additives": ["1", "2", "5"]
+        },
+        {
+          "id": "tragolargo-tinto",
+          "name": "Tragolargo tinto",
+          "producer": "VINESSENS",
+          "grape": "Monastrell",
+          "size": "0.2l",
+          "price": 7.9,
+          "additives": ["1", "2", "5"]
+        },
+        {
+          "id": "chhyang",
+          "name": "Chhyang (hausgemachter Reiswein)",
+          "description": "Chhyang ist ein traditionelles nepalesisches Getränk, das aus fermentiertem Reis hergestellt wird",
+          "sizes": [
+            { "size": "0.1l", "price": 5.9 },
+            { "size": "0.5l", "price": 15.0 }
+          ],
+          "additives": ["1", "2", "5"]
+        }
+      ]
+    }
+  }
+}

@@ -8,7 +8,7 @@
 
 ## Current progress
 
-**11 / 16 milestones completed** · **2 in progress** (M13 UI/UX, M16 account stub) · next up **M11 OCR**
+**12 / 17 milestones completed** · **2 in progress** (M13 UI/UX, M16 account stub) · next up **M11 OCR**
 
 | Done | Milestone | Summary |
 |------|-----------|---------|
@@ -23,6 +23,7 @@
 | ✅ | M9 Ower decrypt | Summary decrypts payment details client-side; copy PayPal/IBAN |
 | ✅ | M10 Payer bill view & roster | Item progress bars, mark paid, participant roster at create |
 | ✅ | M12 Shared-item polish | Unit-level splits, explicit split count, fractional payer progress |
+| ✅ | M17 Dal Bhat menu | `/restaurant/dalbhat` menu picker, search/filter, EUR prices → bill → payment → share |
 | 🔄 | M13 Mobile UX & share | Warm UI refresh, sticky CTAs, copy/share, loading states (QR pending) |
 | 🔄 | M16 Account dashboards | Optional username save after bill; dashboard UI pending |
 | ⏳ | M11 Receipt scan | Next feature milestone (Phase 3) |
@@ -36,4 +37,5 @@ Phase 1 (core flow)     → M1–M6
 Phase 2 (zero-knowledge)→ M7–M10
 Phase 3 (OCR)           → M11
 Phase 4 (polish)        → M12–M16
+Phase 5 (restaurants)   → M17
 ```
