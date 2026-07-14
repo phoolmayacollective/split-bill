@@ -23,6 +23,23 @@ test("normalizeParsedReceipt accepts valid Gemini-shaped JSON", () => {
   assert.equal(result.tip, 0);
 });
 
+test("normalizeParsedReceipt passes through the receipt total", () => {
+  const result = normalizeParsedReceipt({
+    items: [{ name: "Dal Bhat Set", price: 12.5, qty: 1 }],
+    total: "24.50",
+  });
+
+  assert.equal(result.total, 24.5);
+});
+
+test("normalizeParsedReceipt omits total when absent", () => {
+  const result = normalizeParsedReceipt({
+    items: [{ name: "Dal Bhat Set", price: 12.5, qty: 1 }],
+  });
+
+  assert.equal("total" in result, false);
+});
+
 test("normalizeParsedReceipt rejects invalid items", () => {
   assert.throws(
     () =>

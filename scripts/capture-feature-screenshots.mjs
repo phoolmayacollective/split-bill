@@ -1,14 +1,22 @@
 /**
  * Capture feature page screenshots from the live production app.
- * Usage: node scripts/capture-feature-screenshots.mjs [baseURL]
+ * Usage: node scripts/capture-feature-screenshots.mjs [baseURL] [--only=name]
  */
 import { chromium } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 
 const PRODUCTION_URL = "https://split-bill-gamma-three.vercel.app";
-const BASE_URL = process.argv[2] ?? PRODUCTION_URL;
+const args = process.argv.slice(2);
+const onlyFlag = args.find((arg) => arg.startsWith("--only="));
+const ONLY = onlyFlag?.split("=")[1] ?? null;
+const BASE_URL = args.find((arg) => !arg.startsWith("--")) ?? PRODUCTION_URL;
 const OUT_DIR = path.join(process.cwd(), "public/features");
+const RECEIPT_FIXTURE = path.join(
+  process.cwd(),
+  "demo/fixtures/generic-invoice.png",
+);
+const SCAN_CAPTURE_URL = process.env.SCAN_CAPTURE_URL ?? BASE_URL;
 
 function assertProductionTarget(url) {
   const host = new URL(url).hostname;
@@ -32,18 +40,70 @@ async function assertNoDevOverlay(page) {
   }
 }
 
-async function screenshot(page, name) {
-  await assertNoDevOverlay(page);
+async function screenshot(page, name, options = {}) {
+  if (!options.skipOverlayCheck) {
+    await assertNoDevOverlay(page);
+  }
   const filePath = path.join(OUT_DIR, `${name}.png`);
   await page.screenshot({ path: filePath, fullPage: false });
   console.log(`Saved ${filePath}`);
+}
+
+async function captureScanReceipt(page) {
+  const scanUrl = SCAN_CAPTURE_URL;
+  console.log(`Capturing scan review from ${scanUrl} (Tesseract does not finish in headless prod)`);
+
+  await page.goto(`${scanUrl}/create/scan`);
+  await page.getByRole("heading", { name: "Scan a receipt" }).waitFor();
+
+  const uploadBtn = page.getByRole("button", { name: /Upload receipt image/i });
+  const [fileChooser] = await Promise.all([
+    page.waitForEvent("filechooser"),
+    uploadBtn.click(),
+  ]);
+  await fileChooser.setFiles(RECEIPT_FIXTURE);
+
+  const reviewHeading = page.getByRole("heading", { name: "Review scanned items" });
+  const ocrResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/ocr") && response.request().method() === "POST",
+    { timeout: 240_000 },
+  );
+
+  try {
+    await Promise.race([
+      reviewHeading.waitFor({ timeout: 240_000 }),
+      ocrResponse.then(async (response) => {
+        if (!response.ok()) {
+          throw new Error(`OCR API returned ${response.status()}`);
+        }
+        await reviewHeading.waitFor({ timeout: 30_000 });
+      }),
+    ]);
+  } catch (error) {
+    const heading = await page.locator("h1").textContent();
+    throw new Error(
+      `Scan review step did not load (current heading: "${heading?.trim()}"). ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+
+  await page.getByText("Line item prices include tax").scrollIntoViewIfNeeded();
+  await screenshot(page, "scan-receipt", {
+    skipOverlayCheck: scanUrl !== BASE_URL,
+  });
 }
 
 async function main() {
   assertProductionTarget(BASE_URL);
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  const browser = await chromium.launch();
+  if (!fs.existsSync(RECEIPT_FIXTURE)) {
+    throw new Error(
+      `Missing receipt fixture at ${RECEIPT_FIXTURE}. Run npm run generate:test-invoice first.`,
+    );
+  }
+
+  const browser = await chromium.launch({ channel: "chrome" });
   const page = await browser.newPage({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2,
@@ -51,6 +111,13 @@ async function main() {
   });
 
   console.log(`Capturing from ${BASE_URL}`);
+
+  if (ONLY === "scan-receipt") {
+    await captureScanReceipt(page);
+    await browser.close();
+    console.log("Done.");
+    return;
+  }
 
   // Landing
   await page.goto(`${BASE_URL}/`);
@@ -70,7 +137,7 @@ async function main() {
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await screenshot(page, "create-bill");
 
-  // Payment step
+  // Payment step — manual create flow
   await page.getByRole("button", { name: "Continue to payment" }).click();
   await page.waitForURL("**/create/*/payment**");
   await page.getByLabel("PayPal").fill("ramey@example.com");

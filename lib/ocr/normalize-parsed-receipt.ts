@@ -12,6 +12,7 @@ const parsedReceiptSchema = z.object({
   items: z.array(parsedReceiptItemSchema),
   tax: z.coerce.number().nonnegative().optional(),
   tip: z.coerce.number().nonnegative().optional(),
+  total: z.coerce.number().nonnegative().optional(),
 });
 
 export function normalizeParsedReceipt(raw: unknown): ParsedReceipt {
@@ -29,5 +30,6 @@ export function normalizeParsedReceipt(raw: unknown): ParsedReceipt {
     })),
     ...(parsed.data.tax !== undefined ? { tax: parsed.data.tax } : {}),
     ...(parsed.data.tip !== undefined ? { tip: parsed.data.tip } : {}),
+    ...(parsed.data.total !== undefined ? { total: parsed.data.total } : {}),
   };
 }

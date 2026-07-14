@@ -71,7 +71,8 @@ Original plan was LLM vision on the image; current approach uses **cheaper two-s
 | Product copy | Scan/create/home subtext — implementation-neutral; card buttons use `whitespace-normal` / `text-pretty` |
 | Phone dev | `scripts/dev-phone.sh`, `npm run dev:phone` — LAN URL for phone testing |
 | Deps | `tesseract.js`, `@google/genai` in `package.json` |
-| Env | `GEMINI_API_KEY`, optional `GEMINI_MODEL` in `.env.example` |
+| Env | `GEMINI_API_KEY`, optional `GEMINI_MODEL` in `.env.example`; `GEMINI_API_KEY` on Vercel production |
+| Production | https://split-bill-gamma-three.vercel.app — scan live after env + redeploy |
 
 ## How it was done
 
@@ -82,6 +83,7 @@ Original plan was LLM vision on the image; current approach uses **cheaper two-s
 5. **Review-first UX** — Payer confirms/edits items before payment; API errors fall back to manual entry.
 6. **Home + copy** — Landing `HomePageActions` adds scan path; user-facing strings avoid vendor/engine names.
 7. **Verification** — Live German receipt test passed; `npm test` + `npm run build` pass.
+8. **Production** — `GEMINI_API_KEY` added to Vercel production; redeployed (`npx vercel --prod`) so `/api/ocr` no longer returns “Receipt parsing is not configured.”
 
 ## Key files
 
@@ -121,4 +123,4 @@ scripts/dev-phone.sh
 - **2026-07-12:** Shipped Gemini parse — `@google/genai` + `POST /api/ocr` + `normalize-parsed-receipt` tests.
 - **2026-07-12:** Started M16. Tesseract.js browser OCR spike; Capacitor/iOS Vision rejected for web-only scope.
 
-- **2026-07-12:** Milestone completed — home scan entry, neutral product copy, `demo/COVERAGE.md` updated.
+- **2026-07-12:** Milestone completed — home scan entry, neutral product copy, `demo/COVERAGE.md` updated; `GEMINI_API_KEY` on Vercel production + redeploy.

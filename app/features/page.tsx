@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ComponentType } from "react";
 import {
+  Camera,
   HandCoins,
   Lock,
   Search,
@@ -21,7 +22,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "How it works — Split Bill",
   description:
-    "Create a bill, share a link, and let friends claim what they owe — with encrypted payment details and restaurant menus.",
+    "Scan or type a bill, share a link, and let friends claim what they owe — with encrypted payment details, QR sharing, and restaurant menus.",
 };
 
 type FeatureSection = {
@@ -43,11 +44,24 @@ const SECTIONS: FeatureSection[] = [
     id: "create",
     icon: UtensilsCrossed,
     title: "Build the bill in minutes",
-    lead: "Add line items, tax, and tip — then invite everyone who was at the table.",
-    body: "Start from scratch or pick dishes from a restaurant menu. Name your friends on the roster so each person can find themselves when they open the link. Totals update as you go, so you know the full amount before sharing.",
+    lead: "Type line items, tax, and tip — or scan a receipt — then invite everyone who was at the table.",
+    body: "Start from scratch, photograph a receipt, or pick dishes from a restaurant menu. Name your friends on the roster so each person can find themselves when they open the link. Signed-in payers can quick-add people from their saved circle. Totals update as you go, so you know the full amount before sharing.",
     image: {
       src: "/features/create-bill.png",
       alt: "Manual bill form with momo, tax, tip, and a participant roster",
+      width: 780,
+      height: 1688,
+    },
+  },
+  {
+    id: "scan",
+    icon: Camera,
+    title: "Scan a receipt",
+    lead: "Photograph or upload a receipt — line items are read for you to review and fix.",
+    body: "Take a photo on your phone or upload an image from your gallery. The receipt stays on your device while text is extracted; only the text is sent to structure items, tax, and tip. Review every line before continuing — scans can miss prices or names. A tax-inclusive toggle handles receipts where VAT is already baked into item prices.",
+    image: {
+      src: "/features/scan-receipt.png",
+      alt: "Receipt scan review with editable line items and tax inclusive toggle",
       width: 780,
       height: 1688,
     },
@@ -69,8 +83,8 @@ const SECTIONS: FeatureSection[] = [
     id: "share",
     icon: Share2,
     title: "One link for everyone",
-    lead: "Copy the share link or show a QR code — no app install, no sign-up.",
-    body: "Send the ower link in your group chat. Each friend opens it on their phone, picks their name, and walks through a short flow. You keep a separate payer dashboard to track who has claimed and who has paid.",
+    lead: "Copy the share link, use native share, or show a QR code — no app install required.",
+    body: "Send the ower link in your group chat. Each friend opens it on their phone, picks their name, and walks through a short flow. Prefer not to put the password in the link? Toggle separate-password mode and send the password in another message. You keep a payer dashboard to track who has claimed and who has paid.",
     image: {
       src: "/features/share.png",
       alt: "Share screen with copy link, QR code, and password options",
@@ -108,8 +122,8 @@ const SECTIONS: FeatureSection[] = [
     id: "track",
     icon: Users,
     title: "Track collection from your dashboard",
-    lead: "Per-item progress bars and mark-paid when the money lands.",
-    body: "The payer dashboard shows who has claimed each dish and how many people have paid. Mark someone paid when you receive their transfer, or let them tap \"I've paid\" on their summary to notify you. Progress bars make it obvious what is still outstanding.",
+    lead: "Per-item progress bars, mark-paid when the money lands, and an optional account to find bills again.",
+    body: "The payer dashboard shows who has claimed each dish and how many people have paid. Mark someone paid when you receive their transfer, or let them tap \"I've paid\" on their summary to notify you. Progress bars make it obvious what is still outstanding. Optionally save a username after sharing — sign in later at your dashboard to reopen linked bills and manage your circle of frequent split partners.",
     image: {
       src: "/features/payer-dashboard.png",
       alt: "Payer dashboard with item progress and participant payment status",
@@ -122,7 +136,7 @@ const SECTIONS: FeatureSection[] = [
     icon: Search,
     title: "Restaurant menus built in",
     lead: "Search a menu with fuzzy matching — type scattered letters to find momo.",
-    body: "For partner restaurants like Dal Bhat in Kathmandu, pick dishes from a searchable menu instead of typing prices by hand. Quantities and totals roll up automatically so you can move straight to payment and sharing.",
+    body: "For partner restaurants like Dal Bhat, pick dishes from a searchable menu instead of typing prices by hand. Quantities and totals roll up automatically so you can move straight to payment and sharing.",
     image: {
       src: "/features/dalbhat.png",
       alt: "Dal Bhat menu with fuzzy search for momo",
@@ -150,13 +164,13 @@ export default function FeaturesPage() {
         <div className="bg-muted/30 p-4 sm:p-5">
           <p className="text-sm font-medium">The whole flow in one glance</p>
           <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-            Landing → add items → encrypt payment → share → friends claim → get
-            paid.
+            Landing → type or scan items → encrypt payment → share → friends
+            claim → get paid.
           </p>
         </div>
         <Image
           src="/features/landing.png"
-          alt="Split Bill home screen with create and open bill options"
+          alt="Split Bill home screen with create, scan receipt, and open bill options"
           width={780}
           height={1688}
           className="border-border/60 w-full border-t"
@@ -208,12 +222,21 @@ export default function FeaturesPage() {
           No account required. Create a bill and share the link in under a
           minute.
         </p>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
           <Link
             href="/create/manual"
             className={cn(buttonVariants({ size: "lg" }), "shadow-card w-full sm:w-auto")}
           >
             Create a bill
+          </Link>
+          <Link
+            href="/create/scan"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }),
+              "w-full sm:w-auto",
+            )}
+          >
+            Scan a receipt
           </Link>
           <Link
             href="/restaurant/dalbhat"

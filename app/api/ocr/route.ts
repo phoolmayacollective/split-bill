@@ -1,8 +1,15 @@
 import { jsonError, jsonResponse, parseJsonBody } from "@/lib/api/http";
+import { createRateLimiter, getClientKey } from "@/lib/api/rate-limit";
 import { ocrParseSchema } from "@/lib/api/schemas";
 import { parseReceiptWithGemini } from "@/lib/ocr/parse-receipt-gemini";
 
+const rateLimiter = createRateLimiter({ limit: 10, windowMs: 60_000 });
+
 export async function POST(request: Request) {
+  if (!rateLimiter.check(getClientKey(request))) {
+    return jsonError("Too many scans. Wait a moment and try again.", 429);
+  }
+
   const parsed = await parseJsonBody(request, ocrParseSchema);
 
   if (!parsed.ok) {

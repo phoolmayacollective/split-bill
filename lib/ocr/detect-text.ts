@@ -12,6 +12,8 @@ export type OcrLine = {
 export type OcrProgress = {
   status: string;
   progress: number;
+  /** True while waiting on a step with no measurable progress (LLM parse). */
+  indeterminate?: boolean;
 };
 
 type TesseractLine = {
@@ -23,8 +25,12 @@ type TesseractLine = {
 };
 
 const OCR_TIMEOUT_MS = 120_000;
+const OCR_LANGUAGES = "deu+eng";
 
 let workerPromise: Promise<TesseractWorker> | null = null;
+// Mutable so the worker can be warmed before a scan and still report
+// progress to whichever scan is currently active.
+let activeProgressHandler: ((progress: OcrProgress) => void) | null = null;
 
 function withTimeout<T>(
   promise: Promise<T>,
@@ -74,20 +80,26 @@ function formatProgressStatus(status: string): string {
 }
 
 async function getWorker(onProgress?: (progress: OcrProgress) => void) {
+  if (onProgress) {
+    activeProgressHandler = onProgress;
+  }
+
   if (!workerPromise) {
     workerPromise = (async () => {
       const Tesseract = await loadTesseractBrowser();
-      return Tesseract.createWorker("eng", 1, {
+      return Tesseract.createWorker(OCR_LANGUAGES, 1, {
         workerPath: "/tesseract/worker.min.js",
+        corePath: "/tesseract/core",
+        langPath: "/tesseract/lang",
         errorHandler: (error: unknown) => {
           throw normalizeOcrError(error);
         },
         logger: (message) => {
-          if (!onProgress || message.status === undefined) {
+          if (!activeProgressHandler || message.status === undefined) {
             return;
           }
 
-          onProgress({
+          activeProgressHandler({
             status: formatProgressStatus(message.status),
             progress: message.progress ?? 0,
           });
@@ -97,6 +109,21 @@ async function getWorker(onProgress?: (progress: OcrProgress) => void) {
   }
 
   return workerPromise;
+}
+
+/**
+ * Start loading the Tesseract worker and language data ahead of time so the
+ * first scan doesn't pay the startup cost. Safe to call multiple times.
+ */
+export function prepareOcrWorker(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  void getWorker().catch(() => {
+    // Warm-up failures are ignored; the scan itself retries and surfaces errors.
+    workerPromise = null;
+  });
 }
 
 export function mapTesseractLines(lines: TesseractLine[]): OcrLine[] {
@@ -143,7 +170,7 @@ export function extractLinesFromPage(page: {
 }
 
 export async function detectTextFromImage(
-  image: File | string,
+  image: File | Blob | string,
   onProgress?: (progress: OcrProgress) => void,
 ): Promise<OcrLine[]> {
   if (typeof window === "undefined") {

@@ -8,9 +8,9 @@
 
 ## Current progress
 
-**14 / 18 milestones completed** · **2 in progress** (M14–M15)
+**15 / 19 milestones completed** · **2 in progress** (M14–M15)
 
-Milestones are numbered in **chronological build order** (M1–M13 + M16 done, M14–M15 active, M17–M18 planned).
+Milestones are numbered in **chronological build order** (M1–M13 + M16 + M19 done, M14–M15 active, M17–M18 planned).
 
 | # | Status | Milestone | Summary |
 |---|--------|-----------|---------|
@@ -32,6 +32,7 @@ Milestones are numbered in **chronological build order** (M1–M13 + M16 done, M
 | 16 | ✅ | Receipt scan | `/create/scan` + home entry; server text parse; tax inclusive toggle; neutral UI copy |
 | 17 | ⏳ | Bill lifecycle | Payer edit token & bill expiry |
 | 18 | ⏳ | Deploy MVP | Vercel + production smoke tests |
+| 19 | ✅ | Receipt scan polish | deu OCR, crop, copyable lines, reconcile total, rate limit |
 
 See [MILESTONES.md](./MILESTONES.md) for the full log and [milestones/](./milestones/) for step-by-step details.
 
@@ -40,7 +41,7 @@ See [MILESTONES.md](./MILESTONES.md) for the full log and [milestones/](./milest
 ```
 Phase 1 (core flow)      → M1–M6
 Phase 2 (zero-knowledge) → M7–M10
-Phase 3 (OCR)            → M16
+Phase 3 (OCR)            → M16, M19
 Phase 4 (polish & ship)  → M11, M13, M14, M17, M18
 Phase 5 (restaurants)    → M12
 Phase 6 (demo tooling)   → M15

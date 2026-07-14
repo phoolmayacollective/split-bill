@@ -1,8 +1,8 @@
 # Milestones
 
-Last updated: 2026-07-12 (M16 completed — receipt scan shipped)
+Last updated: 2026-07-14 (M19 completed — receipt scan polish)
 
-Milestones **M1–M18** are numbered in **chronological build order**: completed work first (M1–M12), then active work by start date (M13–M15), then planned work (M16–M18).
+Milestones **M1–M19** are numbered in **chronological build order**: completed work first (M1–M12), then active work by start date (M13–M15), then planned work (M16–M19).
 
 Track progress here and in each file under [`milestones/`](./milestones/).
 
@@ -26,6 +26,7 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 | 16 | [Receipt scan (OCR)](./milestones/16-receipt-scan.md) | 3 | `completed` | 5 |
 | 17 | [Payer edit token & bill lifecycle](./milestones/17-bill-lifecycle.md) | 4 | `pending` | 8 |
 | 18 | [Deploy MVP](./milestones/18-deploy.md) | 4 | `pending` | 9, 11 |
+| 19 | [Receipt scan polish (zero cost)](./milestones/19-receipt-scan-polish.md) | 3 | `completed` | 16 |
 
 ## Phase summary
 
@@ -33,14 +34,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 |-------|------------|------|
 | **1 — Core flow** | 1–6 | Manual bill, claim items, summary — no crypto, no OCR |
 | **2 — Zero-knowledge payment** | 7–10 | Encrypt payment details client-side; payer bill view, settlement tracking, participant roster |
-| **3 — OCR** | 16 | Scan receipt → editable line items |
+| **3 — OCR** | 16, 19 | Scan receipt → editable line items; polish (deu OCR, review UX, state fixes) |
 | **4 — Polish & ship** | 11, 13, 14, 17, 18 | Splitting UX, mobile, account dashboards, edit token, deploy |
 | **5 — Restaurant menus** | 12 | Static restaurant menu → bill create (Dal Bhat first) |
 | **6 — Demo tooling** | 15 | Scripted product walkthrough → silent or narrated MP4 |
 
 ## Progress
 
-- **Completed:** 14 / 18 (M1–M13, M16)
+- **Completed:** 15 / 19 (M1–M13, M16, M19)
 - **In progress:** 2 (M14, M15)
 - **Pending:** 2 (M17, M18)
 
@@ -152,6 +153,14 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/13-mobile-share.md](./milestones/13-mobile-share.md)
 
+### M16 — Receipt scan (OCR) (2026-07-12)
+
+**What:** End-to-end receipt scan — browser OCR → server text parse → review with **tax inclusive toggle**; home + `/create` scan entry; neutral product copy (no engine names in UI).
+
+**How:** `detect-text.ts` → scan page POSTs OCR lines to `/api/ocr` (`parse-receipt-gemini.ts`) → `BillItemEditor` review; `HomePageActions` + `/create` hub link to `/create/scan`. Live German receipt test passed; `GEMINI_API_KEY` on Vercel production; `npm test` + `npm run build` pass.
+
+**Details:** [milestones/16-receipt-scan.md](./milestones/16-receipt-scan.md)
+
 ## In progress work log
 
 ### M14 — Payer & ower account dashboards (started 2026-07-11)
@@ -170,17 +179,9 @@ Track progress here and in each file under [`milestones/`](./milestones/).
 
 **Details:** [milestones/15-demo-video.md](./milestones/15-demo-video.md)
 
-### M16 — Receipt scan (OCR) (2026-07-12)
-
-**What:** End-to-end receipt scan — browser OCR → server text parse → review with **tax inclusive toggle**; home + `/create` scan entry; neutral product copy (no engine names in UI).
-
-**How:** `detect-text.ts` → scan page POSTs OCR lines to `/api/ocr` (`parse-receipt-gemini.ts`) → `BillItemEditor` review; `HomePageActions` + `/create` hub link to `/create/scan`. Live German receipt test passed; `npm test` + `npm run build` pass.
-
-**Details:** [milestones/16-receipt-scan.md](./milestones/16-receipt-scan.md)
-
 ## Next up
 
-**M14 — Account dashboards** — Payer circle + dashboard list UI (Phase 4). Optional: broader receipt quality trials and a scan demo scene (M15/M16 follow-up).
+**M14 — Account dashboards** — payer circle + dashboard list UI (Phase 4).
 
 ## How to update
 

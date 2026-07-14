@@ -79,8 +79,16 @@ export const payerAuthSchema = z.object({
 
 export type PayerAuthInput = z.infer<typeof payerAuthSchema>;
 
+// A receipt is a few dozen short lines; generous caps that still stop
+// abusive payloads from burning LLM quota.
+export const OCR_MAX_LINES = 300;
+export const OCR_MAX_LINE_LENGTH = 300;
+
 export const ocrParseSchema = z.object({
-  lines: z.array(z.string()).min(1, "OCR text is required"),
+  lines: z
+    .array(z.string().max(OCR_MAX_LINE_LENGTH, "OCR line is too long"))
+    .min(1, "OCR text is required")
+    .max(OCR_MAX_LINES, "Too many OCR lines"),
 });
 
 export type OcrParseInput = z.infer<typeof ocrParseSchema>;

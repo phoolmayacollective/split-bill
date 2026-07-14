@@ -88,3 +88,29 @@ Receipt scan (`/create/scan` and home page) is **not** in the automated walkthro
 npm run dev:demo
 # Open http://localhost:3001/?demo_persona=Payer%20·%20Ramey
 ```
+
+### Receipt scan fixtures
+
+| File | Purpose |
+|------|---------|
+| `demo/fixtures/generic-invoice.png` | Contemporary Kathmandu restaurant receipt (NPR) for OCR / scan testing |
+| `demo/fixtures/generic-invoice.txt` | Plain-text version of the same receipt (parser tests) |
+| `demo/fixtures/sample-receipt.png` | Minimal text receipt (legacy) |
+
+Regenerate the PNG:
+
+```bash
+npm run generate:test-invoice
+```
+
+### Feature page screenshots
+
+Captured from production (`https://split-bill-gamma-three.vercel.app`) except scan review — Tesseract does not finish in headless prod, so scan uses local dev:
+
+```bash
+npm run dev   # in another terminal
+npm run capture:features -- https://split-bill-gamma-three.vercel.app
+npm run capture:features -- https://split-bill-gamma-three.vercel.app --only=scan-receipt
+```
+
+Outputs land in `public/features/`.

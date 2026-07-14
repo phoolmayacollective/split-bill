@@ -8,6 +8,8 @@ export type ParsedReceipt = {
   items: ParsedReceiptItem[];
   tax?: number;
   tip?: number;
+  /** Printed grand total on the receipt, used to sanity-check parsed items. */
+  total?: number;
 };
 
 const SKIP_LINE =

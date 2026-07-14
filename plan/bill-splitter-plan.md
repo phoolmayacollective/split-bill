@@ -162,9 +162,10 @@ Detailed tasks live in [`milestones/`](./milestones/). Track status in [`MILESTO
 | 13 | Mobile UX & share tools (QR, copy) | 4 | `completed` |
 | 14 | Payer & ower account dashboards (optional username, payer circle) | 4 | `in_progress` |
 | 15 | Automated demo video | 6 | `in_progress` |
-| 16 | Receipt scan (OCR) | 3 | `in_progress` |
+| 16 | Receipt scan (OCR) | 3 | `completed` |
 | 17 | Payer edit token & bill lifecycle | 4 | `pending` |
 | 18 | Deploy MVP | 4 | `pending` |
+| 19 | Receipt scan polish (zero cost) | 3 | `completed` |
 
 ## Open Questions / Risks
 

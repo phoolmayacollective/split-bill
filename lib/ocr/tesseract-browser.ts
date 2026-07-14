@@ -12,6 +12,8 @@ export type TesseractLoggerMessage = {
 
 export type TesseractWorkerOptions = {
   workerPath?: string;
+  corePath?: string;
+  langPath?: string;
   logger?: (message: TesseractLoggerMessage) => void;
   errorHandler?: (error: unknown) => void;
 };
@@ -31,7 +33,7 @@ export type TesseractRecognizeOutput = {
 
 export type TesseractWorker = {
   recognize: (
-    image: File | string,
+    image: File | Blob | string,
     options?: { rotateAuto?: boolean },
     output?: {
       text?: boolean;

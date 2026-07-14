@@ -101,7 +101,7 @@ Defined in `e2e/demo-helpers.ts` (`DEMO_PERSONAS`) and `demo/scenes.json`.
 | Capture/upload + on-device text extraction | `app/create/scan/page.tsx`, `lib/ocr/detect-text.ts` |
 | Server text parse → editable items | `POST /api/ocr`, `parse-receipt-gemini.ts`, tax inclusive toggle on review |
 
-Requires `GEMINI_API_KEY` on the server for structured line items; product UI does not mention OCR/LLM vendors.
+Requires `GEMINI_API_KEY` on the server for structured line items (set on Vercel production); product UI does not mention OCR/LLM vendors.
 
 ### In progress (not complete)
 
